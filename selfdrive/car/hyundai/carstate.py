@@ -388,6 +388,8 @@ class CarState(CarStateBase):
       ("PRESSURE_FR", "TPMS11"),
       ("PRESSURE_RL", "TPMS11"),
       ("PRESSURE_RR", "TPMS11"),
+
+      ("N", "EMS_366"),
     ]
 
     checks = [
@@ -404,7 +406,7 @@ class CarState(CarStateBase):
       ("SAS11", 100),
 
       ("TPMS11", 5),
-      ("Navi_HU", 5),
+      #("Navi_HU", 5),
     ]
 
     if not CP.openpilotLongitudinalControl:
