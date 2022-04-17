@@ -89,7 +89,7 @@ def is_comma_remote() -> bool:
   if origin is None:
     return False
 
-  return origin.startswith('git@github.com:commaai') or origin.startswith('https://github.com/commaai')
+  return origin.startswith('git@github.com:hikee9123') or origin.startswith('https://github.com/hikee9123')
 
 
 @cache
@@ -101,7 +101,9 @@ def is_tested_branch() -> bool:
 def is_dirty() -> bool:
   origin = get_origin()
   branch = get_branch()
-  if (origin is None) or (branch is None):
+  tested = is_tested_branch()
+  print('origin={}  branch={} tested={}'.format( origin, branch, tested ))
+  if (origin is None) or (branch is None) or not tested:
     return True
 
   dirty = False

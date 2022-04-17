@@ -5,11 +5,13 @@ from common.realtime import DT_MDL
 from common.conversions import Conversions as CV
 from selfdrive.modeld.constants import T_IDXS
 
+import common.MoveAvg as mvAvg
+
 # WARNING: this value was determined based on the model's training distribution,
 #          model predictions above this speed can be unpredictable
 V_CRUISE_MAX = 145  # kph
 V_CRUISE_MIN = 8  # kph
-V_CRUISE_ENABLE_MIN = 40  # kph
+V_CRUISE_ENABLE_MIN = 30  # kph
 
 LAT_MPC_N = 16
 LON_MPC_N = 32
@@ -18,6 +20,14 @@ CAR_ROTATION_RADIUS = 0.0
 
 # EU guidelines
 MAX_LATERAL_JERK = 5.0
+
+MAX_LATERAL_JERKS = [0, 0.000001, 5]
+MAX_LATERAL_JERK_SPEEDS = [0, 20*CV.KPH_TO_MS, 50*CV.KPH_TO_MS]
+
+moveAvg = mvAvg.MoveAvg()
+
+
+
 
 CRUISE_LONG_PRESS = 50
 CRUISE_NEAREST_FUNC = {
@@ -93,18 +103,27 @@ def get_lag_adjusted_curvature(CP, v_ego, psis, curvatures, curvature_rates):
 
   # TODO this needs more thought, use .2s extra for now to estimate other delays
   delay = CP.steerActuatorDelay + .2
+
+  if v_ego < 3:
+    #current_curvature = moveAvg.get_min(curvatures[0], 5)
+    current_curvature = moveAvg.get_avg(curvatures[0], 3)
+  else:
   current_curvature = curvatures[0]
+
   psi = interp(delay, T_IDXS[:CONTROL_N], psis)
   desired_curvature_rate = curvature_rates[0]
 
+  v_ego = max(v_ego, 1)
   # MPC can plan to turn the wheel and turn back before t_delay. This means
   # in high delay cases some corrections never even get commanded. So just use
   # psi to calculate a simple linearization of desired curvature
-  curvature_diff_from_psi = psi / (max(v_ego, 1e-1) * delay) - current_curvature
+  curvature_diff_from_psi = psi / (v_ego * delay) - current_curvature
   desired_curvature = current_curvature + 2 * curvature_diff_from_psi
 
-  v_ego = max(v_ego, 0.1)
-  max_curvature_rate = MAX_LATERAL_JERK / (v_ego**2)
+  
+  LATERAL_JERK = interp(v_ego, MAX_LATERAL_JERK_SPEEDS, MAX_LATERAL_JERKS)
+  #LATERAL_JERK = MAX_LATERAL_JERK
+  max_curvature_rate = LATERAL_JERK / (v_ego**2)
   safe_desired_curvature_rate = clip(desired_curvature_rate,
                                           -max_curvature_rate,
                                           max_curvature_rate)

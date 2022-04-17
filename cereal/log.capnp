@@ -326,6 +326,9 @@ struct DeviceState @0xa4d8b5af2aa492eb {
   fanSpeedPercentDesired @10 :UInt16;
   screenBrightnessPercent @37 :Int8;
 
+  # atom
+  wifiIpAddress @42 :Text;
+
   struct ThermalZone {
     name @0 :Text;
     temp @1 :Float32;
@@ -577,6 +580,13 @@ struct ControlsState @0x97ff69c53601abf1 {
 
   cumLagMs @15 :Float32;
   canErrorCounter @57 :UInt32;
+
+  # atom
+  output @61 :Float32;
+  alertTextMsg1  @62 :Text;
+  alertTextMsg2  @63 :Text;
+  alertTextMsg3  @64 :Text;
+
 
   lateralControlState :union {
     indiState @52 :LateralINDIState;
@@ -912,6 +922,10 @@ struct LateralPlan @0xe1e9318e2ae8b51e {
   curvatureRates @28 :List(Float32);
 
   solverExecutionTime @30 :Float32;
+
+  # atom
+  laneLess @32 :Bool;
+  modelSpeed @33 :Float32;
 
   enum Desire {
     none @0;
@@ -1646,6 +1660,27 @@ struct LiveParametersData {
   roll @14 :Float32;
 }
 
+
+  # atom
+struct LiveNaviData {
+  id @0 :UInt8;
+  ts @1 :UInt64;  
+  speedLimit @2 :Float32;
+  speedLimitDistance @3 :Float32;
+  safetySign @4 :Float32;
+  roadCurvature @5 :Float32;
+  mapValid @6 :Bool;
+  mapEnable @7 :Int32;
+  trafficType @8 :Int32;
+
+  turnInfo @9 :Int32;
+  distanceToTurn @10 :Int32;      
+
+   arrivalSec @11 :Float32;
+   arrivalDistance @12 :Float32;
+}
+
+
 struct LiveMapDataDEPRECATED {
   speedLimitValid @0 :Bool;
   speedLimit @1 :Float32;
@@ -1818,6 +1853,11 @@ struct Event {
     navInstruction @82 :NavInstruction;
     navRoute @83 :NavRoute;
     navThumbnail @84: Thumbnail;
+
+    # atom NAVI Info
+    liveNaviData @90 :LiveNaviData;
+
+
 
     # *********** debug ***********
     testJoystick @52 :Joystick;

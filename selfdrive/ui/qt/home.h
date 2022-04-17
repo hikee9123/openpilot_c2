@@ -54,6 +54,9 @@ protected:
   void mouseDoubleClickEvent(QMouseEvent* e) override;
 
 private:
+  int  mouseEventLatch(QMouseEvent* e);
+
+private:
   Sidebar *sidebar;
   OffroadHome *home;
   OnroadWindow *onroad;

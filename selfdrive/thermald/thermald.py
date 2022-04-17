@@ -34,7 +34,7 @@ DISCONNECT_TIMEOUT = 5.  # wait 5 seconds before going offroad after disconnect 
 PANDA_STATES_TIMEOUT = int(1000 * 2.5 * DT_TRML)  # 2.5x the expected pandaState frequency
 
 ThermalBand = namedtuple("ThermalBand", ['min_temp', 'max_temp'])
-HardwareState = namedtuple("HardwareState", ['network_type', 'network_metered', 'network_strength', 'network_info', 'nvme_temps', 'modem_temps'])
+HardwareState = namedtuple("HardwareState", ['network_type', 'network_metered', 'network_strength', 'network_info', 'nvme_temps', 'modem_temps','wifiIpAddress'])
 
 # List of thermal bands. We will stay within this region as long as we are within the bounds.
 # When exiting the bounds, we'll jump to the lower or higher band. Bands are ordered in the dict.
@@ -83,6 +83,8 @@ def read_thermal(thermal_config):
   dat.deviceState.memoryTempC = read_tz(thermal_config.mem[0]) / thermal_config.mem[1]
   dat.deviceState.ambientTempC = read_tz(thermal_config.ambient[0]) / thermal_config.ambient[1]
   dat.deviceState.pmicTempC = [read_tz(z) / thermal_config.pmic[1] for z in thermal_config.pmic[0]]
+  dat.deviceState.batteryTempCDEPRECATED = read_tz(thermal_config.bat[0]) / thermal_config.bat[1]
+  dat.deviceState.modemTempC = HARDWARE.get_modem_temperatures()
   return dat
 
 
@@ -127,6 +129,7 @@ def hw_state_thread(end_event, hw_queue):
           network_info=HARDWARE.get_network_info(),
           nvme_temps=HARDWARE.get_nvme_temperatures(),
           modem_temps=modem_temps,
+          wifiIpAddress = HARDWARE.get_ip_address(),
         )
 
         try:
@@ -183,6 +186,7 @@ def thermald_thread(end_event, hw_queue):
     network_info=None,
     nvme_temps=[],
     modem_temps=[],
+    wifiIpAddress='N/A',
   )
 
   current_filter = FirstOrderFilter(0., CURRENT_TAU, DT_TRML)
@@ -201,6 +205,7 @@ def thermald_thread(end_event, hw_queue):
   fan_controller = None
 
   while not end_event.is_set():
+    ts = sec_since_boot()
     sm.update(PANDA_STATES_TIMEOUT)
 
     pandaStates = sm['pandaStates']
@@ -228,6 +233,13 @@ def thermald_thread(end_event, hw_queue):
           fan_controller = UnoFanController()
         else:
           fan_controller = EonFanController()
+    elif (count % int(10. / DT_TRML)) == 0:
+      # atom
+      is_openpilot_view_enabled = params.get_bool("IsOpenpilotViewEnabled") # IsRHD
+      if is_openpilot_view_enabled:
+        onroad_conditions["ignition"] = True
+      elif onroad_conditions["ignition"] == True:
+        onroad_conditions["ignition"] = False
 
     try:
       last_hw_state = hw_queue.get_nowait()
@@ -247,6 +259,10 @@ def thermald_thread(end_event, hw_queue):
 
     msg.deviceState.nvmeTempC = last_hw_state.nvme_temps
     msg.deviceState.modemTempC = last_hw_state.modem_temps
+
+    msg.deviceState.wifiIpAddress = last_hw_state.wifiIpAddress
+    msg.deviceState.batteryStatusDEPRECATED = HARDWARE.get_battery_status()
+    msg.deviceState.batteryVoltageDEPRECATED = HARDWARE.get_battery_voltage()
 
     msg.deviceState.screenBrightnessPercent = HARDWARE.get_screen_brightness()
     msg.deviceState.batteryPercent = HARDWARE.get_battery_capacity()
@@ -406,6 +422,9 @@ def thermald_thread(end_event, hw_queue):
       statlog.gauge(f"modem_temperature{i}", temp)
     statlog.gauge("fan_speed_percent_desired", msg.deviceState.fanSpeedPercentDesired)
     statlog.gauge("screen_brightness_percent", msg.deviceState.screenBrightnessPercent)
+
+    if usb_power:
+      power_monitor.charging_ctrl( msg, ts, 60, 45 )    
 
     # report to server once every 10 minutes
     if (count % int(600. / DT_TRML)) == 0:

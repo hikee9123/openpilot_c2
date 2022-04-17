@@ -26,6 +26,7 @@ signals:
   void closeSettings();
   void reviewTrainingGuide();
   void showDriverView();
+  void offroadTransition(bool offroad);
 
 private:
   QPushButton *sidebar_alert_widget;

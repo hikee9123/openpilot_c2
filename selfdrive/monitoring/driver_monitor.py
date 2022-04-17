@@ -20,9 +20,11 @@ class DRIVER_MONITOR_SETTINGS():
     self._DT_DMON = DT_DMON
     # ref (page15-16): https://eur-lex.europa.eu/legal-content/EN/TXT/PDF/?uri=CELEX:42018X1947&rid=2
     self._AWARENESS_TIME = 30. # passive wheeltouch total timeout
+    self._AWARENESS_STEP_CHANGE = self._AWARENESS_TIME  * 20    # touch
     self._AWARENESS_PRE_TIME_TILL_TERMINAL = 15.
     self._AWARENESS_PROMPT_TIME_TILL_TERMINAL = 6.
     self._DISTRACTED_TIME = 11. # active monitoring total timeout
+    self._DISTRACTED_STEP_CHANGE = self._DISTRACTED_TIME * 1   # 
     self._DISTRACTED_PRE_TIME_TILL_TERMINAL = 8.
     self._DISTRACTED_PROMPT_TIME_TILL_TERMINAL = 6.
 
@@ -63,7 +65,7 @@ class DRIVER_MONITOR_SETTINGS():
     self._RECOVERY_FACTOR_MAX = 5.  # relative to minus step change
     self._RECOVERY_FACTOR_MIN = 1.25  # relative to minus step change
 
-    self._MAX_TERMINAL_ALERTS = 3  # not allowed to engage after 3 terminal alerts
+    self._MAX_TERMINAL_ALERTS = 30  # not allowed to engage after 3 terminal alerts
     self._MAX_TERMINAL_DURATION = int(30 / self._DT_DMON)  # not allowed to engage after 30s of terminal alerts
 
 
@@ -154,7 +156,7 @@ class DriverStatus():
   def _set_timers(self, active_monitoring):
     if self.active_monitoring_mode and self.awareness <= self.threshold_prompt:
       if active_monitoring:
-        self.step_change = self.settings._DT_DMON / self.settings._DISTRACTED_TIME
+        self.step_change = self.settings._DT_DMON / self.settings._DISTRACTED_STEP_CHANGE
       else:
         self.step_change = 0.
       return  # no exploit after orange alert
@@ -169,7 +171,7 @@ class DriverStatus():
 
       self.threshold_pre = self.settings._DISTRACTED_PRE_TIME_TILL_TERMINAL / self.settings._DISTRACTED_TIME
       self.threshold_prompt = self.settings._DISTRACTED_PROMPT_TIME_TILL_TERMINAL / self.settings._DISTRACTED_TIME
-      self.step_change = self.settings._DT_DMON / self.settings._DISTRACTED_TIME
+      self.step_change = self.settings._DT_DMON / self.settings._DISTRACTED_STEP_CHANGE
       self.active_monitoring_mode = True
     else:
       if self.active_monitoring_mode:
@@ -178,7 +180,7 @@ class DriverStatus():
 
       self.threshold_pre = self.settings._AWARENESS_PRE_TIME_TILL_TERMINAL / self.settings._AWARENESS_TIME
       self.threshold_prompt = self.settings._AWARENESS_PROMPT_TIME_TILL_TERMINAL / self.settings._AWARENESS_TIME
-      self.step_change = self.settings._DT_DMON / self.settings._AWARENESS_TIME
+      self.step_change = self.settings._DT_DMON / self.settings._AWARENESS_STEP_CHANGE
       self.active_monitoring_mode = False
 
   def _get_distracted_types(self):
@@ -279,6 +281,7 @@ class DriverStatus():
   def update_events(self, events, driver_engaged, ctrl_active, standstill):
     if (driver_engaged and self.awareness > 0) or not ctrl_active:
       # reset only when on disengagement if red reached
+      self.terminal_alert_cnt = 0
       self.awareness = 1.
       self.awareness_active = 1.
       self.awareness_passive = 1.

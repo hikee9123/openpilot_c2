@@ -10,6 +10,7 @@ from selfdrive.car.fw_versions import get_fw_versions, match_fw_to_car
 from selfdrive.swaglog import cloudlog
 import cereal.messaging as messaging
 from selfdrive.car import gen_empty_fingerprint
+from selfdrive.car.hyundai.values import CAR
 
 from cereal import car
 EventName = car.CarEvent.EventName
@@ -180,6 +181,7 @@ def get_car(logcan, sendcan):
   if candidate is None:
     cloudlog.warning("car doesn't match any fingerprints: %r", fingerprints)
     candidate = "mock"
+    candidate = CAR.GRANDEUR_HEV_19
 
   disable_radar = Params().get_bool("DisableRadar")
 

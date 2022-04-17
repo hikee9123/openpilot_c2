@@ -7,7 +7,8 @@
 #include "selfdrive/ui/qt/widgets/cameraview.h"
 #include "selfdrive/ui/ui.h"
 
-
+#include "selfdrive/ui/qt/atom/paint.h"
+#include "selfdrive/ui/qt/atom/dashcam.h"
 // ***** onroad widgets *****
 
 class OnroadHud : public QWidget {
@@ -29,6 +30,8 @@ private:
   void drawIcon(QPainter &p, int x, int y, QPixmap &img, QBrush bg, float opacity);
   void drawText(QPainter &p, int x, int y, const QString &text, int alpha = 255);
   void paintEvent(QPaintEvent *event) override;
+  void drawCurrentSpeed(QPainter &p, int x, int y);
+
 
   QPixmap engage_img;
   QPixmap dm_img;
@@ -42,6 +45,11 @@ private:
   bool dmActive = false;
   bool hideDM = false;
   int status = STATUS_DISENGAGED;
+
+
+private:
+  int  m_nBrakeStatus;
+  float m_gasVal;
 
 signals:
   void valueChanged();
@@ -100,6 +108,10 @@ private:
   QColor bg = bg_colors[STATUS_DISENGAGED];
   QWidget *map = nullptr;
   QHBoxLayout* split;
+
+  // atom
+  OnPaint *m_pPaint;
+  OnDashCam *m_pDashCam;
 
 private slots:
   void offroadTransition(bool offroad);
