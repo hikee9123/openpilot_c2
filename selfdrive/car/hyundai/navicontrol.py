@@ -150,7 +150,8 @@ class NaviControl():
       if len(leads_v3) > 1:
         d_rel1 = leads_v3[0].x[0] 
         d_rel2 = leads_v3[1].x[0]
-        if leads_v3[0].prob > 0.5 and leads_v3[1].prob > 0.5 and d_rel2 < 30:
+        d_rel = min( d_rel1, d_rel2 )
+        if leads_v3[0].prob > 0.5 and leads_v3[1].prob > 0.5 and d_rel < 60:
           cut_in = d_rel1 - d_rel2  # > 3
 
       return cut_in, d_rel1, d_rel2
