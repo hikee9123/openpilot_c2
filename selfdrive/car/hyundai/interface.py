@@ -69,7 +69,7 @@ class CarInterface(CarInterfaceBase):
       ret.lateralTuning.lqr.scale = 2000     #1700.0
       ret.lateralTuning.lqr.ki = 0.01      #0.01
       ret.lateralTuning.lqr.dcGain =  0.0027  #0.0027
-      # ?˜¸?•¼  1500, 0.015, 0.0027
+      # í˜¸ì•¼  1500, 0.015, 0.0027
       #  1700, 0.01, 0.0029
       #  2000, 0.01, 0.003
       # toyota  1500, 0.05,   0.002237852961363602

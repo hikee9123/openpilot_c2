@@ -165,8 +165,8 @@ class CarInterfaceBase(ABC):
     if cs_out.steerFaultTemporary:
       # if the user overrode recently, show a less harsh alert
       #if self.silent_steer_warning or cs_out.standstill or self.steering_unpressed < int(1.5 / DT_CTRL):
-        self.silent_steer_warning = True
-        events.add(EventName.steerTempUnavailableSilent)
+      self.silent_steer_warning = True
+      events.add(EventName.steerTempUnavailableSilent)
       #else:
       #  events.add(EventName.steerTempUnavailable)
     else:

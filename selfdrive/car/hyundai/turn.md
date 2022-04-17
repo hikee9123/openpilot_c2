@@ -32,7 +32,7 @@
       ret.lateralTuning.indi.outerLoopGainBP = [0.]
       ret.lateralTuning.indi.outerLoopGainV = [2.0]
       ret.lateralTuning.indi.timeConstantBP = [0.]
-      ret.lateralTuning.indi.timeConstantV = [1.4]
+      ret.lateralTuning.indi.timeConstantV = [1.4]               # 2. 중앙 조정
       ret.lateralTuning.indi.actuatorEffectivenessBP = [0.]
-      ret.lateralTuning.indi.actuatorEffectivenessV = [5.3]
+      ret.lateralTuning.indi.actuatorEffectivenessV = [5.3]      # 1. 낮을수록 코너를 잘돔.  (직진 와리 가리 조정)
   
