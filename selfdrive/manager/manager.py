@@ -194,10 +194,10 @@ def manager_thread() -> None:
       break
 
 def map_exec():
-  os.system("am start com.mnsoft.mappyobn/com.mnsoft.mappy.MainActivity &")  # map ?‹¤?–‰.
+  os.system("am start com.mnsoft.mappyobn/com.mnsoft.mappy.MainActivity &") 
 
 def map_hide():
-  os.system("am start --activity-task-on-home com.opkr.maphack/com.opkr.maphack.MainActivity")  # map backgrandë¡? ? „?™˜?•©?‹ˆ?‹¤.
+  os.system("am start --activity-task-on-home com.opkr.maphack/com.opkr.maphack.MainActivity") 
 
 def map_return():
   os.system("am start --activity-task-on-home com.mnsoft.mappyobn/com.mnsoft.mappy.MainActivity")
