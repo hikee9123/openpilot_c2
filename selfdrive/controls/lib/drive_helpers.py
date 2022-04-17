@@ -108,7 +108,7 @@ def get_lag_adjusted_curvature(CP, v_ego, psis, curvatures, curvature_rates):
     #current_curvature = moveAvg.get_min(curvatures[0], 5)
     current_curvature = moveAvg.get_avg(curvatures[0], 3)
   else:
-  current_curvature = curvatures[0]
+    current_curvature = curvatures[0]
 
   psi = interp(delay, T_IDXS[:CONTROL_N], psis)
   desired_curvature_rate = curvature_rates[0]
