@@ -16,18 +16,21 @@ DESIRES = {
     LaneChangeState.preLaneChange: log.LateralPlan.Desire.none,
     LaneChangeState.laneChangeStarting: log.LateralPlan.Desire.none,
     LaneChangeState.laneChangeFinishing: log.LateralPlan.Desire.none,
+    LaneChangeState.laneChangeDisEngage: log.LateralPlan.Desire.none,
   },
   LaneChangeDirection.left: {
     LaneChangeState.off: log.LateralPlan.Desire.none,
     LaneChangeState.preLaneChange: log.LateralPlan.Desire.none,
     LaneChangeState.laneChangeStarting: log.LateralPlan.Desire.laneChangeLeft,
     LaneChangeState.laneChangeFinishing: log.LateralPlan.Desire.laneChangeLeft,
+    LaneChangeState.laneChangeDisEngage: log.LateralPlan.Desire.none,
   },
   LaneChangeDirection.right: {
     LaneChangeState.off: log.LateralPlan.Desire.none,
     LaneChangeState.preLaneChange: log.LateralPlan.Desire.none,
     LaneChangeState.laneChangeStarting: log.LateralPlan.Desire.laneChangeRight,
     LaneChangeState.laneChangeFinishing: log.LateralPlan.Desire.laneChangeRight,
+    LaneChangeState.laneChangeDisEngage: log.LateralPlan.Desire.none,
   },
 }
 
@@ -99,8 +102,11 @@ class DesireHelper:
                               (carstate.rightBlindspot and self.lane_change_direction == LaneChangeDirection.right))
 
         torque_applied = self.auto_lanechange( md, torque_applied )
-        if not one_blinker or below_lane_change_speed:
-          self.lane_change_state = LaneChangeState.off
+        if below_lane_change_speed:
+          if not one_blinker:
+            self.lane_change_state = LaneChangeState.off
+          else:
+            self.lane_change_state = LaneChangeState.laneChangeDisEngage
         elif torque_applied and not blindspot_detected:
           self.lane_change_state = LaneChangeState.laneChangeStarting
 
@@ -125,7 +131,7 @@ class DesireHelper:
           else:
             self.lane_change_state = LaneChangeState.off
 
-    if self.lane_change_state in (LaneChangeState.off, LaneChangeState.preLaneChange):
+    if self.lane_change_state in (LaneChangeState.off, LaneChangeState.preLaneChange,LaneChangeState.laneChangeDisEngage):
       self.lane_change_timer = 0.0
     else:
       self.lane_change_timer += DT_MDL
@@ -135,7 +141,7 @@ class DesireHelper:
     self.desire = DESIRES[self.lane_change_direction][self.lane_change_state]
 
     # Send keep pulse once per second during LaneChangeStart.preLaneChange
-    if self.lane_change_state in (LaneChangeState.off, LaneChangeState.laneChangeStarting):
+    if self.lane_change_state in (LaneChangeState.off, LaneChangeState.laneChangeStarting,LaneChangeState.laneChangeDisEngage):
       self.keep_pulse_timer = 0.0
     elif self.lane_change_state == LaneChangeState.preLaneChange:
       self.keep_pulse_timer += DT_MDL

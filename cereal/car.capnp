@@ -111,6 +111,7 @@ struct CarEvent @0x9b1657f34caf3ad3 {
     lkasDisabled @107;
     canBusMissing @111;
     cutInCarDetect  @112;
+    laneChangedisengaged @113;
 
     radarCanErrorDEPRECATED @15;
     communityFeatureDisallowedDEPRECATED @62;
