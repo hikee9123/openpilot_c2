@@ -34,8 +34,8 @@ def manager_init() -> None:
   params = Params()
   enableLogger = params.get_bool("UploadRaw")
   if enableLogger:
-  # save boot log
-  subprocess.call("./bootlog", cwd=os.path.join(BASEDIR, "selfdrive/loggerd"))
+    # save boot log
+    subprocess.call("./bootlog", cwd=os.path.join(BASEDIR, "selfdrive/loggerd"))
 
   params.clear_all(ParamKeyType.CLEAR_ON_MANAGER_START)
 
@@ -194,10 +194,10 @@ def manager_thread() -> None:
       break
 
 def map_exec():
-  os.system("am start com.mnsoft.mappyobn/com.mnsoft.mappy.MainActivity &")  # map ì‹¤í–‰.
+  os.system("am start com.mnsoft.mappyobn/com.mnsoft.mappy.MainActivity &")  # map ?‹¤?–‰.
 
 def map_hide():
-  os.system("am start --activity-task-on-home com.opkr.maphack/com.opkr.maphack.MainActivity")  # map backgrandë¡œ ì „í™˜í•©ë‹ˆë‹¤.
+  os.system("am start --activity-task-on-home com.opkr.maphack/com.opkr.maphack.MainActivity")  # map backgrandë¡? ? „?™˜?•©?‹ˆ?‹¤.
 
 def map_return():
   os.system("am start --activity-task-on-home com.mnsoft.mappyobn/com.mnsoft.mappy.MainActivity")
