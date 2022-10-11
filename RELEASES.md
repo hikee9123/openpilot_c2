@@ -1,5 +1,6 @@
 Version 0.8.14 (2022-0X-XX)
 ========================
+ * NEOS 20: improved reliability
  * bigmodel!
  * comma body support
  * Hyundai Tucson Diesel 2019 support thanks to sunnyhaibin!
@@ -165,7 +166,7 @@ Version 0.8.3 (2021-04-01)
  * New model
    * Trained on new diverse dataset from 2000+ users from 30+ countries
    * Trained with improved segnet from the comma-pencil community project
-   * 🥬 Dramatically improved end-to-end lateral performance 🥬
+   * �� Dramatically improved end-to-end lateral performance ��
  * Toggle added to disable the use of lanelines
  * NEOS update: update packages and support for new UI
  * New offroad UI based on Qt
