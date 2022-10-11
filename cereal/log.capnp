@@ -182,6 +182,13 @@ struct GPSNMEAData {
   nmea @2 :Text;
 }
 
+
+struct UpdateEventData {
+  version @0 :Int32;
+  type @1 :Int32;
+  command @2 :Int32;
+}
+
 # android sensor_event_t
 struct SensorEventData {
   version @0 :Int32;
@@ -328,6 +335,7 @@ struct DeviceState @0xa4d8b5af2aa492eb {
 
   # atom
   wifiIpAddress @42 :Text;
+  connectName @43 :Text;
 
   struct ThermalZone {
     name @0 :Text;
@@ -657,6 +665,8 @@ struct ControlsState @0x97ff69c53601abf1 {
     f @5 :Float32;
     output @6 :Float32;
     saturated @7 :Bool;
+    actualLateralAccel @9 :Float32;
+    desiredLateralAccel @10 :Float32;
    }
 
   struct LateralLQRState {
@@ -1661,6 +1671,21 @@ struct LiveParametersData {
   roll @14 :Float32;
 }
 
+struct LiveTorqueParametersData {
+  liveValid @0 :Bool;
+  latAccelFactorRaw @1 :Float32;
+  latAccelOffsetRaw @2 :Float32;
+  frictionCoefficientRaw @3 :Float32;
+  latAccelFactorFiltered @4 :Float32;
+  latAccelOffsetFiltered @5 :Float32;
+  frictionCoefficientFiltered @6 :Float32;
+  totalBucketPoints @7 :Float32;
+  decay @8 :Float32;
+  maxResets @9 :Float32;
+  points @10 :List(List(Float32));
+  version @11 :Int32;
+  useParams @12 :Bool;
+}
 
   # atom
 struct LiveNaviData {
@@ -1668,17 +1693,25 @@ struct LiveNaviData {
   ts @1 :UInt64;  
   speedLimit @2 :Float32;
   speedLimitDistance @3 :Float32;
-  safetySign @4 :Float32;
+
+
   roadCurvature @5 :Float32;
-  mapValid @6 :Bool;
-  mapEnable @7 :Int32;
-  trafficType @8 :Int32;
+  remainTime @6 :Float32;
 
-  turnInfo @9 :Int32;
-  distanceToTurn @10 :Int32;      
+  safetySign1 @4 :Int32;
+  safetySign2 @14 :Int32;
 
-   arrivalSec @11 :Float32;
-   arrivalDistance @12 :Float32;
+
+  mapValid @7 :Bool;
+  mapEnable @8 :Int32;
+  trafficType @9 :Int32;
+  mapType @15 :Int32;
+  
+  turnInfo @10 :Int32;
+  distanceToTurn @11 :Int32;      
+
+   arrivalSec @12 :Float32;
+   arrivalDistance @13 :Float32;
 }
 
 
@@ -1824,6 +1857,7 @@ struct Event {
     gpsLocationExternal @48 :GpsLocationData;
     driverState @59 :DriverState;
     liveParameters @61 :LiveParametersData;
+    liveTorqueParameters @93 :LiveTorqueParametersData;    
     cameraOdometry @63 :CameraOdometry;
     thumbnail @66: Thumbnail;
     carEvents @68: List(Car.CarEvent);
@@ -1857,6 +1891,7 @@ struct Event {
 
     # atom NAVI Info
     liveNaviData @90 :LiveNaviData;
+    updateEvents @91 :UpdateEventData;
 
 
 

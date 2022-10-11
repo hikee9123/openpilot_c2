@@ -74,7 +74,7 @@ void OnPaint::updateState(const UIState &s)
   m_param.batteryTemp = deviceState.getBatteryTempCDEPRECATED();
   m_param.cpuPerc = deviceState.getCpuUsagePercent()[0];
 
-  if( m_param.cpuPerc < 0) m_param.cpuPerc = 0
+  if( m_param.cpuPerc < 0) m_param.cpuPerc = 0;
   else if( m_param.cpuPerc > 100) m_param.cpuPerc = 100;
 
   auto  maxCpuTemp = deviceState.getCpuTempC();
