@@ -82,7 +82,7 @@ private:
   QPixmap img_narrow_road;
   QPixmap img_rail_road;
 
-  QPixmap img_overtrack;
+  //QPixmap img_overtrack;
   QPixmap img_park_crackdown;
 
 
