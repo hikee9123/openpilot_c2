@@ -201,7 +201,7 @@ static void update_state(UIState *s) {
   if( scene.IsOpenpilotViewEnabled )
     scene.started = sm["deviceState"].getDeviceState().getStarted();
   else
-  scene.started = sm["deviceState"].getDeviceState().getStarted() && scene.ignition;
+    scene.started = sm["deviceState"].getDeviceState().getStarted() && scene.ignition;
 
 
 
