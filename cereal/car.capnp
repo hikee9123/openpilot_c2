@@ -510,15 +510,15 @@ struct CarParams {
 
   wheelSpeedFactor @63 :Float32; # Multiplier on wheels speeds to computer actual speeds
 
-  atompilotLongitudinalControl @70  :Bool;
-  atomHybridSpeed @71  :Float32;
+  atompilotLongitudinalControl @68  :Bool;
+  atomHybridSpeed @69  :Float32;
 
-  opkrAutoResume @72 :Bool;
+  opkrAutoResume @70 :Bool;
 
-  smoothSteer @73 :SmoothSteerData;
-  laneParam @75 :LaneParamData;
+  smoothSteer @71 :SmoothSteerData;
+  laneParam @72 :LaneParamData;
 
-  opkrOsmCurvOption  @76 :Int16;
+  opkrOsmCurvOption  @73 :Int16;
 
   struct LaneParamData
   {
