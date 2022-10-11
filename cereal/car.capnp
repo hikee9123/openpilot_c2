@@ -442,7 +442,7 @@ struct CarParams {
   enableApgs @6 :Bool;       # advanced parking guidance system
   enableBsm @56 :Bool;       # blind spot monitoring
   flags @64 :UInt32;         # flags for car specific quirks
-  experimentalLongitudinalAvailable @77 :Bool;
+  experimentalLongitudinalAvailable @73 :Bool;
 
   minEnableSpeed @7 :Float32;
   minSteerSpeed @8 :Float32;
@@ -452,7 +452,7 @@ struct CarParams {
 
   # Car docs fields
   maxLateralAccel @74 :Float32;
-  autoResumeSng @78 :Bool;               # describes whether car can resume from a stop automatically
+  autoResumeSng @75 :Bool;               # describes whether car can resume from a stop automatically
 
   steerMaxBPDEPRECATED @11 :List(Float32);
   steerMaxVDEPRECATED @12 :List(Float32);
@@ -518,7 +518,7 @@ struct CarParams {
   smoothSteer @71 :SmoothSteerData;
   laneParam @72 :LaneParamData;
 
-  opkrOsmCurvOption  @73 :Int16;
+
 
   struct LaneParamData
   {
