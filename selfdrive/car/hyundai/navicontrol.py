@@ -165,7 +165,7 @@ class NaviControl():
     self.liveNaviData = sm['liveNaviData']
     speedLimit = self.liveNaviData.speedLimit
     speedLimitDistance = self.liveNaviData.arrivalDistance  #speedLimitDistance
-    #safetySign  = self.liveNaviData.safetySign
+    #safetySign  = self.liveNaviData.safetySign1
     mapValid = self.liveNaviData.mapValid
     trafficType = self.liveNaviData.trafficType
     
