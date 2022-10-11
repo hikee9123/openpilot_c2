@@ -61,9 +61,9 @@ def manager_init() -> None:
     ("OpkratomLongitudinal", "0"), 
 
 
-    {"OpkrMaxAngleLimit", "85"},
+    #{"OpkrMaxAngleLimit", "85"},
     ("OpkrSteerMethod", "0"),
-    ("OpkrMaxSteeringAngle", "85"),
+    #("OpkrMaxSteeringAngle", "85"),
     ("OpkrMaxDriverAngleWait", "0.002"),
     ("OpkrMaxSteerAngleWait", "0.001"),
     ("OpkrDriverAngleWait", "0.001"),
