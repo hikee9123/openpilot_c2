@@ -1857,7 +1857,7 @@ struct Event {
     gpsLocationExternal @48 :GpsLocationData;
     driverState @59 :DriverState;
     liveParameters @61 :LiveParametersData;
-    liveTorqueParameters @93 :LiveTorqueParametersData;    
+    liveTorqueParameters @92 :LiveTorqueParametersData;    
     cameraOdometry @63 :CameraOdometry;
     thumbnail @66: Thumbnail;
     carEvents @68: List(Car.CarEvent);
