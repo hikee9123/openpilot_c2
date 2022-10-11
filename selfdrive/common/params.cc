@@ -90,6 +90,7 @@ std::unordered_map<std::string, uint32_t> keys = {
     {"CarBatteryCapacity", PERSISTENT},
     {"CarParams", CLEAR_ON_MANAGER_START | CLEAR_ON_IGNITION_ON},
     {"CarParamsCache", CLEAR_ON_MANAGER_START},
+    {"CarParamsPersistent", PERSISTENT},    
     {"CarVin", CLEAR_ON_MANAGER_START | CLEAR_ON_IGNITION_ON},
     {"CompletedTrainingVersion", PERSISTENT},
     {"ControlsReady", CLEAR_ON_MANAGER_START | CLEAR_ON_IGNITION_ON},
@@ -108,6 +109,7 @@ std::unordered_map<std::string, uint32_t> keys = {
     {"ForcePowerDown", CLEAR_ON_MANAGER_START},
     {"GitBranch", PERSISTENT},
     {"GitCommit", PERSISTENT},
+    {"GitCommitRemote", PERSISTENT},
     {"GitDiff", PERSISTENT},
     {"GithubSshKeys", PERSISTENT},
     {"GithubUsername", PERSISTENT},
@@ -126,17 +128,21 @@ std::unordered_map<std::string, uint32_t> keys = {
     {"IsOnroad", PERSISTENT},
     {"IsRHD", PERSISTENT},
     {"IsTakingSnapshot", CLEAR_ON_MANAGER_START},
+    {"IsTestedBranch", CLEAR_ON_MANAGER_START},
     {"IsUpdateAvailable", CLEAR_ON_MANAGER_START},
     {"JoystickDebugMode", CLEAR_ON_MANAGER_START | CLEAR_ON_IGNITION_OFF},
+    {"LanguageSetting", PERSISTENT},
     {"LastAthenaPingTime", CLEAR_ON_MANAGER_START},
     {"LastGPSPosition", PERSISTENT},
     {"LastManagerExitReason", CLEAR_ON_MANAGER_START},
     {"LastPeripheralPandaType", PERSISTENT},
     {"LastPowerDropDetected", CLEAR_ON_MANAGER_START},
     {"LastSystemShutdown", CLEAR_ON_MANAGER_START},
-    {"LastUpdateException", PERSISTENT},
+    {"LastUpdateException", CLEAR_ON_MANAGER_START},
     {"LastUpdateTime", PERSISTENT},
     {"LiveParameters", PERSISTENT},
+    {"LiveTorqueCarParams", PERSISTENT},
+    {"LiveTorqueParameters", PERSISTENT | DONT_LOG},    
     {"NavDestination", CLEAR_ON_MANAGER_START | CLEAR_ON_IGNITION_OFF},
     {"NavSettingTime24h", PERSISTENT},
     {"NavdRender", PERSISTENT},
@@ -153,11 +159,20 @@ std::unordered_map<std::string, uint32_t> keys = {
     {"SnoozeUpdate", CLEAR_ON_MANAGER_START | CLEAR_ON_IGNITION_OFF},
     {"SshEnabled", PERSISTENT},
     {"SubscriberInfo", PERSISTENT},
+    {"SwitchToBranch", CLEAR_ON_MANAGER_START},
     {"TermsVersion", PERSISTENT},
     {"Timezone", PERSISTENT},
     {"TrainingVersion", PERSISTENT},
     {"UpdateAvailable", CLEAR_ON_MANAGER_START},
     {"UpdateFailedCount", CLEAR_ON_MANAGER_START},
+    {"UpdaterState", CLEAR_ON_MANAGER_START},
+    {"UpdaterTargetBranch", CLEAR_ON_MANAGER_START}, 
+    {"UpdaterAvailableBranches", CLEAR_ON_MANAGER_START},
+    {"UpdaterFetchAvailable", CLEAR_ON_MANAGER_START},    
+    {"UpdaterCurrentDescription", CLEAR_ON_MANAGER_START},    
+    {"UpdaterCurrentReleaseNotes", CLEAR_ON_MANAGER_START},    
+    {"UpdaterNewDescription", CLEAR_ON_MANAGER_START},
+    {"UpdaterNewReleaseNotes", CLEAR_ON_MANAGER_START},    
     {"Version", PERSISTENT},
     {"VisionRadarToggle", PERSISTENT},
     {"ApiCache_Device", PERSISTENT},
@@ -193,14 +208,49 @@ std::unordered_map<std::string, uint32_t> keys = {
     {"OpkrAutoFocus", PERSISTENT},
 
     {"OpkrRunNaviOnBoot", PERSISTENT},
-    {"OpkrMapEnable", PERSISTENT},
-    {"OpkrParameters", PERSISTENT},
-    {"OpkrCarModel", PERSISTENT},
     {"OpkratomLongitudinal", PERSISTENT},
     
     {"OpkrPowerShutdown", PERSISTENT},
     
+
+    {"OpkrMaxAngleLimit", PERSISTENT},
+    {"OpkrSteerMethod", PERSISTENT},
+    {"OpkrMaxSteeringAngle", PERSISTENT},
+    {"OpkrMaxDriverAngleWait", PERSISTENT},
+    {"OpkrMaxSteerAngleWait", PERSISTENT},
+    {"OpkrDriverAngleWait", PERSISTENT},
     
+    {"OpkrLateralControlMethod", PERSISTENT},
+   // Torque
+    {"TorqueMaxLatAccel", PERSISTENT},
+    {"TorqueHybridSpeed", PERSISTENT},
+    {"Torquedeadzone", PERSISTENT},
+    {"TorqueFriction", PERSISTENT},
+    {"TorqueKp", PERSISTENT},
+    {"TorqueKf", PERSISTENT},
+    {"TorqueKi", PERSISTENT},
+    {"TorqueUseAngle", PERSISTENT},
+    {"TorqueLiveTuning", PERSISTENT},
+    
+
+    // LQR
+    {"LqrScale", PERSISTENT},
+    {"LqrKi", PERSISTENT},
+    {"LqrDcGain", PERSISTENT},
+
+    // PID
+    {"PidKp", PERSISTENT},
+    {"PidKi", PERSISTENT},
+    {"PidKf", PERSISTENT},
+
+    // lane
+    {"OpkrCameraOffsetAdj", PERSISTENT}, 
+    {"OpkrPathOffsetAdj", PERSISTENT}, 
+    {"OpkrLeftLaneOffset", PERSISTENT}, 
+    {"OpkrRightLaneOffset", PERSISTENT}, 
+
+    // Navi
+    {"OpkrNaviSelect", PERSISTENT},    
 };
 
 } // namespace
