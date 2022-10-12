@@ -211,7 +211,7 @@ CarSelectCombo::CarSelectCombo() : AbstractControl("", "", "")
   QObject::connect(&btn, &QPushButton::clicked, [=]() {
     if (btn.text() == "UNSET") {
       if (ConfirmationDialog::confirm("Do you want to unset?", this)) {
-        params.delete("CarModel");
+        params.remove("CarModel");
         combobox.setCurrentIndex(0);
         refresh();
       }
@@ -5454,7 +5454,7 @@ OPKRServerAPI::OPKRServerAPI() : AbstractControl("User's API", "Set Your API ser
       }
     } else if (btn.text() == "UNSET") {
       if (ConfirmationDialog::confirm("Do you want to unset? the API server gets back to Retropilot server and Device will be rebooted now.", this)) {
-        params.delete("OPKRServerAPI");
+        params.remove("OPKRServerAPI");
         params.put("OPKRServer", "0");
         QProcess::execute("rm -f /data/params/d/DongleId");
         QProcess::execute("rm -f /data/params/d/IMEI");

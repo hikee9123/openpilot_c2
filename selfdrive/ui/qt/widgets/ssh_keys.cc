@@ -18,8 +18,8 @@ SshControl::SshControl() : ButtonControl("SSH Keys", "", "Warning: This grants S
         getUserKeys(username);
       }
     } else {
-      params.delete("GithubUsername");
-      params.delete("GithubSshKeys");
+      params.remove("GithubUsername");
+      params.remove("GithubSshKeys");
       refresh();
     }
   });

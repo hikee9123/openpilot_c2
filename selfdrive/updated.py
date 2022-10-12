@@ -335,7 +335,7 @@ class Updater:
         pass
 
     if exception is None:
-      self.params.delete("LastUpdateException")
+      self.params.remove("LastUpdateException")
     else:
       self.params.put("LastUpdateException", exception)
 
