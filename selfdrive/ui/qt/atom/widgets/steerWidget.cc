@@ -445,3 +445,96 @@ void CLaneWidget::refresh()
   }
 
 }
+
+
+/**
+ * NaviSect
+ * 
+ */
+
+CNaviSelect::CNaviSelect( TuningPanel *panel ) : CGroupWidget( "Navi Select" ) 
+{
+  m_pPanel = panel;
+  QString str_param = "OpkrNaviSelect";
+  auto str = QString::fromStdString( params.get( str_param.toStdString() ) );
+  int value = str.toInt();
+  m_nMethod = value;    
+
+  // label
+  method_label = new QPushButton("method"); // .setAlignment(Qt::AlignVCenter|Qt::AlignHCenter);
+  method_label->setStyleSheet(R"(
+    padding: 0;
+    border-radius: 50px;
+    font-size: 35px;
+    font-weight: 500;
+    color: #E4E4E4;
+    background-color: #00A12E;
+  )");
+  method_label->setFixedSize( 500, 100);
+  hlayout->addWidget(method_label);
+  
+  connect(method_label, &QPushButton::clicked, [=]() {
+    m_nMethod += 1;
+    if( m_nMethod >= TP_ALL )
+      m_nMethod = 0;
+
+    QString values = QString::number(m_nMethod);
+    params.put( str_param.toStdString(), values.toStdString());      
+    refresh();
+  });
+  main_layout->addLayout(hlayout);
+
+
+  FrameMappy( CreateBoxLayout(TP_MAPPY) );
+  FrameINavi( CreateBoxLayout(TP_INAVI) );
+  refresh();
+}  
+
+
+void  CNaviSelect::FrameMappy(QVBoxLayout *layout)
+{
+   // 1.
+  MenuControl *pMenu1 = new MenuControl( 
+    "OpkrNavi_Mappy",
+    "Mappy curvature threshold",
+    "_TURN_CURVATURE_THRESHOLD A curvature over this value will generate a speed limit section. 1/mts. def:0.002"
+     );
+
+  pMenu1->SetControl( 0, 1, 0.001 );
+  layout->addWidget( pMenu1 );  
+}
+
+
+void  CNaviSelect::FrameINavi(QVBoxLayout *layout)
+{
+   // 1.
+  MenuControl *pMenu1 = new MenuControl( 
+    "OpkrNavi_INavi",
+    "INavi curvature threshold",
+    "_TURN_CURVATURE_THRESHOLD A curvature over this value will generate a speed limit section. 1/mts. def:0.002"
+     );
+
+  pMenu1->SetControl( 0, 1, 0.001 );
+  layout->addWidget( pMenu1 );  
+}
+
+
+void CNaviSelect::refresh( int nID )
+{
+  CGroupWidget::refresh( m_nMethod );
+
+  QString  str;
+  switch( m_nMethod )
+  {
+    case TP_NONE  :  str = "0.None";    break;
+    case TP_MAPPY :  str = "1.Mappy";    break;
+    case TP_INAVI :  str = "2.iNavi";      break;
+  }
+
+  if( m_nMethod == TP_NONE )
+    method_label->setStyleSheet("background-color: #101010;");
+  else
+    method_label->setStyleSheet("background-color: #393939;");
+
+  method_label->setText( str ); 
+}

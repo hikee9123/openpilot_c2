@@ -101,3 +101,33 @@ private:
    QFrame *m_pChildFrame2;
 };
 
+
+
+
+class CNaviSelect : public CGroupWidget 
+{
+  Q_OBJECT
+
+public:
+  explicit CNaviSelect( TuningPanel *panel );
+
+  enum emType {
+    TP_NONE = 0,
+    TP_MAPPY,
+    TP_INAVI,
+    TP_ALL,
+  };  
+
+ private:
+  TuningPanel  *m_pPanel;
+  QPushButton  *method_label;
+  int    m_nMethod;
+  Params params;
+  
+  void  FrameMappy(QVBoxLayout *parent=nullptr);
+  void  FrameINavi(QVBoxLayout *parent=nullptr);
+  
+
+public slots:  
+  virtual void refresh(int nID = 0);  
+};
