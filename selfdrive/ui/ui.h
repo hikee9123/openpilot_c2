@@ -157,7 +157,6 @@ typedef struct UIScene {
 
      bool IsCalibraionGridViewToggle;
 
-     int  lane_line_cnt;
 
      int  IsViewNavi;
   } scr;

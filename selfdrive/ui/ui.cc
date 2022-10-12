@@ -120,18 +120,6 @@ static void update_blindspot_data(const UIState *s, int lr, const cereal::ModelD
 }
 
 
-static void update_stop_line_data(const UIState *s, const cereal::ModelDataV2::StopLineData::Reader &line,
-                                  float x_off, float y_off, float z_off, line_vertices_data *pvd) {
-  const auto line_x = line.getX(), line_y = line.getY(), line_z = line.getZ();
-  QPointF *v = &pvd->v[0];
-  v += calib_frame_to_full_frame(s, line_x + x_off, line_y - y_off, line_z + z_off, v);
-  v += calib_frame_to_full_frame(s, line_x + x_off, line_y + y_off, line_z + z_off, v);
-  v += calib_frame_to_full_frame(s, line_x - x_off, line_y + y_off, line_z + z_off, v);
-  v += calib_frame_to_full_frame(s, line_x - x_off, line_y - y_off, line_z + z_off, v);
-  pvd->cnt = v - pvd->v;
-  assert(pvd->cnt <= std::size(pvd->v));
-}
-
 static void update_model(UIState *s, const cereal::ModelDataV2::Reader &model) {
   UIScene &scene = s->scene;
   auto model_position = model.getPosition();
@@ -142,15 +130,10 @@ static void update_model(UIState *s, const cereal::ModelDataV2::Reader &model) {
   const auto lane_lines = model.getLaneLines();
   const auto lane_line_probs = model.getLaneLineProbs();
   int max_idx = get_path_length_idx(lane_lines[0], max_distance);
-  int lane_line_cnt = 0;
   for (int i = 0; i < std::size(scene.lane_line_vertices); i++) {
     scene.lane_line_probs[i] = lane_line_probs[i];
-    update_line_data(s, lane_lines[i], 0.025 * scene.lane_line_probs[i], 0, &scene.lane_line_vertices[i], max_idx);
-
-    lane_line_cnt = std::max( lane_line_cnt, scene.lane_line_vertices[i].cnt );    
+    update_line_data(s, lane_lines[i], 0.025 * scene.lane_line_probs[i], 0, &scene.lane_line_vertices[i], max_idx);  
   }
-
-  scene.scr.lane_line_cnt = lane_line_cnt;  
 
 
   // lane barriers for blind spot
@@ -175,22 +158,6 @@ static void update_model(UIState *s, const cereal::ModelDataV2::Reader &model) {
   }
   max_idx = get_path_length_idx(model_position, max_distance);
   update_line_data(s, model_position, scene.end_to_end ? 0.9 : 0.5, 1.22, &scene.track_vertices, max_idx, false);
-
-
-
-
-
-
-
-  // update stop lines
-  scene.scr.stop_line = 1;
-  if (scene.scr.stop_line) {
-    const auto stop_line = model.getStopLine();
-    scene.stop_line_probs = stop_line.getProb();
-    if (scene.stop_line_probs > .5) {
-      update_stop_line_data(s, stop_line, .5, 2, 1.22, &scene.stop_line_vertices);
-    }
-  }  
 }
 
 static void update_sockets(UIState *s) {

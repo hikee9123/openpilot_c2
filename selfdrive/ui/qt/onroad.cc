@@ -545,16 +545,6 @@ void NvgWindow::drawLaneLines(QPainter &painter, const UIState *s) {
 
 
 
-  // stop line
-  if (scene.scr.stop_line && scene.stop_line_probs > 0.5 )
-  {
-    if( scene.longitudinalPlan.stopline[12] > 3.0 )
-    {
-      painter.setBrush(QColor::fromRgbF(1.0, 0.0, 0.0, std::clamp<float>(scene.stop_line_probs, 0.0, 0.7)));
-      painter.drawPolygon(scene.stop_line_vertices.v, scene.stop_line_vertices.cnt);
-    }
-  } 
-
   painter.restore();
 }
 
