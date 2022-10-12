@@ -258,6 +258,14 @@ Params::Params(const std::string &path) {
   params_path = path.empty() ? default_param_path : ensure_params_path(path);
 }
 
+std::vector<std::string> Params::allKeys() const {
+  std::vector<std::string> ret;
+  for (auto &p : keys) {
+    ret.push_back(p.first);
+  }
+  return ret;
+}
+
 bool Params::checkKey(const std::string &key) {
   return keys.find(key) != keys.end();
 }
