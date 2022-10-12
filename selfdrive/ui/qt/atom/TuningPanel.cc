@@ -15,8 +15,8 @@
 #include "selfdrive/ui/qt/atom/widgets/TunWidget.h"
 #include "selfdrive/ui/qt/atom/widgets/osmWidget.h"
 
-#include "common/params.h"
-#include "common/util.h"
+#include "selfdrive/common/params.h"
+#include "selfdrive/common/util.h"
 #include "selfdrive/ui/ui.h"
 
 
