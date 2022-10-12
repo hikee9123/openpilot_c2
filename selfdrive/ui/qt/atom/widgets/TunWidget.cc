@@ -98,7 +98,7 @@ CTunWidget::CTunWidget( TuningPanel *panel, QWidget *parent) : QFrame(parent)
   FrameINDI();
   FrameLQR();
   FrameTOROUE();
-  FrameHYBRID();
+
 
 
   main_layout->addStretch();
@@ -305,30 +305,6 @@ void  CTunWidget::FrameTOROUE(int nMode, QVBoxLayout *parent)
     m_pPanel->ConfirmButton( box_layout );
 }
 
-void  CTunWidget::FrameHYBRID(QVBoxLayout *parent)
-{
-  QVBoxLayout *box_layout = parent;
-  if( parent == nullptr )     
-      box_layout = CreateBoxLayout(LAT_HYBRID);
-
-
-  box_layout->addWidget(new AbstractControl("[2.LQR]","lqr","../assets/offroad/icon_shell.png"));
-  FrameLQR( 1, box_layout );
-
-  box_layout->addWidget(new AbstractControl("[3.TORQUE]","torque","../assets/offroad/icon_shell.png"));
-  FrameTOROUE( 1,  box_layout );
-
-   MenuControl *pHybridSpeed = new MenuControl( 
-    "TorqueHybridSpeed",
-    "Hybrid Speed",
-    "Adjust Hybrid speed def:50"
-    );
-   pHybridSpeed->SetControl( 10, 80, 5 ); 
-   box_layout->addWidget( pHybridSpeed );  
-
-
-    m_pPanel->ConfirmButton( box_layout );   
-}
 
 
 QVBoxLayout *CTunWidget::CreateBoxLayout( int nID )
@@ -397,9 +373,6 @@ void CTunWidget::refresh()
     case LAT_INDI : str = "1.INDI"; break;
     case LAT_LQR : str = "2.LQR";  break;
     case LAT_TOROUE : str = "3.TORQUE";  break;
-    case LAT_HYBRID : str = "4.HYBRID";  break;
-    case LAT_MULTI : str = "5.MULTI";  break;
-    case LAT_DEFAULT : str = "6.DEFAULT";  break;
     default: str = "DEFAULT"; break;
   }
 

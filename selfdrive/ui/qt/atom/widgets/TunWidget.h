@@ -30,9 +30,6 @@ public:
     LAT_INDI,
     LAT_LQR,
     LAT_TOROUE,
-    LAT_HYBRID,
-    LAT_MULTI,
-    LAT_DEFAULT,
     LAT_ALL,
   };
 
@@ -50,7 +47,6 @@ private:
   void  FrameINDI(QVBoxLayout *parent=nullptr);
   void  FrameLQR( int nMode=0, QVBoxLayout *parent=nullptr);
   void  FrameTOROUE( int nMode=0, QVBoxLayout *parent=nullptr);
-  void  FrameHYBRID(QVBoxLayout *parent=nullptr);
 
   void  FrameHide( int nID = -1 );
   void  FrameShow( int nID );

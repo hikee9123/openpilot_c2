@@ -42,64 +42,7 @@ private:
   void getBranchID(const QString &branchid);
 };
 
-/*
-class GitHash : public AbstractControl {
-  Q_OBJECT
 
-public:
-  GitHash();
-
-private:
-  QLabel local_hash;
-  QLabel remote_hash;
-  Params params;
-};
-
-// openpilot preview
-
-class OpenpilotView : public AbstractControl {
-  Q_OBJECT
-
-public:
-  OpenpilotView();
-
-private:
-  QPushButton btn;
-  QPushButton btnc;
-  Params params;
-  
-  void refresh();
-};
-*/
-
-
-class CarSelectCombo : public AbstractControl 
-{
-  Q_OBJECT
-
-public:
-  CarSelectCombo();
-
-private:
-  QPushButton btn;
-  QComboBox combobox;
-  Params params;
-
-  void refresh();
-};
-
-
-class BranchSelectCombo : public AbstractControl 
-{
-  Q_OBJECT
-
-public:
-  BranchSelectCombo();
-
-private:
-  QComboBox combobox;
-  Params params;
-};
 
 
 
