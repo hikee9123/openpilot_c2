@@ -1,6 +1,9 @@
 #include "selfdrive/ui/qt/util.h"
 
 #include <QApplication>
+#include <QFile>
+#include <QJsonDocument>
+#include <QJsonObject>
 #include <QLayoutItem>
 #include <QStyleOption>
 
