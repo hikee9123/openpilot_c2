@@ -163,7 +163,7 @@ AdvancedNetworking::AdvancedNetworking(QWidget* parent, WifiManager* wifi): QWid
     QString apn = InputDialog::getText("Enter APN", this, "leave blank for automatic configuration", false, -1, cur_apn).trimmed();
 
     if (apn.isEmpty()) {
-      params.remove("GsmApn");
+      params.delete("GsmApn");
     } else {
       params.put("GsmApn", apn.toStdString());
     }

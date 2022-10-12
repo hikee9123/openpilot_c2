@@ -46,12 +46,7 @@ CommunityPanel::CommunityPanel(QWidget* parent) : ListWidget(parent)
       "../assets/offroad/icon_shell.png",
     },
 
-    {
-      "OpkrRunNaviOnBoot",
-      "부팅 후 네비 자동 실행",
-      "부팅후 네비게이션(티맵)을 자동 실행합니다.",
-      "../assets/offroad/icon_shell.png",
-    },    
+
 
     {
       "OpkrTurnSteeringDisable",

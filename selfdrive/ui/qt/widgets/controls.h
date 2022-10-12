@@ -33,6 +33,9 @@ class AbstractControl : public QFrame {
   Q_OBJECT
 
 public:
+  AbstractControl(const QString &title, const QString &desc = "", const QString &icon = "", QWidget *parent = nullptr);
+
+public:
   void setDescription(const QString &desc) {
     if (description) description->setText(desc);
   }
@@ -41,16 +44,60 @@ public:
     title_label->setText(title);
   }
 
+  void setValue(const QString &val) {
+    value->setText(val);
+  }
+
+public slots:
+  void showDescription() {
+    description->setVisible(true);
+  };
+
 signals:
-  void showDescription();
+  void showDescriptionEvent();
 
 protected:
-  AbstractControl(const QString &title, const QString &desc = "", const QString &icon = "", QWidget *parent = nullptr);
   void hideEvent(QHideEvent *e) override;
 
+  QVBoxLayout *main_layout;
   QHBoxLayout *hlayout;
   QPushButton *title_label;
+  
+  QLabel *value;
   QLabel *description = nullptr;
+};
+
+
+class MenuControl : public AbstractControl {
+  Q_OBJECT
+
+public:
+  MenuControl(const QString &str_param , const QString &title, const QString &desc = "", const QString &icon = "",  QWidget *parent = nullptr);
+
+private:
+  void refresh();
+
+private:
+  QPushButton btnplus;
+  QPushButton btnminus;
+  QPushButton btnsel;
+  QLabel label;
+  Params params;
+
+  float  m_dValue;
+  
+ private:
+   float   m_defDelta;
+   float   m_nDelta, m_nMax, m_nMin;
+   QStringList  m_strList;
+
+   float      m_nValue;
+   QString  m_strValue;
+
+public:
+   void SetControl( float nMin=0, float nMax=100, float nDelta = 1 );
+   void SetString( const QString strList );
+   void SetString( float nValue, const QString str );
 };
 
 // widget to display a value
@@ -122,10 +169,14 @@ public:
     });
   }
 
-  void showEvent(QShowEvent *event) override {
+  void refresh() {
     if (params.getBool(key) != toggle.on) {
       toggle.togglePosition();
     }
+  };
+
+  void showEvent(QShowEvent *event) override {
+    refresh();
   };
 
 private:

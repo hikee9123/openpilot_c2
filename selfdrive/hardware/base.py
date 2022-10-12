@@ -71,6 +71,12 @@ class HardwareBase(ABC):
   def get_network_strength(self, network_type):
     pass
 
+  @abstractmethod
+  def get_connect_name(self, network_type):
+    pass
+
+
+
   def get_network_metered(self, network_type) -> bool:
     return network_type not in (NetworkType.none, NetworkType.wifi, NetworkType.ethernet)
 

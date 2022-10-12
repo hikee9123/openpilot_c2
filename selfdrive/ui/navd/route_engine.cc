@@ -225,7 +225,7 @@ void RouteEngine::routeUpdate() {
           recompute_countdown = 0;
         } else {
           qWarning() << "Destination reached";
-          Params().remove("NavDestination");
+          Params().delete("NavDestination");
 
           // Clear route if driving away from destination
           float d = segment.maneuver().position().distanceTo(to_QGeoCoordinate(*last_position));
