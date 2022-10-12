@@ -31,8 +31,8 @@ OnPaint::OnPaint(QWidget *parent) : QWidget(parent)
   img_compass= QPixmap("../assets/addon/Image/img_compass.png").scaled(img_size_compass, img_size_compass, Qt::KeepAspectRatio, Qt::SmoothTransformation);
   img_direction= QPixmap("../assets/addon/Image/img_direction.png").scaled(img_size_compass, img_size_compass, Qt::KeepAspectRatio, Qt::SmoothTransformation);
   img_tire_pressure= QPixmap("../assets/addon/Image/img_tire_pressure.png").scaled(90, 90, Qt::KeepAspectRatio, Qt::SmoothTransformation);
-  img_rpm1 = QPixmap("../assets/addon/Image/RPM11.png").scaled(img_size_rpm, img_size_rpm, Qt::KeepAspectRatio, Qt::SmoothTransformation);
-  img_rpm2 = QPixmap("../assets/addon/Image/RPM22.png").scaled(img_size_rpm/2, img_size_rpm/2, Qt::KeepAspectRatio, Qt::SmoothTransformation);
+  //img_rpm1 = QPixmap("../assets/addon/Image/RPM11.png").scaled(img_size_rpm, img_size_rpm, Qt::KeepAspectRatio, Qt::SmoothTransformation);
+  //img_rpm2 = QPixmap("../assets/addon/Image/RPM22.png").scaled(img_size_rpm/2, img_size_rpm/2, Qt::KeepAspectRatio, Qt::SmoothTransformation);
 
   img_traf_turn= QPixmap("../assets/img_trafficSign_turn.png").scaled(img_size, img_size, Qt::KeepAspectRatio, Qt::SmoothTransformation);
   img_speed = QPixmap("../assets/addon/navigation/img_speed.png").scaled(img_size, img_size, Qt::KeepAspectRatio, Qt::SmoothTransformation);
