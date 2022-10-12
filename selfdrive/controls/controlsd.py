@@ -494,9 +494,9 @@ class Controls:
             self.soft_disable_timer = int(SOFT_DISABLE_TIME / DT_CTRL)
             self.current_alert_types.append(ET.SOFT_DISABLE)
 
-          elif self.events.any(ET.OVERRIDE):
+          elif self.events.any(ET.OVERRIDE_LATERAL) or self.events.any(ET.OVERRIDE_LONGITUDINAL):
             self.state = State.overriding
-            self.current_alert_types.append(ET.OVERRIDE)
+            self.current_alert_types += [ET.OVERRIDE_LATERAL, ET.OVERRIDE_LONGITUDINAL]
 
         # SOFT DISABLING
         elif self.state == State.softDisabling:
@@ -526,10 +526,10 @@ class Controls:
             self.state = State.softDisabling
             self.soft_disable_timer = int(SOFT_DISABLE_TIME / DT_CTRL)
             self.current_alert_types.append(ET.SOFT_DISABLE)
-          elif not self.events.any(OVERRIDE_LATERAL):
+          elif not (self.events.any(ET.OVERRIDE_LATERAL) or self.events.any(ET.OVERRIDE_LONGITUDINAL)):
             self.state = State.enabled
           else:
-            self.current_alert_types.append(ET.OVERRIDE_LATERAL)
+            self.current_alert_types += [ET.OVERRIDE_LATERAL, ET.OVERRIDE_LONGITUDINAL]
 
     # DISABLED
     elif self.state == State.disabled:
@@ -540,7 +540,7 @@ class Controls:
         else:
           if self.events.any(ET.PRE_ENABLE):
             self.state = State.preEnabled
-          elif self.events.any(ET.OVERRIDE_LATERAL):
+          elif self.events.any(ET.OVERRIDE_LATERAL) or self.events.any(ET.OVERRIDE_LONGITUDINAL):
             self.state = State.overriding
           else:
             self.state = State.enabled
@@ -588,7 +588,7 @@ class Controls:
     #                 CS.vEgo > self.CP.minSteerSpeed and not CS.standstill
     CC.latActive = self.active and not CS.steerFaultPermanent and \
                      CS.vEgo > self.CP.minSteerSpeed and not CS.standstill
-    CC.longActive = self.active and not self.events.any(ET.OVERRIDE_LATERAL)
+    CC.longActive = self.active and not self.events.any(ET.OVERRIDE_LONGITUDINAL) and self.CP.openpilotLongitudinalControl
 
     actuators = CC.actuators
     actuators.longControlState = self.LoC.long_control_state
