@@ -12,7 +12,7 @@ from selfdrive.swaglog import cloudlog
 # OPKR 
 
 #android_packages = ("com.mixplorer", "com.opkr.maphack",  "com.gmd.hidesoftkeys", "com.google.android.inputmethod.korean", "com.skt.tmap.ku",)
-android_packages = ("com.mixplorer","com.gmd.hidesoftkeys", "com.opkr.maphack", "com.mnsoft.mappyobn", "com.thinkware.inaviair","com.phillit.akeyboard","com.goodappsoftware.laserlevel","net.androgames.level","com.moon.android.level" )   # "com.skt.tmap.ku",
+android_packages = ("com.mixplorer","com.gmd.hidesoftkeys", "com.opkr.maphack", "com.mnsoft.mappyobn", "com.thinkware.inaviair","com.phillit.akeyboard" )   # "com.skt.tmap.ku",
 
 def get_installed_apks():
   dat = subprocess.check_output(["pm", "list", "packages", "-f"], encoding='utf8').strip().split("\n")
