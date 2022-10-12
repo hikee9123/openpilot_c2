@@ -13,7 +13,6 @@
 
 #include "selfdrive/ui/qt/atom/widgets/steerWidget.h"
 #include "selfdrive/ui/qt/atom/widgets/TunWidget.h"
-#include "selfdrive/ui/qt/atom/widgets/osmWidget.h"
 
 #include "selfdrive/common/params.h"
 #include "selfdrive/common/util.h"
@@ -35,23 +34,12 @@ TuningPanel::TuningPanel(QWidget *parent) : QFrame(parent)
   QVBoxLayout *main_layout = new QVBoxLayout(this);
 
 
-  Params param = Params();
-  int osm_enable = param.getBool("OpkrOSMEnable");
-
-
-
   // OPKR
   main_layout->addWidget(new CTunWidget(this));
   main_layout->addWidget(new CSteerWidget(this));  
   main_layout->addWidget(new CLaneWidget(this));  
   
-  main_layout->addWidget(new CosmWidget(this)); 
 
-  if( osm_enable )
-  {
-    main_layout->addWidget(new CWidgetosmConfig(this));
-    main_layout->addWidget(new CWidgetosmNodesData(this));
-  }
 
   main_layout->addWidget(new CNaviSelect(this));
 }

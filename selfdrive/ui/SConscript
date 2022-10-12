@@ -25,7 +25,6 @@ widgets_src = ["qt/util.cc", "qt/widgets/input.cc", "qt/widgets/drive_stats.cc",
                "qt/request_repeater.cc", "qt/qt_window.cc"]
 widgets_src += ["qt/widgets/groupWidget.cc",
                 "qt/atom/widgets/steerWidget.cc",
-                "qt/atom/widgets/osmWidget.cc",
                 "qt/atom/widgets/TunWidget.cc"]
 
 if arch != 'aarch64':
