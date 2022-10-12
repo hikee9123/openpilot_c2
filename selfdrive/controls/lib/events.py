@@ -868,13 +868,7 @@ EVENTS: Dict[int, Dict[str, Union[Alert, AlertCallbackType]]] = {
     ET.NO_ENTRY: NoEntryAlert("LKAS Disabled"),
   },
 
-  EventName.cutInCarDetect: {
-    ET.WARNING: Alert(
-      "Forward vehicle cut-in detection while driving",
-      "",
-      AlertStatus.normal, AlertSize.small,
-      Priority.LOW, VisualAlert.none, AudibleAlert.none, .1, alert_rate=0.75),
-  },
+
 
   EventName.laneChangedisengaged: {
     ET.USER_DISABLE: EngagementAlert(AudibleAlert.disengage),

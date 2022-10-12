@@ -112,7 +112,6 @@ struct CarEvent @0x9b1657f34caf3ad3 {
     cruiseMismatch @106;
     lkasDisabled @107;
     canBusMissing @111;
-    cutInCarDetect  @112;
     laneChangedisengaged @113;
     controlsdLagging @118;
     resumeBlocked @119;
@@ -145,6 +144,7 @@ struct CarEvent @0x9b1657f34caf3ad3 {
     modelLagWarningDEPRECATED @93;
     startupOneplusDEPRECATED @82;
     startupFuzzyFingerprintDEPRECATED @97;
+    cutInCarDetectDEPRECATED  @112;    
   }
 }
 
