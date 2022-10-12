@@ -37,7 +37,7 @@ OnPaint::OnPaint(QWidget *parent) : QWidget(parent)
   img_section = QPixmap("../assets/addon/navigation/img_section.png").scaled(img_size, img_size, Qt::KeepAspectRatio, Qt::SmoothTransformation);
   img_camera = QPixmap("../assets/addon/navigation/img_camera.png").scaled(img_size, img_size, Qt::KeepAspectRatio, Qt::SmoothTransformation);
 
-  img_overtrack = QPixmap("../assets/addon/navigation/overtrak.png").scaled(img_size, img_size, Qt::KeepAspectRatio, Qt::SmoothTransformation);
+  //img_overtrack = QPixmap("../assets/addon/navigation/overtrak.png").scaled(img_size, img_size, Qt::KeepAspectRatio, Qt::SmoothTransformation);
   img_park_crackdown = QPixmap("../assets/addon/navigation/park_crackdown.png").scaled(img_size, img_size, Qt::KeepAspectRatio, Qt::SmoothTransformation);
 
 
@@ -68,19 +68,20 @@ OnPaint::OnPaint(QWidget *parent) : QWidget(parent)
 
 void OnPaint::updateState(const UIState &s)
 {
+  if( s.scene.started )
+  {
+    auto deviceState = s.scene.deviceState;// sm["deviceState"].getDeviceState();
 
-  auto deviceState = s.scene.deviceState;// sm["deviceState"].getDeviceState();
+    m_param.batteryTemp = deviceState.getBatteryTempCDEPRECATED();
+    m_param.cpuPerc = deviceState.getCpuUsagePercent()[0];
 
-  m_param.batteryTemp = deviceState.getBatteryTempCDEPRECATED();
-  m_param.cpuPerc = deviceState.getCpuUsagePercent()[0];
+    if( m_param.cpuPerc < 0) m_param.cpuPerc = 0;
+    else if( m_param.cpuPerc > 100) m_param.cpuPerc = 100;
 
-  if( m_param.cpuPerc < 0) m_param.cpuPerc = 0;
-  else if( m_param.cpuPerc > 100) m_param.cpuPerc = 100;
-
-  auto  maxCpuTemp = deviceState.getCpuTempC();
-    m_param.cpuTemp = maxCpuTemp[0];      
-
-
+    auto  maxCpuTemp = deviceState.getCpuTempC();
+      m_param.cpuTemp = maxCpuTemp[0];   
+  }
+   
 
 
   SubMaster &sm = *(s.sm);
@@ -696,7 +697,7 @@ void OnPaint::ui_draw_traffic_sign( QPainter &p, float map_sign, float speedLimi
     else if( nTrafficSign == TS_ANE_CHANGE2 ) traffic_sign = &img_img_space;  // 차선변경금지종료
     else if( nTrafficSign == TS_LOAD_OVER ) traffic_sign = &img_img_space;  // 과적단속
     else if( nTrafficSign == TS_TRAFFIC_INFO ) traffic_sign = &img_img_space;  // 교통정보수집
-    else if( nTrafficSign == TS_OVERTRAK ) traffic_sign = &img_overtrack;  // 추월금지구간
+   // else if( nTrafficSign == TS_OVERTRAK ) traffic_sign = &img_overtrack;  // 추월금지구간
     else if( nTrafficSign == TS_SHOULDER  ) traffic_sign = &img_img_space; // 갓길단속
     else if( nTrafficSign == TS_LOAD_POOR  ) traffic_sign = &img_img_space;  // 적재불량단속  
     
