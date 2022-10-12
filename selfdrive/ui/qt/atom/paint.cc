@@ -20,7 +20,9 @@ OnPaint::OnPaint(QWidget *parent) : QWidget(parent)
 {
   m_param.bbh_left = 0;
   m_param.bbh_right = 0;
-
+  m_param.cpuPerc = 0;
+  m_param.cpuTemp = 0;
+  m_param.batteryTemp = 0;
 
 
   m_nOldSec = 0;
@@ -96,9 +98,27 @@ int OnPaint::get_param( const std::string &key )
 void OnPaint::updateState(const UIState &s)
 {
   enginRpm = s.scene.scr.enginrpm; 
-
-
   setProperty("enginRpm", enginRpm );
+
+  if( s.scene.started )
+  {
+    auto deviceState = s.scene.deviceState;
+
+    m_param.batteryTemp = deviceState.getBatteryTempCDEPRECATED();
+    m_param.cpuPerc = deviceState.getCpuUsagePercent()[0];
+
+    if( m_param.cpuPerc < 0) m_param.cpuPerc = 0;
+    else if( m_param.cpuPerc > 100) m_param.cpuPerc = 100;
+
+    auto  maxCpuTemp = deviceState.getCpuTempC();
+      m_param.cpuTemp = maxCpuTemp[0];   
+  }
+  else
+  {
+    m_param.cpuPerc = 0;
+    m_param.cpuTemp = 0;
+    m_param.batteryTemp = 0;
+  }
 
   SubMaster &sm = *(s.sm);
   if (sm.frame % (UI_FREQ / 2) != 0) return;
@@ -108,20 +128,6 @@ void OnPaint::updateState(const UIState &s)
     m_param.altitudeUblox = gps_ext.getAltitude(); 
     m_param.bearingUblox = gps_ext.getBearingDeg();
 
-
-   if (sm.updated("deviceState")) 
-   {
-      auto deviceState = sm["deviceState"].getDeviceState();
-
-     m_param.batteryTemp = deviceState.getBatteryTempCDEPRECATED();
-     m_param.cpuPerc = deviceState.getCpuUsagePercent()[0];
-
-     if( m_param.cpuPerc > 100)
-        m_param.cpuPerc = 100;
-
-     auto  maxCpuTemp = deviceState.getCpuTempC();
-     m_param.cpuTemp = maxCpuTemp[0];      
-   }
 
     m_param.angleSteers = s.scene.car_state.getSteeringAngleDeg();
     m_param.angleSteersDes = s.scene.controls_state.getSteeringAngleDesiredDegDEPRECATED();
