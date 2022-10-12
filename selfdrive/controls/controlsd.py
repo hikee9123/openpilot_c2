@@ -588,7 +588,7 @@ class Controls:
     #                 CS.vEgo > self.CP.minSteerSpeed and not CS.standstill
     CC.latActive = self.active and not CS.steerFaultPermanent and \
                      CS.vEgo > self.CP.minSteerSpeed and not CS.standstill
-    CC.longActive = self.active and not self.events.any(ET.OVERRIDE)
+    CC.longActive = self.active and not self.events.any(ET.OVERRIDE_LATERAL)
 
     actuators = CC.actuators
     actuators.longControlState = self.LoC.long_control_state
