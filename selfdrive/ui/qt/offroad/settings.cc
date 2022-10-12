@@ -133,7 +133,7 @@ void TogglesPanel::updateToggles() {
     cereal::CarParams::Reader CP = cmsg.getRoot<cereal::CarParams>();
 
     if (!CP.getExperimentalLongitudinalAvailable()) {
-      params.delete("ExperimentalLongitudinalEnabled");
+      params.remove("ExperimentalLongitudinalEnabled");
     }
     op_long_toggle->setVisible(CP.getExperimentalLongitudinalAvailable());
 
@@ -146,7 +146,7 @@ void TogglesPanel::updateToggles() {
     } else {
       // no long for now
       e2e_toggle->setEnabled(false);
-      params.delete("EndToEndLong");
+      params.remove("EndToEndLong");
 
       const QString no_long = tr("openpilot longitudinal control is not currently available for this car.");
       const QString exp_long = tr("Enable experimental longitudinal control to enable this.");
@@ -178,7 +178,7 @@ DevicePanel::DevicePanel(SettingsWindow *parent) : ListWidget(parent) {
   connect(resetCalibBtn, &ButtonControl::showDescriptionEvent, this, &DevicePanel::updateCalibDescription);
   connect(resetCalibBtn, &ButtonControl::clicked, [&]() {
     if (ConfirmationDialog::confirm(tr("Are you sure you want to reset calibration?"), this)) {
-      params.delete("CalibrationParams");
+      params.remove("CalibrationParams");
     }
   });
   addItem(resetCalibBtn);
@@ -210,7 +210,7 @@ DevicePanel::DevicePanel(SettingsWindow *parent) : ListWidget(parent) {
       // put language setting, exit Qt UI, and trigger fast restart
       Params().put("LanguageSetting", langs[selection].toStdString());
       qApp->exit(18);
-      watchdog_kick(0);
+      watchdog_kick();
       Hardware::reboot();
     }
   });
