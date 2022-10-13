@@ -110,6 +110,7 @@ void OnPaint::updateState(const UIState &s)
     if( m_param.cpuPerc < 0) m_param.cpuPerc = 0;
     else if( m_param.cpuPerc > 100) m_param.cpuPerc = 100;
 
+
     auto  maxCpuTemp = deviceState.getCpuTempC();
       m_param.cpuTemp = maxCpuTemp[0];   
   }
@@ -789,6 +790,7 @@ void OnPaint::ui_draw_traffic_sign( QPainter &p )
    // else if( nTrafficSign == TS_OVERTRAK ) traffic_sign = &img_overtrack;  
     else if( nTrafficSign == TS_SHOULDER  ) traffic_sign = &img_img_space; 
     else if( nTrafficSign == TS_LOAD_POOR  ) traffic_sign = &img_img_space; 
+
     
 
     else if( nTrafficSign == TS_CAMERA2_BUS ) traffic_sign = &img_bus_only; 
