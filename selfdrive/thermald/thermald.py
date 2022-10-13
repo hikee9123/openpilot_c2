@@ -232,7 +232,8 @@ def thermald_thread(end_event, hw_queue):
         else:
           fan_controller = EonFanController()
 
-      elif (count % int(1. / DT_TRML)) == 0  and peripheralState.pandaType == log.PandaState.PandaType.unknown:
+      elif (count % int(1. / DT_TRML)) == 0:
+          print('{}'.format(peripheralState ) )
           # atom
           is_openpilot_view_enabled = params.get_bool("IsOpenpilotViewEnabled") # IsRHD
           if is_openpilot_view_enabled:
