@@ -32,7 +32,6 @@ HomeWindow::HomeWindow(QWidget* parent) : QWidget(parent) {
 
   body = new BodyWindow(this);
   slayout->addWidget(body);
-  body->setEnabled(false);
 
   driver_view = new DriverViewWindow(this);
   connect(driver_view, &DriverViewWindow::done, [=] {
@@ -42,6 +41,7 @@ HomeWindow::HomeWindow(QWidget* parent) : QWidget(parent) {
   setAttribute(Qt::WA_NoSystemBackground);
   QObject::connect(uiState(), &UIState::uiUpdate, this, &HomeWindow::updateState);
   QObject::connect(uiState(), &UIState::offroadTransition, this, &HomeWindow::offroadTransition);
+//  QObject::connect(uiState(), &UIState::offroadTransition, sidebar, &Sidebar::offroadTransition);  
 }
 
 void HomeWindow::showSidebar(bool show) {
@@ -59,6 +59,7 @@ void HomeWindow::updateState(const UIState &s) {
 }
 
 void HomeWindow::offroadTransition(bool offroad) {
+  body->setEnabled(false);
   sidebar->setVisible(offroad);
   if (offroad) {
     slayout->setCurrentWidget(home);
@@ -84,11 +85,20 @@ int HomeWindow::mouseEventLatch(QMouseEvent* e) {
   bool bSidebar = sidebar->isVisible();
 
   UIScene  &scene =  uiState()->scene;//QUIState::ui_state.scene;
-  scene.scr.sidebar = bSidebar;
+
+
+  if( scene.scr.sidebar != bSidebar )
+  {
+     scene.scr.sidebar = bSidebar;
+
+     if( bSidebar && scene.scr.IsViewNavi )   
+       sidebar->setVisible( false );
+
+  }
 
   //printf("HomeWindow::mousePressEvent %d,%d  \n", e_x, e_y);
-
-  if( e_y > 700 ) return true;
+  if( scene.scr.IsViewNavi ) return true;
+  else if( e_y > 700 ) return true;
 
   return false;
 }
@@ -219,6 +229,6 @@ void OffroadHome::refresh() {
   update_notif->setVisible(updateAvailable);
   alert_notif->setVisible(alerts);
   if (alerts) {
-    alert_notif->setText(QString::number(alerts) + (alerts > 1 ? " ALERTS" : " ALERT"));
+    alert_notif->setText(QString::number(alerts) + (alerts > 1 ? tr(" ALERTS") : tr(" ALERT")));
   }
 }

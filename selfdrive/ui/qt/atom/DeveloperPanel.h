@@ -11,6 +11,7 @@
 #include <QButtonGroup>
 #include <QScrollArea>
 #include <QStackedWidget>
+#include <QFileSystemWatcher>
 
 #include "selfdrive/ui/qt/widgets/controls.h"
 
@@ -20,6 +21,11 @@ class DeveloperPanel : public QFrame
   Q_OBJECT
 public:
   explicit DeveloperPanel(QWidget* parent = nullptr);
+
+private:
+  QWidget *main_widget;
+  QVBoxLayout *main_layout;
+
 
 
 protected:
@@ -49,7 +55,10 @@ class CPrebuiltToggle : public ToggleControl {
   Q_OBJECT
 
 public:
-  CPrebuiltToggle() : ToggleControl("Prebuilt 파일 생성", "Prebuilt 파일을 생성하며 부팅속도를 단축시킵니다. UI수정을 한 경우 기능을 끄십시오.", "../assets/offroad/icon_shell.png", Params().getBool("OpkrPrebuiltOn")) {
+  CPrebuiltToggle() : ToggleControl("  Prebuilt file make", 
+    "Prebuilt 파일을 생성하며 부팅속도를 단축시킵니다. UI수정을 한 경우 기능을 끄십시오.", 
+    "", 
+    Params().getBool("OpkrPrebuiltOn")) {
     QObject::connect(this, &CPrebuiltToggle::toggleFlipped, [=](int state) {
       Params().putBool("OpkrPrebuiltOn", (bool)state);
 
@@ -153,8 +162,25 @@ public:
   GitHash();
 
 private:
+  Params params;
+  QFileSystemWatcher *fs_watch;
+
+private:
   QLabel local_hash;
-  QLabel remote_hash;
+  QPushButton* updateBtn;
+  QWidget *win_widget;
+  QString  str_desc;
+
+
+
+
+  void refresh();
+
+  void information();
+  void update();
+
+private:
+  void showEvent(QShowEvent *event) override;
 };
 
 
@@ -163,7 +189,7 @@ class SshLegacyToggle : public ToggleControl {
   Q_OBJECT
 
 public:
-  SshLegacyToggle() : ToggleControl("기존 공개KEY 사용", "SSH 접속시 기존 공개KEY(0.8.2이하)를 사용합니다.", "", Params().getBool("OpkrSSHLegacy")) {
+  SshLegacyToggle() : ToggleControl("Use Legacy SSH Key", "Public KEY (0.8.2 or less) is used when accessing SSH.", "", Params().getBool("OpkrSSHLegacy")) {
     QObject::connect(this, &SshLegacyToggle::toggleFlipped, [=](int state) {
       char value = state ? '1' : '0';
       Params().put("OpkrSSHLegacy", &value, 1);
@@ -187,39 +213,20 @@ class IsOpenpilotViewEnabledToggle : public ToggleControl {
 public:
    IsOpenpilotViewEnabledToggle();
 
-};
-////////////////////////////////////////////////////////////////////////////////////////
-//
-//  Combo box
-class CarSelectCombo : public AbstractControl 
-{
-  Q_OBJECT
-
-public:
-  CarSelectCombo();
-
-public:
-  QComboBox  combobox;
-
-  void refresh();
-
-};
-
-class CarSelectBtn : public AbstractControl 
-{
-  Q_OBJECT
-
-public:
-  CarSelectBtn( CarSelectCombo *pCarSelectmenu );
-
-
-  CarSelectCombo *m_pCarSelectMenu;
-
 private:
-  QPushButton btnplus;
-  QPushButton btnminus;
-  QLabel label;
-
+ 
+  QWidget *win_widget;
   void refresh();
+
+  void showEvent(QShowEvent *event) override;
+
+
 };
 
+class IsCalibraionGridViewToggle : public ToggleControl {
+  Q_OBJECT
+
+public:
+   IsCalibraionGridViewToggle();
+
+};

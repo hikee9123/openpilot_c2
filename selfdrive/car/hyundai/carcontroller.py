@@ -34,8 +34,8 @@ class CarController():
     self.scc12_cnt = 0
     self.NC = NaviControl(self.params)
     self.debug_button = 0
-    self.cut_in_car_alert = False
-    self.cut_in_car_time = 0
+    #self.cut_in_car_alert = False
+    #self.cut_in_car_time = 0
     
 
     # hud
@@ -111,22 +111,9 @@ class CarController():
 
 
   def update_debug(self, CS, c ):
-    cut_in, d_rel1, d_rel2 = self.NC.get_cut_in_car()
-    if abs(cut_in) > 3:
-      self.cut_in_car_time += 1
-    else:
-      self.cut_in_car_time = 0
-      
-
-    if self.cut_in_car_time > 1:
-      self.cut_in_car_alert = True
-    else:
-      self.cut_in_car_alert = False
-
-
-    actuators = c.actuators
+    #actuators = c.actuators
     vFuture = c.hudControl.vFuture * 3.6
-    str_log1 = 'MODE={:.0f} vF={:.1f} TG={:.1f} cut_in={:.1f}={:.1f}-{:.1f}'.format( CS.cruise_set_mode, vFuture, self.apply_steer_last, cut_in, d_rel1, d_rel2, )
+    str_log1 = 'MODE={:.0f} vF={:.1f} TG={:.1f}'.format( CS.cruise_set_mode, vFuture, self.apply_steer_last  )
     trace1.printf2( '{}'.format( str_log1 ) )
 
 

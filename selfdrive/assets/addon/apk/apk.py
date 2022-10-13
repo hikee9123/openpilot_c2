@@ -3,13 +3,16 @@ import subprocess
 import glob
 import hashlib
 import shutil
+import time
+
 from common.basedir import BASEDIR
 from selfdrive.swaglog import cloudlog
+
 
 # OPKR 
 
 #android_packages = ("com.mixplorer", "com.opkr.maphack",  "com.gmd.hidesoftkeys", "com.google.android.inputmethod.korean", "com.skt.tmap.ku",)
-android_packages = ("com.mixplorer","com.gmd.hidesoftkeys", "com.opkr.maphack", "com.mnsoft.mappyobn","com.phillit.akeyboard","com.goodappsoftware.laserlevel","net.androgames.level","com.moon.android.level" )   # "com.skt.tmap.ku",
+android_packages = ("com.mixplorer","com.gmd.hidesoftkeys", "com.opkr.maphack", "com.mnsoft.mappyobn", "com.thinkware.inaviair","com.phillit.akeyboard" )   # "com.skt.tmap.ku",
 
 def get_installed_apks():
   dat = subprocess.check_output(["pm", "list", "packages", "-f"], encoding='utf8').strip().split("\n")
@@ -78,6 +81,14 @@ def update_apks():
         cloudlog.info("needing to uninstall %s" % app)
         system("pm uninstall %s" % app)
         success = install_apk(apk_path)
+
+      if app == "com.thinkware.inaviair":
+        wanted_permissions = ["ACCESS_FINE_LOCATION", "READ_PHONE_STATE", "READ_EXTERNAL_STORAGE", "SYSTEM_ALERT_WINDOW"]
+        for permission in wanted_permissions:
+          pm_grant("com.thinkware.inaviair", "android.permission."+permission)
+
+
+
 
       assert success
 

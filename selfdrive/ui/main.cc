@@ -1,6 +1,7 @@
 #include <sys/resource.h>
 
 #include <QApplication>
+#include <QTranslator>
 #include <QSslConfiguration>
 
 #include "selfdrive/hardware/hw.h"
@@ -14,6 +15,12 @@ int main(int argc, char *argv[]) {
   qInstallMessageHandler(swagLogMessageHandler);
   initApp(argc, argv);
 
+  QTranslator translator;
+  QString translation_file = QString::fromStdString(Params().get("LanguageSetting"));
+  if (!translator.load(translation_file, "translations") && translation_file.length()) {
+    qCritical() << "Failed to load translation file:" << translation_file;
+  }
+
   if (Hardware::EON()) {
     QSslConfiguration ssl = QSslConfiguration::defaultConfiguration();
     ssl.setCaCertificates(QSslCertificate::fromPath("/usr/etc/tls/cert.pem"));
@@ -21,6 +28,8 @@ int main(int argc, char *argv[]) {
   }
 
   QApplication a(argc, argv);
+  a.installTranslator(&translator);
+  
   MainWindow w;
   setMainWindow(&w);
   a.installEventFilter(&w);

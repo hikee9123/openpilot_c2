@@ -15,6 +15,7 @@ enum ParamKeyType {
 class Params {
 public:
   Params(const std::string &path = {});
+  std::vector<std::string> allKeys() const;    
   bool checkKey(const std::string &key);
   ParamKeyType getKeyType(const std::string &key);
   inline std::string getParamPath(const std::string &key = {}) {

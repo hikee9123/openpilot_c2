@@ -7,7 +7,8 @@ from functools import lru_cache
 from common.basedir import BASEDIR
 from selfdrive.swaglog import cloudlog
 
-TESTED_BRANCHES = ['devel', 'release2-staging', 'release3-staging', 'dashcam-staging', 'release2', 'release3', 'dashcam']
+
+TESTED_BRANCHES = ['master', 'release2-staging', 'dashcam-staging', 'release2', 'dashcam']
 
 training_version: bytes = b"0.2.0"
 terms_version: bytes = b"2"

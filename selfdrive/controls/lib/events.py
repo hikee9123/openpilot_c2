@@ -30,7 +30,8 @@ class Priority(IntEnum):
 class ET:
   ENABLE = 'enable'
   PRE_ENABLE = 'preEnable'
-  OVERRIDE = 'override'
+  OVERRIDE_LATERAL = 'overrideLateral'
+  OVERRIDE_LONGITUDINAL = 'overrideLongitudinal'  
   NO_ENTRY = 'noEntry'
   WARNING = 'warning'
   USER_DISABLE = 'userDisable'
@@ -375,7 +376,7 @@ EVENTS: Dict[int, Dict[str, Union[Alert, AlertCallbackType]]] = {
       "Steering Temporarily Unavailable",
       "",
       AlertStatus.userPrompt, AlertSize.small,
-      Priority.LOW, VisualAlert.steerRequired, AudibleAlert.prompt, 1.),
+      Priority.LOW, VisualAlert.none, AudibleAlert.prompt, 1.8),
   },
 
   EventName.preDriverDistracted: {
@@ -483,7 +484,7 @@ EVENTS: Dict[int, Dict[str, Union[Alert, AlertCallbackType]]] = {
       "Take Control",
       "Turn Exceeds Steering Limit",
       AlertStatus.userPrompt, AlertSize.mid,
-      Priority.LOW, VisualAlert.steerRequired, AudibleAlert.promptRepeat, 1.),
+      Priority.LOW, VisualAlert.none, AudibleAlert.promptRepeat, 1.),
   },
 
   # Thrown when the fan is driven at >50% but is not rotating
@@ -555,7 +556,15 @@ EVENTS: Dict[int, Dict[str, Union[Alert, AlertCallbackType]]] = {
   },
 
   EventName.gasPressedOverride: {
-    ET.OVERRIDE: Alert(
+    ET.OVERRIDE_LONGITUDINAL: Alert(
+      "",
+      "",
+      AlertStatus.normal, AlertSize.none,
+      Priority.LOWEST, VisualAlert.none, AudibleAlert.none, .1),
+  },
+
+  EventName.steerOverride: {
+    ET.OVERRIDE_LATERAL: Alert(
       "",
       "",
       AlertStatus.normal, AlertSize.none,
@@ -859,13 +868,7 @@ EVENTS: Dict[int, Dict[str, Union[Alert, AlertCallbackType]]] = {
     ET.NO_ENTRY: NoEntryAlert("LKAS Disabled"),
   },
 
-  EventName.cutInCarDetect: {
-    ET.WARNING: Alert(
-      "Forward vehicle cut-in detection while driving",
-      "",
-      AlertStatus.normal, AlertSize.small,
-      Priority.LOW, VisualAlert.none, AudibleAlert.none, .1, alert_rate=0.75),
-  },
+
 
   EventName.laneChangedisengaged: {
     ET.USER_DISABLE: EngagementAlert(AudibleAlert.disengage),

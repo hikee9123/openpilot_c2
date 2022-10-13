@@ -23,80 +23,23 @@
 
 DeveloperPanel::DeveloperPanel(QWidget* parent) : QFrame(parent)
 {
-  QWidget *w = new QWidget(parent);  
-  QVBoxLayout *main_layout = new QVBoxLayout(w);
+  main_widget = new QWidget(parent);  
+
+  main_layout = new QVBoxLayout(main_widget);
   main_layout->setSpacing(10);
 
   // wifi + tethering buttons
-  auto updateBtn = new ButtonControl("업데이트 체크 및 적용", "업데이트");
-  QObject::connect(updateBtn, &ButtonControl::clicked, [=]() 
-  { 
-    const char* gitcommit = "/data/openpilot/selfdrive/assets/addon/sh/gitcommit.sh";
-    const char* gitpull = "/data/openpilot/selfdrive/assets/addon/sh/gitpull.sh";
+  main_layout->addWidget(new GitHash());
 
-
-    std::system( gitcommit );
-    std::system("date '+%F %T' > /data/params/d/LastUpdateTime");
-    QString desc = "";
-    QString commit_local = QString::fromStdString(Params().get("GitCommit").substr(0, 7));
-    QString commit_remote = QString::fromStdString(Params().get("GitCommitRemote").substr(0, 7));
- 
-    desc += QString("(로컬/리모트): %1/%2\n").arg(commit_local, commit_remote );
-    if (commit_local == commit_remote) {
-      desc += QString("로컬과 리모트가 일치합니다.");
-    } else {
-      desc += QString("업데이트가 있습니다.");
-    }
-    if (ConfirmationDialog::confirm(desc, this)) {
-      Params().putBool("OpkrPrebuiltOn", 0);
-      std::system( "cd /data/openpilot; rm -f prebuilt" );
-      std::system( gitpull );
-    }
-
-
-  });
-  main_layout->addWidget(updateBtn);
-
-
-
-
-  auto exe_git_pull = new ButtonControl("Git Pull 실행", "실행");
-  QObject::connect(exe_git_pull, &ButtonControl::clicked, [=]() 
-  { 
-          if (ConfirmationDialog::confirm("Are you sure you want to git pull?", this)) 
-          {
-            std::system("git pull");
-          }
-  });
-  main_layout->addWidget(exe_git_pull);
-
-  auto exe_git_cancel = new ButtonControl("Git Pull 취소", "실행");
-  QObject::connect(exe_git_cancel, &ButtonControl::clicked, [=]() 
-  { 
-        if (ConfirmationDialog::confirm("GitPull 이전 상태로 되돌립니다. 진행하시겠습니까?", this))
-        {
-          const char* gitpull_cancel = "/data/openpilot/selfdrive/assets/addon/sh/gitpull_cancel.sh ''";
-          std::system(gitpull_cancel);
-        }
-  });  
-  main_layout->addWidget(exe_git_cancel);
 
 
 
   main_layout->setMargin(100);
   setLayout(main_layout);
 
-  layout()->addWidget(new GitHash());
-  layout()->addWidget(new SshLegacyToggle());
 
   layout()->addWidget(horizontal_line());
 
-  layout()->addWidget(new IsOpenpilotViewEnabledToggle());
-
-
-   layout()->addWidget(new CPrebuiltToggle());
-  
-  layout()->addWidget(horizontal_line());
 
   layout()->addWidget(new CLiveSteerRatioToggle());
   layout()->addWidget(new BrightnessControl());
@@ -105,6 +48,8 @@ DeveloperPanel::DeveloperPanel(QWidget* parent) : QFrame(parent)
   layout()->addWidget(new BrightnessOffControl());
   
   layout()->addWidget(new CAutoFocus());
+
+  
 
   layout()->addWidget(horizontal_line());
 
@@ -188,7 +133,23 @@ DeveloperPanel::DeveloperPanel(QWidget* parent) : QFrame(parent)
   auto tmapclose_exe = new ButtonControl("NAVI Return", "Open","NAVI을 Return 합니다.");
   connect(tmapclose_exe, &ButtonControl::clicked, [=]() 
   { 
-    std::system("am start --activity-task-on-home com.mnsoft.mappyobn/com.mnsoft.mappy.MainActivity");
+    Params param = Params();
+    auto str = QString::fromStdString(Params().get("OpkrNaviSelect"));
+    int param_navi_sel = str.toInt();    
+
+
+    if( param_navi_sel == 1 )
+      std::system("am start --activity-task-on-home com.mnsoft.mappyobn/com.mnsoft.mappy.MainActivity");
+    else if( param_navi_sel == 2 )
+      std::system("am start --activity-task-on-home com.thinkware.inaviair/com.thinkware.inaviair.UIActivity");
+
+
+    UIScene  &scene =  uiState()->scene;
+    scene.scr.IsViewNavi = 1;
+    if ( ConfirmationDialog::alert("Navi program Running", this) )
+    {
+      std::system("am start --activity-task-on-home com.opkr.maphack/com.opkr.maphack.MainActivity");
+    }
   });
 
 
@@ -201,14 +162,9 @@ DeveloperPanel::DeveloperPanel(QWidget* parent) : QFrame(parent)
   });  
 
 
-  auto laserlevel_exe = new ButtonControl("laserlevel Open", "Open","laserlevel을 실행 합니다.");
-  connect(laserlevel_exe, &ButtonControl::clicked, [=]() 
-  { 
-    std::system("am start com.goodappsoftware.laserlevel/com.goodappsoftware.laserlevel.MainActivity");
-  });  
 
 
-  for (auto btn : {car_interfaces, build_exe, finger_exe, android_exe, apk_exe, mixplorer_exe, tmapopen_exe, tmapclose_exe, softkey_exe, laserlevel_exe}) {
+  for (auto btn : {car_interfaces, build_exe, finger_exe, android_exe, apk_exe, mixplorer_exe, tmapopen_exe, tmapclose_exe, softkey_exe}) {
     if (btn) {
      // layout()->addWidget(horizontal_line());
       connect(parent, SIGNAL(offroadTransition(bool)), btn, SLOT(setEnabled(bool)));
@@ -217,37 +173,241 @@ DeveloperPanel::DeveloperPanel(QWidget* parent) : QFrame(parent)
   }
 
   layout()->addWidget(horizontal_line());
-
-
-  CarSelectCombo *pCarSelectmenu = new CarSelectCombo();
-  layout()->addWidget( pCarSelectmenu );
-  layout()->addWidget( new CarSelectBtn(pCarSelectmenu) );
-  
 }
 
 void DeveloperPanel::showEvent(QShowEvent *event) 
 {
-  Params params = Params();
-
 
 }
 
 
 
+////////////////////////////////////////////////////////////////////////////////////////
+//
+//  Git
 
-IsOpenpilotViewEnabledToggle::IsOpenpilotViewEnabledToggle() 
-        : ToggleControl("주행화면 미리보기", "오픈파일럿 주행화면을 미리보기 합니다.", "../assets/offroad/icon_eon.png", Params().getBool("IsOpenpilotViewEnabled")) 
+GitHash::GitHash() : AbstractControl("Check for Update") 
 {
-  QObject::connect(this, &IsOpenpilotViewEnabledToggle::toggleFlipped, [=](int state) {
-    char value = state ? '1' : '0';
+  params = Params();
 
-    UIScene  &scene =  uiState()->scene;//QUIState::ui_state.scene;
-    scene.IsOpenpilotViewEnabled = state;
-    Params().put("IsOpenpilotViewEnabled", &value, 1);
+  local_hash.setAlignment(Qt::AlignVCenter);
+  local_hash.setStyleSheet("color: #aaaaaa");
+
+  updateBtn = new QPushButton("CHECK");
+ // updateBtn->setVisible(false);
+  updateBtn->setStyleSheet(R"(
+    QPushButton {
+      padding: 0;
+      border-radius: 50px;
+      font-size: 35px;
+      font-weight: 500;
+      color: #E4E4E4;
+      background-color: #393939;
+    }
+    QPushButton:pressed {
+      background-color: #4a4a4a;
+    }
+    QPushButton:disabled {
+      color: #33E4E4E4;
+    }
+  )");
+  updateBtn->setFixedSize(250, 100); 
+
+
+  hlayout->addWidget(&local_hash);
+  hlayout->addWidget(updateBtn);
+  //hlayout->addWidget(update_notif, 0, Qt::AlignHCenter | Qt::AlignRight);
+
+  if( description == nullptr )
+  {
+    description = new QLabel(str_desc);
+    description->setContentsMargins(40, 20, 40, 20);
+    description->setStyleSheet("font-size: 40px; color: grey");
+    description->setWordWrap(true);
+    description->setVisible(false);
+    main_layout->addWidget(description);
+  }
+
+
+  win_widget = new QWidget;
+  QVBoxLayout *vlayout = new QVBoxLayout(win_widget);
+  vlayout->setMargin(0);
+  vlayout->setSpacing(20);
+
+  auto exe_git_pull = new ButtonControl("  Git Pull", "UPDATE");
+  QObject::connect(exe_git_pull, &ButtonControl::clicked, [=]() 
+  { 
+        if (ConfirmationDialog::confirm("GitPull을 실행후 프로그램을 Update합니다. 진행하시겠습니까?", this))
+        {
+          std::system( "cd /data/openpilot; rm -f prebuilt" );
+          const char* gitpull = "/data/openpilot/selfdrive/assets/addon/sh/gitpull.sh";
+          std::system( gitpull );
+        }
+  });
+  vlayout->addWidget( exe_git_pull );
+
+  auto exe_git_cancel = new ButtonControl("  Git Pull cancel", "Cancel");
+  QObject::connect(exe_git_cancel, &ButtonControl::clicked, [=]() 
+  { 
+        if (ConfirmationDialog::confirm("GitPull 이전 상태로 되돌립니다. 진행하시겠습니까?", this))
+        {
+          const char* gitpull_cancel = "/data/openpilot/selfdrive/assets/addon/sh/gitpull_cancel.sh ''";
+          std::system(gitpull_cancel);
+        }
+  });
+  vlayout->addWidget( exe_git_cancel );
+
+
+  vlayout->addWidget( new CPrebuiltToggle() );
+  main_layout->addWidget( win_widget );
+  win_widget->hide();
+
+
+  QObject::connect( title_label, &QPushButton::clicked, this, &GitHash::information);
+  QObject::connect( updateBtn, &QPushButton::clicked, this, &GitHash::update);
+
+
+
+  fs_watch = new QFileSystemWatcher(this);
+  QObject::connect(fs_watch, &QFileSystemWatcher::fileChanged, [=](const QString path) {
+      updateBtn->setText(tr("CHECK"));
+      updateBtn->setEnabled(true);
+
+      QString lhash = QString::fromStdString(params.get("GitCommit").substr(0, 10));
+      QString rhash = QString::fromStdString(params.get("GitCommitRemote").substr(0, 10));
+      if (lhash != rhash) {
+        win_widget->show();        
+      }
+
+      emit showDescriptionEvent();
+      description->setVisible( true );
+      refresh();
+  });
+
+  refresh();
+}
+
+void GitHash::update()
+{
+    if (params.getBool("IsOffroad")) {
+      fs_watch->addPath(QString::fromStdString(params.getParamPath("LastUpdateTime")));
+      fs_watch->addPath(QString::fromStdString(params.getParamPath("UpdateFailedCount")));
+      updateBtn->setText(tr("CHECKING"));
+      updateBtn->setEnabled(false);
+    }
+    std::system("pkill -1 -f selfdrive.updated");
+}
+
+void GitHash::information()
+{
+      if( !description->isVisible() ) 
+      {
+        std::string cmd1 = "git fetch";
+        std::system(cmd1.c_str());
+
+        std::string cmd2 = "git rev-parse @{u}   > /data/params/d/GitCommitRemote";
+        std::system(cmd2.c_str());
+
+        win_widget->show();
+        emit showDescriptionEvent();
+      } else  {
+        win_widget->hide();
+      }
+      description->setVisible(!description->isVisible());
+      refresh();
+}
+
+void GitHash::refresh()
+{
+  QString lhash = QString::fromStdString(params.get("GitCommit").substr(0, 10));
+  QString rhash = QString::fromStdString(params.get("GitCommitRemote").substr(0, 10));
+
+  local_hash.setText( rhash );
+  if (lhash == rhash) {
+    str_desc = "로컬과 리모트가 일치합니다.";
+   // updateBtn->setEnabled(false);
+    local_hash.setStyleSheet("color: #aaaaaa");
+  } else {
+    str_desc = "업데이트가 있습니다.";
+    description->setStyleSheet("color: #0099ff");
+    local_hash.setStyleSheet("color: #0099ff");
+   // updateBtn->setEnabled(true);       
+  }  
+
+  str_desc += QString("\nLOCAL:%1 REMOTE:%2").arg(lhash, rhash );
+  description->setText( str_desc );  
+}
+
+void GitHash::showEvent(QShowEvent *event) 
+{
+
+   refresh();
+}
+
+IsCalibraionGridViewToggle::IsCalibraionGridViewToggle() 
+        : ToggleControl("Calibraion Grid view", 
+        "장착에 필요한 Grid 화면과 기울기를 제공합니다.."
+        ) 
+{
+  QObject::connect(this, &IsCalibraionGridViewToggle::toggleFlipped, [=](int state) {
+    UIScene  &scene =  uiState()->scene;
+    scene.scr.IsCalibraionGridViewToggle = state;
+
   });
 }
 
 
+IsOpenpilotViewEnabledToggle::IsOpenpilotViewEnabledToggle() 
+        : ToggleControl("주행화면 미리보기", 
+        "오픈파일럿 주행화면을 미리보기 합니다.", 
+        "", 
+        Params().getBool("IsOpenpilotViewEnabled")) 
+{
+  win_widget = new QWidget;
+  QHBoxLayout *hlayout = new QHBoxLayout(win_widget);
+  hlayout->setMargin(0);
+  hlayout->setSpacing(20);
+
+  hlayout->addWidget( new IsCalibraionGridViewToggle() );
+  main_layout->addWidget( win_widget );
+
+  QObject::connect( title_label, &QPushButton::clicked, this, &IsOpenpilotViewEnabledToggle::refresh); 
+  QObject::connect(this, &IsOpenpilotViewEnabledToggle::toggleFlipped, [=](int state) {
+    char value = state ? '1' : '0';
+
+    UIScene  &scene =  uiState()->scene;
+    scene.IsOpenpilotViewEnabled = state;
+    Params().put("IsOpenpilotViewEnabled", &value, 1);
+    refresh();
+  });
+
+  main_layout->addStretch();
+
+  refresh();
+}
+
+void IsOpenpilotViewEnabledToggle::refresh()
+{
+  UIScene  &scene =  uiState()->scene;
+
+  if ( scene.pandaType != cereal::PandaState::PandaType::UNKNOWN) 
+  {
+      toggle.setEnabled(false);
+      win_widget->show();
+  }
+  else
+  {
+      toggle.setEnabled(true);
+      if( scene.IsOpenpilotViewEnabled )  win_widget->show();
+      else win_widget->hide();
+  }
+}
+
+void IsOpenpilotViewEnabledToggle::showEvent(QShowEvent *event) 
+{
+// Params params = Params(); 
+   refresh();
+}
 ////////////////////////////////////////////////////////////////////////////////////////
 //
 //  CLiveSteerRatioToggle
@@ -711,178 +871,6 @@ void CAutoFocus::refresh()
   } else {
     label.setText(QString::fromStdString(Params().get("OpkrAutoFocus")));
   }
-  btnminus.setText("－");
-  btnplus.setText("＋");
-}
-////////////////////////////////////////////////////////////////////////////////////////
-//
-//  Git
-
-
-GitHash::GitHash() : AbstractControl("커밋(로컬/리모트)", "", "") {
-
-  QString lhash = QString::fromStdString(Params().get("GitCommit").substr(0, 10));
-  QString rhash = QString::fromStdString(Params().get("GitCommitRemote").substr(0, 10));
-  hlayout->addStretch(2);
-  
-  local_hash.setText(QString::fromStdString(Params().get("GitCommit").substr(0, 10)));
-  remote_hash.setText(QString::fromStdString(Params().get("GitCommitRemote").substr(0, 10)));
-  local_hash.setAlignment(Qt::AlignVCenter);
-  remote_hash.setAlignment(Qt::AlignVCenter);
-  local_hash.setStyleSheet("color: #aaaaaa");
-  if (lhash == rhash) {
-    remote_hash.setStyleSheet("color: #aaaaaa");
-  } else {
-    remote_hash.setStyleSheet("color: #0099ff");
-  }
-  hlayout->addWidget(&local_hash);
-  hlayout->addWidget(&remote_hash);
-}
-
-////////////////////////////////////////////////////////////////////////////////////////
-//
-//  QComboBox
-CarSelectCombo::CarSelectCombo() : AbstractControl("Car", "자동차 모델을 강제로 인식시키는 메뉴입니다.", "") 
-{
-  combobox.setStyleSheet(R"(
-    font-size: 50px;
-    subcontrol-origin: padding;
-    subcontrol-position: top right;
-    selection-background-color: #111;
-    selection-color: yellow;
-    color: white;
-    background-color: #393939;
-    border-style: solid;
-    border: 1px solid #1e1e1e;
-    border-radius: 5;
-    padding: 1px 0px 1px 5px; 
-    width: 100px;
-    QComboBox { max-width: 1000px; min-height: 50px;}
-  )");
-
-
-
-   combobox.addItem("HYUNDAI ELANTRA LIMITED 2017");
-    combobox.addItem("HYUNDAI I30 N LINE 2019");
-    combobox.addItem("HYUNDAI GENESIS 2015-2016");
-
-    combobox.addItem("HYUNDAI IONIQ ELECTRIC 2019");
-    combobox.addItem("HYUNDAI IONIQ ELECTRIC 2020");
-    combobox.addItem("HYUNDAI KONA 2020");
-    combobox.addItem("HYUNDAI KONA ELECTRIC 2019");
-    combobox.addItem("HYUNDAI SANTA FE LIMITED 2019");
-    combobox.addItem("HYUNDAI SONATA 2020");
-    combobox.addItem("HYUNDAI SONATA 2019");
-    combobox.addItem("HYUNDAI PALISADE 2020");
-    combobox.addItem("HYUNDAI VELOSTER 2019");
-    combobox.addItem("HYUNDAI GRANDEUR HYBRID 2019");
-
-
-    combobox.addItem("KIA FORTE E 2018 & GT 2021");
-    combobox.addItem("KIA NIRO EV 2020");
-    combobox.addItem("KIA OPTIMA SX 2019 & 2016");
-    combobox.addItem("KIA OPTIMA HYBRID 2017 2019");
-    combobox.addItem("KIA SELTOS 2021");
-    combobox.addItem("KIA SORENTO GT LINE 2018");
-    combobox.addItem("KIA STINGER GT2 2018");
-    combobox.addItem("KIA CEED INTRO ED 2019");
-
-
-    combobox.addItem("GENESIS G70 2018");
-    combobox.addItem("GENESIS G80 2017");
-    combobox.addItem("GENESIS G90 2017");
-   // combobox.setFixedWidth(700);
-    combobox.setFixedWidth(1000);
-
-  hlayout->addWidget(&combobox);
-
-
-  QObject::connect(&combobox, static_cast<void(QComboBox::*)(int)>(&QComboBox::currentIndexChanged), [=](int index)
-  {
-      int nIdx = combobox.currentIndex();
-
-      QString str = combobox.currentText();
-      printf("changeEvent: %d  index = %d %s \n", nIdx, index, str.toStdString().c_str() );
-      refresh();
-  });
-
-  refresh();
-}
-
-void CarSelectCombo::refresh() 
-{
-   int nIdx = combobox.currentIndex();
-
-  QString values = QString::number(nIdx);
-  Params().put("OpkrCarModel", values.toStdString());
-}
-
-/////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-CarSelectBtn::CarSelectBtn( CarSelectCombo *p) : AbstractControl("Car Model", "등록된 자동차 모델", "") 
-{
-  m_pCarSelectMenu  = p;
-
-  btnminus.setStyleSheet(R"(
-    padding: 0;
-    border-radius: 50px;
-    font-size: 35px;
-    font-weight: 500;
-    color: #E4E4E4;
-    background-color: #393939;
-  )");
-
-  btnplus.setStyleSheet(R"(
-    padding: 0;
-    border-radius: 50px;
-    font-size: 35px;
-    font-weight: 500;
-    color: #E4E4E4;
-    background-color: #393939;
-  )");
-
-
-  label.setAlignment(Qt::AlignVCenter|Qt::AlignRight);
-  label.setStyleSheet("color: #e0e879");
-  hlayout->addWidget(&label);
-
-
-  btnminus.setFixedSize(150, 100);
-  btnplus.setFixedSize(150, 100);
-  hlayout->addWidget(&btnminus);
-  hlayout->addWidget(&btnplus);
-
-
-
-  QObject::connect(&btnminus, &QPushButton::released, [=]() 
-  {
-    int nIdx = m_pCarSelectMenu->combobox.currentIndex() - 1;
-    if( nIdx < 0 ) nIdx = 0;
-    m_pCarSelectMenu->combobox.setCurrentIndex( nIdx);
-    m_pCarSelectMenu->refresh();
-  });
-  
-  QObject::connect(&btnplus, &QPushButton::released, [=]() 
-  {
-    int nMax = m_pCarSelectMenu->combobox.count();
-    int nIdx = m_pCarSelectMenu->combobox.currentIndex() + 1;
-
-    if( nIdx >=  nMax )
-      nIdx = nMax;
-
-    m_pCarSelectMenu->combobox.setCurrentIndex( nIdx);
-
-    m_pCarSelectMenu->refresh();
-  });
-
-
-  refresh();
-}
-
-void CarSelectBtn::refresh() 
-{
-  // int nIdx = m_pCarSelectMenu->combobox.currentIndex();
- // m_pCarSelectMenu->label.setText( QString::number(nIdx) );
-
   btnminus.setText("－");
   btnplus.setText("＋");
 }

@@ -71,6 +71,9 @@ def getprop(key: str) -> Union[str, None]:
 
 
 class Android(HardwareBase):
+  def __init__(self):
+    self.connect_name = "---"
+
   def get_os_version(self):
     with open("/VERSION") as f:
       return f.read().strip()
@@ -196,6 +199,9 @@ class Android(HardwareBase):
       }
       return cell_networks.get(cell_check, NetworkType.none)
 
+
+
+
   def get_network_strength(self, network_type):
     network_strength = NetworkStrength.unknown
 
@@ -300,10 +306,14 @@ class Android(HardwareBase):
       network_strength = NetworkStrength.unknown
       for line in out.split('\n'):
         signal_str = "SignalStrength: "
+        ssid_str = "extra: "
         if signal_str in line:
           lvl_idx_start = line.find(signal_str) + len(signal_str)
           lvl_idx_end = line.find(']', lvl_idx_start)
           lvl = int(line[lvl_idx_start : lvl_idx_end])
+          ssid_idx_start = line.find(ssid_str) + len(ssid_str) + 1
+          ssid_idx_end = line.find('"', ssid_idx_start)          
+          self.connect_name = line[ssid_idx_start : ssid_idx_end]
           if lvl >= -50:
             network_strength = NetworkStrength.great
           elif lvl >= -60:
@@ -432,3 +442,5 @@ class Android(HardwareBase):
       return pattern.search(wlan).group(1)
     except Exception:
       return "--"
+  def get_connect_name(self, network_type):
+    return self.connect_name

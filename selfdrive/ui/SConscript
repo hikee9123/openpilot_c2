@@ -23,6 +23,9 @@ widgets_src = ["qt/util.cc", "qt/widgets/input.cc", "qt/widgets/drive_stats.cc",
                "qt/widgets/offroad_alerts.cc", "qt/widgets/prime.cc", "qt/widgets/keyboard.cc",
                "qt/widgets/scrollview.cc", "qt/widgets/cameraview.cc", "#third_party/qrcode/QrCode.cc", "qt/api.cc",
                "qt/request_repeater.cc", "qt/qt_window.cc"]
+widgets_src += ["qt/widgets/groupWidget.cc",
+                "qt/atom/widgets/steerWidget.cc",
+                "qt/atom/widgets/TunWidget.cc"]
 
 if arch != 'aarch64':
   widgets_src += ["qt/offroad/networking.cc", "qt/offroad/wifiManager.cc"]
@@ -58,8 +61,13 @@ qt_env.Program("qt/spinner", ["qt/spinner.cc"], LIBS=qt_libs)
 # build main UI
 qt_src = ["main.cc", "ui.cc", "qt/sidebar.cc", "qt/onroad.cc", "qt/body.cc",
           "qt/window.cc", "qt/home.cc", "qt/offroad/settings.cc",
-          "qt/offroad/onboarding.cc", "qt/offroad/driverview.cc"]
+          "qt/offroad/software_settings.cc", "qt/offroad/onboarding.cc", 
+          "qt/offroad/driverview.cc"]
 qt_src += ["qt/atom/DeveloperPanel.cc","qt/atom/CommunityPanel.cc", "qt/atom/ControlPanel.cc", "qt/atom/paint.cc", "qt/atom/dashcam.cc"]
+
+qt_src += ["qt/atom/TuningPanel.cc","qt/atom/widgets/opkr.cc"]
+#qt_src += ["qt/atom/widgets/opkr.cc"]
+
 qt_env.Program("_ui", qt_src + [asset_obj], LIBS=qt_libs)
 
 

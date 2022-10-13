@@ -32,12 +32,13 @@ services = {
   "pandaStates": (True, 2., 1),
   "peripheralState": (True, 2., 1),
   "radarState": (True, 20., 5),
-  "roadEncodeIdx": (False, 20., 1),
+  "roadEncodeIdx": (True, 20., 1),
   "liveTracks": (True, 20.),
   "sendcan": (True, 100., 139),
   "logMessage": (True, 0.),
   "errorLogMessage": (True, 0., 1),
   "liveCalibration": (True, 4., 4),
+  "liveTorqueParameters": (True, 4., 1),
   "androidLog": (True, 0.),
   "carState": (True, 100., 10),
   "carControl": (True, 100., 10),
@@ -57,10 +58,10 @@ services = {
   "carParams": (True, 0.02, 1),
   "roadCameraState": (True, 20., 20),
   "driverCameraState": (True, DCAM_FREQ, DCAM_FREQ),
-  "driverEncodeIdx": (False, DCAM_FREQ, 1),
+  "driverEncodeIdx": (True, DCAM_FREQ, 1),
   "driverState": (True, DCAM_FREQ, DCAM_FREQ / 2),
   "driverMonitoringState": (True, DCAM_FREQ, DCAM_FREQ / 2),
-  "wideRoadEncodeIdx": (False, 20., 1),
+  "wideRoadEncodeIdx": (True, 20., 1),
   "wideRoadCameraState": (True, 20., 20),
   "modelV2": (True, 20., 40),
   "managerState": (True, 2., 1),
@@ -71,8 +72,9 @@ services = {
 
 # atom
   "liveNaviData": (True, 0.),
+  "updateEvents": (True, 0.),
 
-  # debug
+
   "testJoystick": (True, 0.),
   "roadEncodeData": (False, 20.),
   "driverEncodeData": (False, DCAM_FREQ),

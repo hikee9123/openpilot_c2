@@ -378,8 +378,8 @@ class CarInterface(CarInterfaceBase):
       self.low_speed_alert = False
     if self.low_speed_alert:
       events.add(car.CarEvent.EventName.belowSteerSpeed)
-    elif self.CC.cut_in_car_alert:
-      events.add(car.CarEvent.EventName.cutInCarDetect)
+    #elif self.CC.cut_in_car_alert:
+    #  events.add(car.CarEvent.EventName.cutInCarDetect)
     #elif self.CS.lkas_button_on == 15:
     #  events.add(car.CarEvent.EventName.invalidLkasSetting)
     

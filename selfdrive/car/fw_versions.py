@@ -257,8 +257,8 @@ def match_fw_to_car_exact(fw_versions_dict):
       ecu_type = ecu[0]
       addr = ecu[1:]
       found_version = fw_versions_dict.get(addr, None)
-      ESSENTIAL_ECUS = [Ecu.engine, Ecu.eps, Ecu.esp, Ecu.fwdRadar, Ecu.fwdCamera, Ecu.vsa]
-      if ecu_type == Ecu.esp and candidate in (TOYOTA.RAV4, TOYOTA.COROLLA, TOYOTA.HIGHLANDER, TOYOTA.SIENNA, TOYOTA.LEXUS_IS) and found_version is None:
+      ESSENTIAL_ECUS = [Ecu.engine, Ecu.eps, Ecu.abs, Ecu.fwdRadar, Ecu.fwdCamera, Ecu.vsa]
+      if ecu_type == Ecu.abs and candidate in (TOYOTA.RAV4, TOYOTA.COROLLA, TOYOTA.HIGHLANDER, TOYOTA.SIENNA, TOYOTA.LEXUS_IS) and found_version is None:
         continue
 
       # On some Toyota models, the engine can show on two different addresses
