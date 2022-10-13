@@ -217,9 +217,7 @@ def thermald_thread(end_event, hw_queue):
 
       # Set ignition based on any panda connected
       onroad_conditions["ignition"] = any(ps.ignitionLine or ps.ignitionCan for ps in pandaStates if ps.pandaType != log.PandaState.PandaType.unknown)
-
       pandaState = pandaStates[0]
-
       in_car = pandaState.harnessStatus != log.PandaState.HarnessStatus.notConnected
       usb_power = peripheralState.usbPowerMode != log.PeripheralState.UsbPowerMode.client
 
@@ -233,13 +231,14 @@ def thermald_thread(end_event, hw_queue):
           fan_controller = UnoFanController()
         else:
           fan_controller = EonFanController()
-    elif (count % int(10. / DT_TRML)) == 0:
-      # atom
-      is_openpilot_view_enabled = params.get_bool("IsOpenpilotViewEnabled") # IsRHD
-      if is_openpilot_view_enabled:
-        onroad_conditions["ignition"] = True
-      elif onroad_conditions["ignition"] == True:
-        onroad_conditions["ignition"] = False
+
+        if (count % int(1. / DT_TRML)) == 0:
+          # atom
+          is_openpilot_view_enabled = params.get_bool("IsOpenpilotViewEnabled") # IsRHD
+          if is_openpilot_view_enabled:
+            onroad_conditions["ignition"] = True
+          elif onroad_conditions["ignition"] == True:
+            onroad_conditions["ignition"] = False
 
     try:
       last_hw_state = hw_queue.get_nowait()
