@@ -232,14 +232,14 @@ def thermald_thread(end_event, hw_queue):
         else:
           fan_controller = EonFanController()
 
-      elif (count % int(1. / DT_TRML)) == 0:
-          print('{}'.format(peripheralState ) )
-          # atom
-          is_openpilot_view_enabled = params.get_bool("IsOpenpilotViewEnabled") # IsRHD
-          if is_openpilot_view_enabled:
-            onroad_conditions["ignition"] = True
-          elif onroad_conditions["ignition"] == True:
-            onroad_conditions["ignition"] = False
+    elif (count % int(1. / DT_TRML)) == 0:
+      print('{}'.format(pandaStates ) )
+      # atom
+      is_openpilot_view_enabled = params.get_bool("IsOpenpilotViewEnabled") # IsRHD
+      if is_openpilot_view_enabled:
+        onroad_conditions["ignition"] = True
+      elif onroad_conditions["ignition"] == True:
+        onroad_conditions["ignition"] = False
 
     try:
       last_hw_state = hw_queue.get_nowait()
