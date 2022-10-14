@@ -54,6 +54,8 @@ class LanePlanner:
     self.curvature = 0
     self.moveAvg = mvAvg.MoveAvg()
 
+    self.end_to_end = False
+
   def cal_model_speed(self, md, v_ego):
     if v_ego < 1.0:
       return  self.soft_model_speed
@@ -90,7 +92,22 @@ class LanePlanner:
           self.soft_model_speed = self.model_speed
     return  self.soft_model_speed
 
-  def parse_model(self, md):
+  def car_params_update(self, sm):
+    laneParam = sm['carParams'].laneParam
+    # laneParam.leftLaneOffset
+    # laneParam.rightLaneOffset
+    self.path_offset = laneParam.pathOffsetAdj
+
+    camera_offset = laneParam.cameraOffsetAdj
+    if not self.end_to_end:
+      camera_offset = laneParam.leftLaneOffset
+
+    if self.camera_offset != camera_offset:
+      self.camera_offset = camera_offset
+      print('camera_offset = {}'.format( self.camera_offset ) )
+
+  def parse_model(self, md, sm):
+    self.car_params_update( sm )
     lane_lines = md.laneLines
     if len(lane_lines) == 4 and len(lane_lines[0].t) == TRAJECTORY_SIZE:
       self.ll_t = (np.array(lane_lines[1].t) + np.array(lane_lines[2].t))/2
