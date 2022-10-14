@@ -192,7 +192,6 @@ class CarState(CarStateBase):
   def update(self, cp, cp_cam, c):
     ret = car.CarState.new_message()
 
-    #cp_cruise = cp_cam if self.CP.carFingerprint in CAMERA_SCC_CAR else cp
     cp_cruise = cp
 
     ret.doorOpen = any([cp.vl["CGW1"]["CF_Gway_DrvDrSw"], cp.vl["CGW1"]["CF_Gway_AstDrSw"],

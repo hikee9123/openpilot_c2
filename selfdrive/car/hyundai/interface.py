@@ -52,8 +52,8 @@ class CarInterface(CarInterfaceBase):
       ret.atompilotLongitudinalControl = Param.get_bool("OpkratomLongitudinal")
     else:
       # WARNING: disabling radar also disables AEB (and we show the same warning on the instrument cluster as if you manually disabled AEB)
-      ret.experimentalLongitudinalAvailable = candidate not in (LEGACY_SAFETY_MODE_CAR | CAMERA_SCC_CAR)
-      ret.openpilotLongitudinalControl = experimental_long and (candidate not in (LEGACY_SAFETY_MODE_CAR | CAMERA_SCC_CAR))
+      ret.experimentalLongitudinalAvailable = candidate not in (LEGACY_SAFETY_MODE_CAR)
+      ret.openpilotLongitudinalControl = experimental_long and (candidate not in (LEGACY_SAFETY_MODE_CAR))
     
     ret.pcmCruise = not ret.openpilotLongitudinalControl
 
