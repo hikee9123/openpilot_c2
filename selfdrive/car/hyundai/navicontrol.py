@@ -7,7 +7,7 @@ import cereal.messaging as messaging
 
 
 
-VisionTurnControllerState = log.LongitudinalPlan.VisionTurnControllerState
+
 EventName = car.CarEvent.EventName
 
 
@@ -49,7 +49,6 @@ class NaviControl():
     self._visionTurnSpeed = 0
     self._current_lat_acc = 0
     self._max_pred_lat_acc = 0
-    self.state = VisionTurnControllerState.disabled
 
     self.auto_resume_time = 0
 
