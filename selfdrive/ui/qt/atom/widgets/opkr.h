@@ -1089,12 +1089,6 @@ private:
   void refresh();
 };
 
-class OCurvSpeedUD : public AbstractControl {
-  Q_OBJECT
-
-public:
-  OCurvSpeedUD();
-};
 
 class OCurvSpeed : public AbstractControl {
   Q_OBJECT

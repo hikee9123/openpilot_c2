@@ -111,6 +111,8 @@ def hw_state_thread(end_event, hw_queue):
       try:
         network_type = HARDWARE.get_network_type()
         modem_temps = HARDWARE.get_modem_temperatures()
+        network_strength = HARDWARE.get_network_strength(network_type)
+        connect_name = HARDWARE.get_connect_name(network_type)
         if len(modem_temps) == 0 and prev_hw_state is not None:
           modem_temps = prev_hw_state.modem_temps
 
@@ -130,6 +132,7 @@ def hw_state_thread(end_event, hw_queue):
           nvme_temps=HARDWARE.get_nvme_temperatures(),
           modem_temps=modem_temps,
           wifiIpAddress = HARDWARE.get_ip_address(),
+          connect_name = HARDWARE.get_connect_name(network_type),          
         )
 
         try:
@@ -187,6 +190,7 @@ def thermald_thread(end_event, hw_queue):
     nvme_temps=[],
     modem_temps=[],
     wifiIpAddress='N/A',
+    connect_name="---"
   )
 
   current_filter = FirstOrderFilter(0., CURRENT_TAU, DT_TRML)
@@ -233,7 +237,6 @@ def thermald_thread(end_event, hw_queue):
           fan_controller = EonFanController()
 
     elif (count % int(1. / DT_TRML)) == 0:
-      print('{}'.format(pandaStates ) )
       # atom
       is_openpilot_view_enabled = params.get_bool("IsOpenpilotViewEnabled") # IsRHD
       if is_openpilot_view_enabled:
@@ -254,6 +257,7 @@ def thermald_thread(end_event, hw_queue):
     msg.deviceState.networkType = last_hw_state.network_type
     msg.deviceState.networkMetered = last_hw_state.network_metered
     msg.deviceState.networkStrength = last_hw_state.network_strength
+    msg.deviceState.connectName = last_hw_state.connect_name    
     if last_hw_state.network_info is not None:
       msg.deviceState.networkInfo = last_hw_state.network_info
 

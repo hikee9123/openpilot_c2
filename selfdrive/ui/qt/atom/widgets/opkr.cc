@@ -4688,8 +4688,6 @@ void VCurvSpeed::refresh() {
   btn.setText("EDIT");
 }
 
-OCurvSpeedUD::OCurvSpeedUD() : AbstractControl("OSMCurvDecel([TSL] [TargetSpeed])", "Adjust the curve deceleration speed according to turn speed limit of OSM. (interpolation value)", "../assets/offroad/icon_shell.png") {
-}
 
 OCurvSpeed::OCurvSpeed() : AbstractControl("", "", "") {
   btn.setStyleSheet(R"(

@@ -1,3 +1,4 @@
+from pickle import TRUE
 from cereal import car, log
 from common.realtime import DT_CTRL
 from common.numpy_fast import clip, interp
@@ -11,6 +12,7 @@ from selfdrive.car.hyundai.navicontrol  import NaviControl
 
 VisualAlert = car.CarControl.HUDControl.VisualAlert
 LongCtrlState = car.CarControl.Actuators.LongControlState
+LaneChangeState = log.LateralPlan.LaneChangeState
 
 
 import common.loger as trace1
@@ -24,27 +26,32 @@ class CarController():
 
     self.apply_steer_last = 0
     self.car_fingerprint = CP.carFingerprint
-    self.steer_rate_limited = False
     self.last_resume_frame = 0
     self.accel = 0
 
     self.resume_cnt = 0
-    self.last_lead_distance = 0
+
+
+
     self.lkas11_cnt = 0
     self.scc12_cnt = 0
-    self.NC = NaviControl(self.params)
-    self.debug_button = 0
-    #self.cut_in_car_alert = False
-    #self.cut_in_car_time = 0
     
+    self.NC = NaviControl(self.params, CP)
+
+    self.gas = 0
+    
+
 
     # hud
     self.hud_timer_alert = 0
     self.hud_timer_left = 0
     self.hud_timer_right = 0
     self.steer_timer_apply_torque = 1.0
-    self.DT_STEER = 0.01
+    self.DT_STEER = 0.005             # 0.01 1sec, 0.005  2sec
     self.scc_live = not CP.radarOffCan
+
+
+
 
   def process_hud_alert(self, enabled, c, CS ):
     visual_alert = c.hudControl.visualAlert
@@ -96,28 +103,41 @@ class CarController():
 
 
   
-  def smooth_steer( self, apply_torque ):
-    if self.steer_timer_apply_torque >= 1:
-      return int(round(float(apply_torque)))
+  def smooth_steer( self, apply_torque, CS ):
+    if self.CP.smoothSteer.maxSteeringAngle and abs(CS.out.steeringAngleDeg) > self.CP.smoothSteer.maxSteeringAngle:
+      if self.CP.smoothSteer.maxDriverAngleWait and CS.out.steeringPressed:
+        self.steer_timer_apply_torque -= self.CP.smoothSteer.maxDriverAngleWait # 0.002 #self.DT_STEER   # 0.01 1sec, 0.005  2sec   0.002  5sec
+      elif self.CP.smoothSteer.maxSteerAngleWait:
+        self.steer_timer_apply_torque -= self.CP.smoothSteer.maxSteerAngleWait # 0.001  # 10 sec
+    elif self.CP.smoothSteer.driverAngleWait and CS.out.steeringPressed:
+      self.steer_timer_apply_torque -= self.CP.smoothSteer.driverAngleWait #0.001
+    else:
+      if self.steer_timer_apply_torque >= 1:
+          return int(round(float(apply_torque)))
+      self.steer_timer_apply_torque += self.DT_STEER
 
-
-    self.steer_timer_apply_torque += self.DT_STEER
-    if self.steer_timer_apply_torque >= 1:
-      self.steer_timer_apply_torque = 1    
+    if self.steer_timer_apply_torque < 0:
+      self.steer_timer_apply_torque = 0
+    elif self.steer_timer_apply_torque > 1:
+      self.steer_timer_apply_torque = 1
 
     apply_torque *= self.steer_timer_apply_torque
 
     return  int(round(float(apply_torque)))
 
 
-  def update_debug(self, CS, c ):
-    #actuators = c.actuators
+
+  def update_debug(self, CS, c, apply_steer ):
+    actuators = c.actuators
     vFuture = c.hudControl.vFuture * 3.6
-    str_log1 = 'MODE={:.0f} vF={:.1f} TG={:.1f}'.format( CS.cruise_set_mode, vFuture, self.apply_steer_last  )
+    str_log1 = 'MODE={:.0f} vF={:.1f}  DIST={:.2f}'.format( CS.cruise_set_mode, vFuture, CS.lead_distance )
     trace1.printf2( '{}'.format( str_log1 ) )
 
+    distance = self.NC.get_auto_resume( CS )
 
-    str_log1 = 'aRV={:.2f},  NV={:.0f} BT={:.0f} KPH={:.0f}'.format( CS.aReqValue,  self.NC.seq_command, self.debug_button, self.NC.set_speed_kph )
+
+
+    str_log1 = 'TG={:.1f}   aRV={:.2f} distance={:.1f}'.format( apply_steer,  CS.aReqValue, distance  )
     trace1.printf3( '{}'.format( str_log1 ) )
   
 
@@ -172,44 +192,21 @@ class CarController():
     return can_sends    
 
 
-  def update_resume(self, can_sends,  c, CS, path_plan):
+  def update_ASCC(self, can_sends,  c, CS):
     pcm_cancel_cmd = c.cruiseControl.cancel
     if pcm_cancel_cmd:
-      can_sends.append(create_clu11(self.packer, self.frame, CS.clu11, Buttons.CANCEL))
-    elif CS.out.cruiseState.standstill:
-      if CS.out.gasPressed:
-        self.last_lead_distance = 0      
-      # run only first time when the car stopped
-      elif self.last_lead_distance == 0:  
-        # get the lead distance from the Radar
-        self.last_lead_distance = CS.lead_distance
-        self.resume_cnt = 0
-      # when lead car starts moving, create 6 RES msgs
-      elif CS.lead_distance != self.last_lead_distance and (self.frame - self.last_resume_frame) > 5:
-        can_sends.append(create_clu11(self.packer, self.resume_cnt, CS.clu11, Buttons.RES_ACCEL))
-        self.resume_cnt += 1
-        # interval after 6 msgs
-        if self.resume_cnt > 5:
-          self.last_resume_frame = self.frame
-          self.resume_cnt = 0
-    # reset lead distnce after the car starts moving          
-    elif self.last_lead_distance != 0:
-      self.last_lead_distance = 0
-
+      can_sends.append(create_clu11(self.packer, self.frame, CS.clu11, Buttons.CANCEL, self.CP.carFingerprint))
     elif CS.out.cruiseState.accActive:
-      btn_signal = self.NC.update( c, CS, path_plan )
-      if btn_signal != None:
-        self.debug_button = btn_signal
-        can_sends.append(create_clu11(self.packer, self.resume_cnt, CS.clu11, btn_signal ))
-        self.resume_cnt += 1
+      if CS.out.cruiseState.standstill and not self.CP.opkrAutoResume:
+        btn_signal = None
       else:
-        self.debug_button = 0
-        self.resume_cnt = 0
-
-
-
+        btn_signal = self.NC.update( c, CS, self.frame )
+        if btn_signal != None:
+          can_sends.append(create_clu11(self.packer, self.resume_cnt, CS.clu11, btn_signal, self.CP.carFingerprint ))
+          self.resume_cnt += 1
+        else:
+          self.resume_cnt = 0
     return  can_sends
-
 
   def update(self, c, CS ):
     enabled = c.enabled
@@ -219,30 +216,32 @@ class CarController():
     right_lane = c.hudControl.rightLaneVisible 
     left_lane_warning = c.hudControl.leftLaneDepart 
     right_lane_warning = c.hudControl.rightLaneDepart
-    # pcm_cancel_cmd = c.cruiseControl.cancel    
-    # vFuture = c.hudControl.vFuture * 3.6
+    
+    self.gas = CS.out.gas
+
   
     # Steering Torque
     new_steer = int(round(actuators.steer * self.params.STEER_MAX))
     apply_steer = apply_std_steer_torque_limits(new_steer, self.apply_steer_last, CS.out.steeringTorque, self.params)
     self.steer_rate_limited = new_steer != apply_steer
 
+    if CS.engage_enable and not enabled:
+      CS.engage_enable = False
 
     # disable when temp fault is active, or below LKA minimum speed
     # lkas_active = enabled and not CS.out.steerFaultTemporary and CS.out.vEgo >= self.CP.minSteerSpeed and CS.out.cruiseState.enabled
-    path_plan = self.NC.update_lateralPlan()    
-    lkas_active = active and  CS.out.vEgo >= self.CP.minSteerSpeed and CS.out.cruiseState.enabled
+    lkas_active = enabled and active and not CS.out.steerFaultTemporary and  CS.out.vEgo >= self.CP.minSteerSpeed and CS.out.cruiseState.enabled
 
 
     if not lkas_active:
       apply_steer = 0
       self.steer_timer_apply_torque = 0
     else:
-      apply_steer = self.smooth_steer(  apply_steer )
+      apply_steer = self.smooth_steer( apply_steer, CS )
 
+    apply_steer = clip( apply_steer, -self.params.STEER_MAX, self.params.STEER_MAX )
     self.apply_steer_last = apply_steer
     sys_warning, sys_state = self.process_hud_alert( lkas_active, c, CS )
-
 
 
     if self.frame == 0: # initialize counts from last received count signals
@@ -270,7 +269,8 @@ class CarController():
     if  self.CP.openpilotLongitudinalControl:
       self.updateLongitudinal( can_sends, c, CS )
     else:
-      self.update_resume( can_sends, c, CS, path_plan )
+      self.update_ASCC( can_sends, c, CS )
+
 
     if self.CP.atompilotLongitudinalControl:
       if (self.frame % 2 == 0) and CS.cruise_set_mode == 2:
@@ -281,7 +281,7 @@ class CarController():
       
     # 20 Hz LFA MFA message
     if self.frame % 5 == 0:
-      self.update_debug( CS, c )
+      self.update_debug( CS, c, apply_steer )
       if self.car_fingerprint in FEATURES["send_hda_mfa"]:
         can_sends.append( create_hda_mfc(self.packer, CS, c ) )
       elif self.car_fingerprint in FEATURES["send_lfa_mfa"]:
@@ -291,6 +291,7 @@ class CarController():
     new_actuators = actuators.copy()
     new_actuators.steer = apply_steer / self.params.STEER_MAX
     new_actuators.accel = self.accel
+    new_actuators.gas = self.gas
 
     self.lkas11_cnt += 1
     self.frame += 1
