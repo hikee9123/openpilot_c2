@@ -288,7 +288,7 @@ struct CarState {
 
   errorsDEPRECATED @0 :List(CarEvent.EventName);
   brakeLightsDEPRECATED @19 :Bool;
-  steeringRateLimited @29 :Bool;   # if the torque is limited by the rate limiter  
+  steeringRateLimitedDEPRECATED @29 :Bool;   # if the torque is limited by the rate limiter  
 }
 
 # ******* radar state @ 20hz *******

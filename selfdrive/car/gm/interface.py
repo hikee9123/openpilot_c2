@@ -158,7 +158,7 @@ class CarInterface(CarInterfaceBase):
   def _update(self, c):
     ret = self.CS.update(self.cp, self.cp_loopback)
 
-    ret.steeringRateLimited = self.CC.steer_rate_limited if self.CC is not None else False
+    #ret.steeringRateLimited = self.CC.steer_rate_limited if self.CC is not None else False
 
     buttonEvents = []
 

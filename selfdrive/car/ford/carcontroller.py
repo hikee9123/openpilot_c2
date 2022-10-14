@@ -24,7 +24,6 @@ class CarController():
     self.packer = CANPacker(dbc_name)
 
     self.apply_steer_last = 0
-    self.steer_rate_limited = False
     self.main_on_last = False
     self.lkas_enabled_last = False
     self.steer_alert_last = False
@@ -45,7 +44,7 @@ class CarController():
     # apply rate limits
     new_steer = actuators.steeringAngleDeg
     apply_steer = apply_ford_steer_angle_limits(new_steer, self.apply_steer_last, CS.out.vEgo)
-    self.steer_rate_limited = new_steer != apply_steer
+    #self.steer_rate_limited = new_steer != apply_steer
 
     # send steering commands at 20Hz
     if (frame % CarControllerParams.LKAS_STEER_STEP) == 0:
