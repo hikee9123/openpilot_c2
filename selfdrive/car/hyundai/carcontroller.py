@@ -30,7 +30,7 @@ class CarController():
     self.accel = 0
 
     self.resume_cnt = 0
-
+    self.steer_rate_limited = False
 
 
     self.lkas11_cnt = 0
