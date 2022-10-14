@@ -94,7 +94,7 @@ class CarInterface(CarInterfaceBase):
 
     ret.longitudinalActuatorDelayUpperBound = 1.0 # s
     ret.atomHybridSpeed = 50 * CV.KPH_TO_MS
-    ret.steerRateCost = 0.1
+    #ret.steerRateCost = 0.1
 
     if candidate in (CAR.GRANDEUR_HEV_19):
       ret.mass = 1675. + STD_CARGO_KG
