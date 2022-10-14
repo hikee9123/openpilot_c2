@@ -3,7 +3,7 @@ from enum import Enum
 from cereal import car
 from common.params import Params
 
-from selfdrive.car import  get_method_config
+
 
 MethodModel = car.CarParams.MethodModel
 
