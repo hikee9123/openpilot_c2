@@ -1,4 +1,4 @@
-Version 0.8.17 (2022-XX-XX)
+Version 0.8.16 (2022-10-15)
 ========================
 * New driving model
   * Nuclear Grade Model

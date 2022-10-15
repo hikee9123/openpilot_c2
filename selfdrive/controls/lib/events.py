@@ -949,11 +949,12 @@ EVENTS: Dict[int, Dict[str, Union[Alert, AlertCallbackType]]] = {
     ET.NO_ENTRY: NoEntryAlert("LKAS Disabled"),
   },
 
-
-
   EventName.laneChangedisengaged: {
-    ET.USER_DISABLE: EngagementAlert(AudibleAlert.disengage),
-    ET.NO_ENTRY: NoEntryAlert("Lane Change dis engage",
-                              visual_alert=VisualAlert.steerRequired),
-  },  
+    ET.WARNING: Alert(
+      "Steer Lane Change disengaged",
+      "",
+      AlertStatus.userPrompt, AlertSize.small,
+      Priority.LOW, VisualAlert.none, AudibleAlert.none, .1, alert_rate=0.75),
+  },
+ 
 }
