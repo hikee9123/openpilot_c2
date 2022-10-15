@@ -352,7 +352,6 @@ class Updater:
       except Exception:
         pass
 
-      print('basedir ={} version={}'.format( basedir,  version ))
       return f"{version} / {branch} / {commit[:7]}"
     self.params.put("UpdaterCurrentDescription", get_description(BASEDIR))
     self.params.put("UpdaterCurrentReleaseNotes", parse_release_notes(BASEDIR))
