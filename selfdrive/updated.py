@@ -347,7 +347,7 @@ class Updater:
       try:
         branch = self.get_branch(basedir)
         commit = self.get_commit_hash(basedir)
-        with open(os.path.join(basedir, "common", "version.h")) as f:
+        with open(os.path.join(basedir, "selfdrive/common", "version.h")) as f:
           version = f.read().split('"')[1]
       except Exception:
         pass
