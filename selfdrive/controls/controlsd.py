@@ -142,7 +142,7 @@ class Controls:
     # cleanup old params
     if not self.CP.experimentalLongitudinalAvailable:
       params.remove("EndToEndLong")
-      params.remove("ExperimentalLongitudinalEnabled")
+      # params.remove("ExperimentalLongitudinalEnabled")
 
     self.CC = car.CarControl.new_message()
     self.CS_prev = car.CarState.new_message()
