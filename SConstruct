@@ -99,7 +99,7 @@ if arch == "aarch64" or arch == "larch64":
       "/usr/lib/aarch64-linux-gnu"
     ]
     cpppath += [
-      "#selfdrive/camerad/include",
+      "#system/camerad/include",
     ]
     cflags = ["-DQCOM2", "-mcpu=cortex-a57"]
     cxxflags = ["-DQCOM2", "-mcpu=cortex-a57"]
@@ -403,11 +403,23 @@ if arch not in ["aarch64", "larch64"]:
 Export('rednose_config')
 SConscript(['rednose/SConscript'])
 
+# Build system services
+SConscript([
+  'system/camerad/SConscript',
+  'system/clocksd/SConscript',
+  'system/proclogd/SConscript',
+])
+if arch != "Darwin":
+  SConscript(['system/logcatd/SConscript'])
+
 # Build openpilot
 
-SConscript(['cereal/SConscript'])
-SConscript(['panda/board/SConscript'])
-SConscript(['opendbc/can/SConscript'])
+# build submodules
+SConscript([
+  'cereal/SConscript',
+  'panda/board/SConscript',
+  'opendbc/can/SConscript',
+])
 
 SConscript(['third_party/SConscript'])
 
@@ -415,7 +427,6 @@ SConscript(['common/SConscript'])
 SConscript(['common/kalman/SConscript'])
 SConscript(['common/transformations/SConscript'])
 
-SConscript(['selfdrive/camerad/SConscript'])
 SConscript(['selfdrive/modeld/SConscript'])
 
 SConscript(['selfdrive/controls/lib/cluster/SConscript'])
@@ -423,8 +434,6 @@ SConscript(['selfdrive/controls/lib/lateral_mpc_lib/SConscript'])
 SConscript(['selfdrive/controls/lib/longitudinal_mpc_lib/SConscript'])
 
 SConscript(['selfdrive/boardd/SConscript'])
-SConscript(['selfdrive/proclogd/SConscript'])
-SConscript(['selfdrive/clocksd/SConscript'])
 
 SConscript(['selfdrive/loggerd/SConscript'])
 
@@ -432,8 +441,6 @@ SConscript(['selfdrive/locationd/SConscript'])
 SConscript(['selfdrive/sensord/SConscript'])
 SConscript(['selfdrive/ui/SConscript'])
 
-if arch != "Darwin":
-  SConscript(['selfdrive/logcatd/SConscript'])
 
 if GetOption('test'):
   SConscript('panda/tests/safety/SConscript')

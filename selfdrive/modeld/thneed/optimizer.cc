@@ -9,6 +9,8 @@
 
 extern map<cl_program, string> g_program_source;
 
+// debug_model
+/*
 static int is_same_size_image(cl_mem a, cl_mem b) {
   size_t a_width, a_height, a_depth, a_array_size, a_row_pitch, a_slice_pitch;
   clGetImageInfo(a, CL_IMAGE_WIDTH, sizeof(a_width), &a_width, NULL);
@@ -30,6 +32,7 @@ static int is_same_size_image(cl_mem a, cl_mem b) {
     (a_depth == b_depth) && (a_array_size == b_array_size) &&
     (a_row_pitch == b_row_pitch) && (a_slice_pitch == b_slice_pitch);
 }
+*/
 
 static cl_mem make_image_like(cl_context context, cl_mem val) {
   cl_image_format format;
@@ -138,7 +141,8 @@ int Thneed::optimize() {
 
       // delete useless copy layers
       // saves ~0.7 ms
-      if (kq[i]->name == "concatenation" || kq[i]->name == "flatten") {
+      // debug_model
+      /*if (kq[i]->name == "concatenation" || kq[i]->name == "flatten") {
         string in = kq[i]->args[kq[i]->get_arg_num("input")];
         string out = kq[i]->args[kq[i]->get_arg_num("output")];
         if (is_same_size_image(*(cl_mem*)in.data(), *(cl_mem*)out.data())) {
@@ -149,6 +153,7 @@ int Thneed::optimize() {
           kq.erase(kq.begin()+i); --i;
         }
       }
+      */
 
       // NOTE: if activations/accumulation are done in the wrong order, this will be wrong
 

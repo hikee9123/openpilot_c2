@@ -7,7 +7,7 @@ from selfdrive.car.hyundai.values import DBC, FEATURES, EV_CAR, HYBRID_CAR, Butt
 from selfdrive.car.interfaces import CarStateBase
 
 
-
+CLUSTER_SAMPLE_RATE = 20  # frames
 
 
 GearShifter = car.CarState.GearShifter
@@ -28,6 +28,11 @@ class CarState(CarStateBase):
 
     self.brake_error = False
     self.buttons_counter = 0
+
+    # On some cars, CLU15->CF_Clu_VehicleSpeed can oscillate faster than the dash updates. Sample at 5 Hz
+    self.cluster_speed = 0
+    self.cluster_speed_counter = CLUSTER_SAMPLE_RATE
+
     self.params = CarControllerParams(CP)
 
     # atom
@@ -193,7 +198,8 @@ class CarState(CarStateBase):
     ret = car.CarState.new_message()
 
     cp_cruise = cp
-
+    is_metric = cp.vl["CLU11"]["CF_Clu_SPEED_UNIT"] == 0
+    speed_conv = CV.KPH_TO_MS if is_metric else CV.MPH_TO_MS
     ret.doorOpen = any([cp.vl["CGW1"]["CF_Gway_DrvDrSw"], cp.vl["CGW1"]["CF_Gway_AstDrSw"],
                         cp.vl["CGW2"]["CF_Gway_RLDrSw"], cp.vl["CGW2"]["CF_Gway_RRDrSw"]])
 
@@ -209,6 +215,17 @@ class CarState(CarStateBase):
     ret.vEgo, ret.aEgo = self.update_speed_kf(ret.vEgoRaw)
 
     ret.standstill = ret.vEgoRaw < 0.1
+
+    self.cluster_speed_counter += 1
+    if self.cluster_speed_counter > CLUSTER_SAMPLE_RATE:
+      self.cluster_speed = cp.vl["CLU15"]["CF_Clu_VehicleSpeed"]
+      self.cluster_speed_counter = 0
+
+      # mimic how dash converts to imperial
+      if not is_metric:
+        self.cluster_speed = math.floor(self.cluster_speed * CV.KPH_TO_MPH + CV.KPH_TO_MPH)
+
+    ret.vEgoCluster = self.cluster_speed * speed_conv
 
     ret.steeringAngleDeg = cp.vl["SAS11"]["SAS_Angle"]
     ret.steeringRateDeg = cp.vl["SAS11"]["SAS_Speed"]

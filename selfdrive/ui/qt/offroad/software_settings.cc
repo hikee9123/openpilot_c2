@@ -13,7 +13,7 @@
 #include "selfdrive/ui/qt/util.h"
 #include "selfdrive/ui/qt/widgets/controls.h"
 #include "selfdrive/ui/qt/widgets/input.h"
-#include "selfdrive/hardware/hw.h"
+#include "system/hardware/hw.h"
 
 
 void SoftwarePanel::checkForUpdates() {

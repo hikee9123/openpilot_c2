@@ -91,10 +91,10 @@ function two_init {
   # Check for NEOS update
   if [ $(< /VERSION) != "$REQUIRED_NEOS_VERSION" ]; then
     echo "Installing NEOS update"
-    NEOS_PY="$DIR/selfdrive/hardware/eon/neos.py"
-    MANIFEST="$DIR/selfdrive/hardware/eon/neos.json"
+    NEOS_PY="$DIR/system/hardware/eon/neos.py"
+    MANIFEST="$DIR/system/hardware/eon/neos.json"
     $NEOS_PY --swap-if-ready $MANIFEST
-    $DIR/selfdrive/hardware/eon/updater $NEOS_PY $MANIFEST
+    $DIR/system/hardware/eon/updater $NEOS_PY $MANIFEST
   fi
 }
 
@@ -112,12 +112,12 @@ function tici_init {
 
   # Check if AGNOS update is required
   if [ $(< /VERSION) != "$AGNOS_VERSION" ]; then
-    AGNOS_PY="$DIR/selfdrive/hardware/tici/agnos.py"
-    MANIFEST="$DIR/selfdrive/hardware/tici/agnos.json"
+    AGNOS_PY="$DIR/system/hardware/tici/agnos.py"
+    MANIFEST="$DIR/system/hardware/tici/agnos.json"
     if $AGNOS_PY --verify $MANIFEST; then
       sudo reboot
     fi
-    $DIR/selfdrive/hardware/tici/updater $AGNOS_PY $MANIFEST
+    $DIR/system/hardware/tici/updater $AGNOS_PY $MANIFEST
   fi
 }
 
@@ -179,7 +179,11 @@ function launch {
 
   # start manager
   cd selfdrive/manager
-  ./build.py && ./manager.py
+  if [ -f "$BASEDIR/prebuilt" ]; then
+     ./manager.py
+  else
+     ./build.py && ./manager.py
+  fi
 
   # if broken, keep on screen error
   while true; do sleep 1; done

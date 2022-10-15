@@ -3,7 +3,7 @@
 #include "selfdrive/boardd/boardd.h"
 #include "selfdrive/common/swaglog.h"
 #include "selfdrive/common/util.h"
-#include "selfdrive/hardware/hw.h"
+#include "system/hardware/hw.h"
 
 int main(int argc, char *argv[]) {
   LOGW("starting boardd");

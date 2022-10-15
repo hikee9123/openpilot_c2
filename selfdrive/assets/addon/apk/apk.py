@@ -6,7 +6,7 @@ import shutil
 import time
 
 from common.basedir import BASEDIR
-from selfdrive.swaglog import cloudlog
+from system.swaglog import cloudlog
 
 
 # OPKR 

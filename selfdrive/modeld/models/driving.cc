@@ -32,11 +32,11 @@ void model_init(ModelState* s, cl_device_id device_id, cl_context context) {
   s->wide_frame = new ModelFrame(device_id, context);
 
 #ifdef USE_THNEED
-  s->m = std::make_unique<ThneedModel>("../../models/supercombo.thneed",
+  s->m = std::make_unique<ThneedModel>("models/supercombo.thneed",
 #elif USE_ONNX_MODEL
-  s->m = std::make_unique<ONNXModel>("../../models/supercombo.onnx",
+  s->m = std::make_unique<ONNXModel>("models/supercombo.onnx",
 #else
-  s->m = std::make_unique<SNPEModel>("../../models/supercombo.dlc",
+  s->m = std::make_unique<SNPEModel>("models/supercombo.dlc",
 #endif
    &s->output[0], NET_OUTPUT_SIZE, USE_GPU_RUNTIME, true);
 
@@ -89,7 +89,11 @@ ModelOutput* model_eval_frame(ModelState* s, VisionBuf* buf, VisionBuf* wbuf,
 }
 
 void model_free(ModelState* s) {
-  delete s->frame;
+  if( s->frame )
+    delete s->frame;
+
+  if( s->wide_frame )
+    delete s->wide_frame;
 }
 
 void fill_lead(cereal::ModelDataV2::LeadDataV3::Builder lead, const ModelOutputLeads &leads, int t_idx, float prob_t) {
