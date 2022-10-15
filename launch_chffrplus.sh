@@ -183,6 +183,7 @@ function launch {
      ./manager.py
   else
      ./build.py && ./manager.py
+  fi
 
   # if broken, keep on screen error
   while true; do sleep 1; done
