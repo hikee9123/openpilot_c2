@@ -1,23 +1,26 @@
 import os
 import time
 from abc import abstractmethod, ABC
-from typing import Dict, Tuple, List
+from typing import Any, Dict, Optional, Tuple, List, Callable
 
 from cereal import car
+from common.conversions import Conversions as CV
 from common.kalman.simple_kalman import KF1D
+from common.numpy_fast import interp
 from common.realtime import DT_CTRL
 from selfdrive.car import gen_empty_fingerprint
-from common.conversions import Conversions as CV
-from selfdrive.controls.lib.drive_helpers import V_CRUISE_MAX
+from selfdrive.controls.lib.drive_helpers import V_CRUISE_MAX, apply_deadzone
 from selfdrive.controls.lib.events import Events
 from selfdrive.controls.lib.vehicle_model import VehicleModel
 
 GearShifter = car.CarState.GearShifter
 EventName = car.CarEvent.EventName
+TorqueFromLateralAccelCallbackType = Callable[[float, car.CarParams.LateralTorqueTuning, float, float, bool], float]
 
 MAX_CTRL_SPEED = (V_CRUISE_MAX + 4) * CV.KPH_TO_MS
 ACCEL_MAX = 2.0
 ACCEL_MIN = -3.5
+FRICTION_THRESHOLD = 0.2
 
 
 # generic car and radar interfaces
@@ -55,8 +58,17 @@ class CarInterfaceBase(ABC):
 
   @staticmethod
   @abstractmethod
-  def get_params(candidate, fingerprint=gen_empty_fingerprint(), car_fw=None, disable_radar=False):
+  def get_params(candidate, fingerprint=gen_empty_fingerprint(), car_fw=None, experimental_long=False):
     pass
+
+
+  @staticmethod
+  def get_tunning_params( tune ):
+    pass
+
+  @staticmethod
+  def get_normal_params( version, CP ):
+    pass  
 
   @staticmethod
   def init(CP, logcan, sendcan):
@@ -71,16 +83,35 @@ class CarInterfaceBase(ABC):
   def get_steer_feedforward_function(self):
     return self.get_steer_feedforward_default
 
+  @staticmethod
+  def torque_from_lateral_accel_linear(lateral_accel_value, torque_params, lateral_accel_error, lateral_accel_deadzone, friction_compensation):
+    # The default is a linear relationship between torque and lateral acceleration (accounting for road roll and steering friction)
+    friction_interp = interp(
+      apply_deadzone(lateral_accel_error, lateral_accel_deadzone),
+      [-FRICTION_THRESHOLD, FRICTION_THRESHOLD],
+      [-torque_params.friction, torque_params.friction]
+    )
+    friction = friction_interp if friction_compensation else 0.0
+    return (lateral_accel_value / torque_params.latAccelFactor) + friction
+
+  def torque_from_lateral_accel(self) -> TorqueFromLateralAccelCallbackType:
+    return self.torque_from_lateral_accel_linear
+
   # returns a set of default params to avoid repetition in car specific params
   @staticmethod
   def get_std_params(candidate, fingerprint):
     ret = car.CarParams.new_message()
     ret.carFingerprint = candidate
 
+   # Car docs fields
+    #ret.maxLateralAccel = get_torque_params(candidate)['MAX_LAT_ACCEL_MEASURED']
+    #ret.autoResumeSng = True  # describes whether car can resume from a stop automatically
+
     # standard ALC params
     ret.steerControlType = car.CarParams.SteerControlType.torque
     ret.minSteerSpeed = 0.
     ret.wheelSpeedFactor = 1.0
+    ret.maxLateralAccel = float('nan')
 
     ret.pcmCruise = True     # openpilot's state is tied to the PCM's cruise state on most cars
     ret.minEnableSpeed = -1. # enable is done by stock ACC, so ignore this
@@ -102,7 +133,20 @@ class CarInterfaceBase(ABC):
     ret.longitudinalActuatorDelayLowerBound = 0.15
     ret.longitudinalActuatorDelayUpperBound = 0.15
     ret.steerLimitTimer = 1.0
+    ret.maxLateralAccel = 3.0    
     return ret
+
+  @staticmethod
+  def configure_torque_tune(candidate, tune, steering_angle_deadzone_deg=0.0, use_steering_angle=True):
+    tune.init('torque')
+    tune.torque.useSteeringAngle = use_steering_angle
+    tune.torque.kp = 1.0
+    tune.torque.kf = 1.0
+    tune.torque.ki = 0.1
+    tune.torque.friction = 2.9
+    tune.torque.latAccelFactor = 0
+    tune.torque.latAccelOffset = 0.0
+    tune.torque.steeringAngleDeadzoneDeg = steering_angle_deadzone_deg
 
   @abstractmethod
   def _update(self, c: car.CarControl) -> car.CarState:
@@ -131,7 +175,7 @@ class CarInterfaceBase(ABC):
   def apply(self, c: car.CarControl) -> Tuple[car.CarControl.Actuators, List[bytes]]:
     pass
 
-  def create_common_events(self, cs_out, extra_gears=None, pcm_enable=True):
+  def create_common_events(self, cs_out, extra_gears=None, pcm_enable=True, allow_enable=True):
     events = Events()
 
     if cs_out.doorOpen:
@@ -159,24 +203,29 @@ class CarInterfaceBase(ABC):
       events.add(EventName.brakeHold)
     if cs_out.parkingBrake:
       events.add(EventName.parkBrake)
+    if cs_out.accFaulted:
+      events.add(EventName.accFaulted)
+    if cs_out.steeringPressed:
+      events.add(EventName.steerOverride)      
 
     # Handle permanent and temporary steering faults
     self.steering_unpressed = 0 if cs_out.steeringPressed else self.steering_unpressed + 1
     if cs_out.steerFaultTemporary:
       # if the user overrode recently, show a less harsh alert
-      #if self.silent_steer_warning or cs_out.standstill or self.steering_unpressed < int(1.5 / DT_CTRL):
-      self.silent_steer_warning = True
-      events.add(EventName.steerTempUnavailableSilent)
-      #else:
-      #  events.add(EventName.steerTempUnavailable)
+      if self.silent_steer_warning or cs_out.standstill or self.steering_unpressed < int(1.5 / DT_CTRL):
+        self.silent_steer_warning = True
+        events.add(EventName.steerTempUnavailableSilent)
+      else:
+        events.add(EventName.steerTempUnavailable)
     else:
       self.silent_steer_warning = False
     if cs_out.steerFaultPermanent:
       events.add(EventName.steerUnavailable)
 
     # we engage when pcm is active (rising edge)
+    # enabling can optionally be blocked by the car interface
     if pcm_enable:
-      if cs_out.cruiseState.enabled and not self.CS.out.cruiseState.enabled:
+      if cs_out.cruiseState.enabled and not self.CS.out.cruiseState.enabled and allow_enable:
         events.add(EventName.pcmEnable)
       elif not cs_out.cruiseState.enabled:
         events.add(EventName.pcmDisable)
@@ -186,6 +235,7 @@ class CarInterfaceBase(ABC):
 
 class RadarInterfaceBase(ABC):
   def __init__(self, CP):
+    self.rcp = None
     self.pts = {}
     self.delay = 0
     self.radar_ts = CP.radarTimeStep
@@ -210,12 +260,12 @@ class CarStateBase(ABC):
     self.left_blinker_prev = False
     self.right_blinker_prev = False
 
-    # Q = np.matrix([[10.0, 0.0], [0.0, 100.0]])
-    # R = 1e3
+    # Q = np.matrix([[0.0, 0.0], [0.0, 100.0]])
+    # R = 0.3
     self.v_ego_kf = KF1D(x0=[[0.0], [0.0]],
                          A=[[1.0, DT_CTRL], [0.0, 1.0]],
                          C=[1.0, 0.0],
-                         K=[[0.12287673], [0.29666309]])
+                         K=[[0.17406039], [1.65925647]])
 
   def update_speed_kf(self, v_ego_raw):
     if abs(v_ego_raw - self.v_ego_kf.x[0][0]) > 2.0:  # Prevent large accelerations when car starts at non zero speed
@@ -266,13 +316,22 @@ class CarStateBase(ABC):
     return bool(left_blinker_stalk or self.left_blinker_cnt > 0), bool(right_blinker_stalk or self.right_blinker_cnt > 0)
 
   @staticmethod
-  def parse_gear_shifter(gear: str) -> car.CarState.GearShifter:
+  def parse_gear_shifter(gear: Optional[str]) -> car.CarState.GearShifter:
+    if gear is None:
+      return GearShifter.unknown
+
     d: Dict[str, car.CarState.GearShifter] = {
-        'P': GearShifter.park, 'R': GearShifter.reverse, 'N': GearShifter.neutral,
-        'E': GearShifter.eco, 'T': GearShifter.manumatic, 'D': GearShifter.drive,
-        'S': GearShifter.sport, 'L': GearShifter.low, 'B': GearShifter.brake
+        'P': GearShifter.park, 'PARK': GearShifter.park,
+        'R': GearShifter.reverse, 'REVERSE': GearShifter.reverse,
+        'N': GearShifter.neutral, 'NEUTRAL': GearShifter.neutral,
+        'E': GearShifter.eco, 'ECO': GearShifter.eco,
+        'T': GearShifter.manumatic, 'MANUAL': GearShifter.manumatic,
+        'D': GearShifter.drive, 'DRIVE': GearShifter.drive,
+        'S': GearShifter.sport, 'SPORT': GearShifter.sport,
+        'L': GearShifter.low, 'LOW': GearShifter.low,
+        'B': GearShifter.brake, 'BRAKE': GearShifter.brake,
     }
-    return d.get(gear, GearShifter.unknown)
+    return d.get(gear.upper(), GearShifter.unknown)
 
   @staticmethod
   def get_cam_can_parser(CP):

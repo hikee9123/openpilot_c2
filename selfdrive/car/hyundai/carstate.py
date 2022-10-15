@@ -3,7 +3,7 @@ from cereal import car
 from common.conversions import Conversions as CV
 from opendbc.can.parser import CANParser
 from opendbc.can.can_define import CANDefine
-from selfdrive.car.hyundai.values import DBC, STEER_THRESHOLD, FEATURES, EV_CAR, HYBRID_CAR, Buttons
+from selfdrive.car.hyundai.values import DBC, FEATURES, EV_CAR, HYBRID_CAR, Buttons, CarControllerParams
 from selfdrive.car.interfaces import CarStateBase
 
 
@@ -26,6 +26,10 @@ class CarState(CarStateBase):
     else:  # preferred and elect gear methods use same definition
       self.shifter_values = can_define.dv["LVR12"]["CF_Lvr_Gear"]
 
+    self.brake_error = False
+    self.buttons_counter = 0
+    self.params = CarControllerParams(CP)
+
     # atom
     self.cruise_buttons = 0
     self.cruise_buttons_time = 0
@@ -39,7 +43,7 @@ class CarState(CarStateBase):
     self.prev_acc_set_btn = False
     self.acc_active = 0
     self.cruise_set_speed_kph = 0
-    self.cruise_set_mode = 1     # 모드 설정.
+    self.cruise_set_mode = 0     # 모드 설정.
     self.gasPressed = False
     self.aReqValue = 0
 
@@ -188,6 +192,8 @@ class CarState(CarStateBase):
   def update(self, cp, cp_cam, c):
     ret = car.CarState.new_message()
 
+    cp_cruise = cp
+
     ret.doorOpen = any([cp.vl["CGW1"]["CF_Gway_DrvDrSw"], cp.vl["CGW1"]["CF_Gway_AstDrSw"],
                         cp.vl["CGW2"]["CF_Gway_RLDrSw"], cp.vl["CGW2"]["CF_Gway_RRDrSw"]])
 
@@ -211,7 +217,7 @@ class CarState(CarStateBase):
       50, cp.vl["CGW1"]["CF_Gway_TurnSigLh"], cp.vl["CGW1"]["CF_Gway_TurnSigRh"])
     ret.steeringTorque = cp.vl["MDPS12"]["CR_Mdps_StrColTq"]
     ret.steeringTorqueEps = cp.vl["MDPS12"]["CR_Mdps_OutTq"]
-    ret.steeringPressed = abs(ret.steeringTorque) > STEER_THRESHOLD
+    ret.steeringPressed = abs(ret.steeringTorque) > self.params.STEER_THRESHOLD
     ret.steerFaultTemporary = cp.vl["MDPS12"]["CF_Mdps_ToiUnavail"] != 0 or cp.vl["MDPS12"]["CF_Mdps_ToiFlt"] != 0
 
     self.clu_Vanz = cp.vl["CLU11"]["CF_Clu_Vanz"]  #kph  현재 차량의 속도.
@@ -224,21 +230,18 @@ class CarState(CarStateBase):
       ret.cruiseState.enabled = cp.vl["TCS13"]["ACC_REQ"] == 1
       ret.cruiseState.standstill = False
     else:
-      self.VSetDis = cp.vl["SCC11"]["VSetDis"]   # kph   크루즈 설정 속도.      
-      self.acc_active = (cp.vl["SCC12"]['ACCMode'] != 0)      
+      self.VSetDis = cp_cruise.vl["SCC11"]["VSetDis"]   # kph   크루즈 설정 속도.      
+      self.acc_active = (cp_cruise.vl["SCC12"]['ACCMode'] != 0)      
       ret.cruiseState.accActive = self.acc_active
       ret.cruiseState.gapSet = cp.vl["SCC11"]['TauGapSet']
       ret.cruiseState.cruiseSwState = self.cruise_buttons
       ret.cruiseState.modeSel = self.cruise_set_mode
 
 
-      self.cruise_available = cp.vl["SCC11"]["MainMode_ACC"] == 1
-      self.acc_mode = cp.vl["SCC12"]["ACCMode"] != 0
-      if self.cruise_set_mode == 4:
-        ret.cruiseState.available = False
-      else:
-        ret.cruiseState.available = self.cruise_available
-      ret.cruiseState.standstill = cp.vl["SCC11"]["SCCInfoDisplay"] == 4.
+      self.cruise_available = cp_cruise.vl["SCC11"]["MainMode_ACC"] == 1
+      self.acc_mode = cp_cruise.vl["SCC12"]["ACCMode"] != 0
+      ret.cruiseState.available = self.cruise_available
+      ret.cruiseState.standstill = cp_cruise.vl["SCC11"]["SCCInfoDisplay"] == 4.
 
 
       set_speed = self.cruise_speed_button()
@@ -285,11 +288,11 @@ class CarState(CarStateBase):
 
     if not self.CP.openpilotLongitudinalControl:
       if self.CP.carFingerprint in FEATURES["use_fca"]:
-        ret.stockAeb = cp.vl["FCA11"]["FCA_CmdAct"] != 0
-        ret.stockFcw = cp.vl["FCA11"]["CF_VSM_Warn"] == 2
+        ret.stockAeb = cp_cruise.vl["FCA11"]["FCA_CmdAct"] != 0
+        ret.stockFcw = cp_cruise.vl["FCA11"]["CF_VSM_Warn"] == 2
       else:
-        ret.stockAeb = cp.vl["SCC12"]["AEB_CmdAct"] != 0
-        ret.stockFcw = cp.vl["SCC12"]["CF_VSM_Warn"] == 2
+        ret.stockAeb = cp_cruise.vl["SCC12"]["AEB_CmdAct"] != 0
+        ret.stockFcw = cp_cruise.vl["SCC12"]["CF_VSM_Warn"] == 2
 
     if self.CP.enableBsm:
       ret.leftBlindspot = cp.vl["LCA11"]["CF_Lca_IndLeft"] != 0
@@ -318,7 +321,7 @@ class CarState(CarStateBase):
   @staticmethod
   def get_can_parser(CP):
     signals = [
-      # sig_name, sig_address
+      # signal_name, signal_address
       ("WHL_SPD_FL", "WHL_SPD11"),
       ("WHL_SPD_FR", "WHL_SPD11"),
       ("WHL_SPD_RL", "WHL_SPD11"),
@@ -330,9 +333,9 @@ class CarState(CarStateBase):
 
       ("CF_Gway_DrvSeatBeltSw", "CGW1"),
       ("CF_Gway_DrvDrSw", "CGW1"),       # Driver Door
-      ("CF_Gway_AstDrSw", "CGW1"),       # Passenger door
-      ("CF_Gway_RLDrSw", "CGW2"),        # Rear reft door
-      ("CF_Gway_RRDrSw", "CGW2"),        # Rear right door
+      ("CF_Gway_AstDrSw", "CGW1"),       # Passenger Door
+      ("CF_Gway_RLDrSw", "CGW2"),        # Rear left Door
+      ("CF_Gway_RRDrSw", "CGW2"),        # Rear right Door
       ("CF_Gway_TurnSigLh", "CGW1"),
       ("CF_Gway_TurnSigRh", "CGW1"),
       ("CF_Gway_ParkBrakeSw", "CGW1"),
@@ -351,6 +354,8 @@ class CarState(CarStateBase):
       ("CF_Clu_CluInfo", "CLU11"),
       ("CF_Clu_AmpInfo", "CLU11"),
       ("CF_Clu_AliveCnt1", "CLU11"),
+
+      ("CF_Clu_VehicleSpeed", "CLU15"),
 
       ("ACCEnable", "TCS13"),
       ("ACC_REQ", "TCS13"),
@@ -398,6 +403,7 @@ class CarState(CarStateBase):
       ("TCS13", 50),
       ("TCS15", 10),
       ("CLU11", 50),
+      ("CLU15", 5),
       ("ESP12", 100),
       ("CGW1", 10),
       ("CGW2", 5),
@@ -526,7 +532,7 @@ class CarState(CarStateBase):
   @staticmethod
   def get_cam_can_parser(CP):
     signals = [
-      # sig_name, sig_address
+      # signal_name, signal_address
       ("CF_Lkas_LdwsActivemode", "LKAS11"),
       ("CF_Lkas_LdwsSysState", "LKAS11"),
       ("CF_Lkas_SysWarning", "LKAS11"),

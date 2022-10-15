@@ -11,21 +11,21 @@ class CarController():
     self.CP = CP
     self.apply_steer_last = 0
     self.packer = CANPacker(dbc_name)
-    self.steer_rate_limited = False
+
     self.brake_counter = 0
 
   def update(self, c, CS, frame):
     can_sends = []
 
     apply_steer = 0
-    self.steer_rate_limited = False
+
 
     if c.latActive:
       # calculate steer and also set limits due to driver torque
       new_steer = int(round(c.actuators.steer * CarControllerParams.STEER_MAX))
       apply_steer = apply_std_steer_torque_limits(new_steer, self.apply_steer_last,
                                                   CS.out.steeringTorque, CarControllerParams)
-      self.steer_rate_limited = new_steer != apply_steer
+      #self.steer_rate_limited = new_steer != apply_steer
 
       if CS.out.standstill and frame % 5 == 0:
         # Mazda Stop and Go requires a RES button (or gas) press if the car stops more than 3 seconds

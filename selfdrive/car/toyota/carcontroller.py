@@ -19,7 +19,6 @@ class CarController:
     self.alert_active = False
     self.last_standstill = False
     self.standstill_req = False
-    self.steer_rate_limited = False
 
     self.packer = CANPacker(dbc_name)
     self.gas = 0
@@ -51,7 +50,7 @@ class CarController:
     # steer torque
     new_steer = int(round(actuators.steer * CarControllerParams.STEER_MAX))
     apply_steer = apply_toyota_steer_torque_limits(new_steer, self.last_steer, CS.out.steeringTorqueEps, CarControllerParams)
-    self.steer_rate_limited = new_steer != apply_steer
+    #self.steer_rate_limited = new_steer != apply_steer
 
     # Cut steering while we're in a known fault state (2s)
     if not CC.latActive or CS.steer_state in (9, 25):

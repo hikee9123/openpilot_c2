@@ -59,7 +59,7 @@ class CarInterface(CarInterfaceBase):
     # LCA can steer down to zero
     ret.minSteerSpeed = 0.
 
-    ret.steerRateCost = 1.0
+    #ret.steerRateCost = 1.0
     ret.centerToFront = ret.wheelbase * 0.44
 
     ret.rotationalInertia = scale_rot_inertia(ret.mass, ret.wheelbase)
@@ -71,7 +71,7 @@ class CarInterface(CarInterfaceBase):
   def _update(self, c):
     ret = self.CS.update(self.cp, self.cp_cam)
 
-    ret.steeringRateLimited = self.CC.steer_rate_limited if self.CC is not None else False
+    #ret.steeringRateLimited = self.CC.steer_rate_limited if self.CC is not None else False
 
     events = self.create_common_events(ret)
     ret.events = events.to_msg()

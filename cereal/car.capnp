@@ -116,12 +116,13 @@ struct CarEvent @0x9b1657f34caf3ad3 {
     controlsdLagging @118;
     resumeBlocked @119;
 
+
+
     # osm
-    curvSpeedEntering @114;
-    curvSpeedTurning @115;
-    curvSpeedLeaving @116;
-
-
+    curvSpeedEnteringDEPRECATED @114;
+    curvSpeedTurningDEPRECATED @115;
+    curvSpeedLeavingDEPRECATED @116;
+    
     radarCanErrorDEPRECATED @15;
     communityFeatureDisallowedDEPRECATED @62;
     radarCommIssueDEPRECATED @67;
@@ -287,7 +288,7 @@ struct CarState {
 
   errorsDEPRECATED @0 :List(CarEvent.EventName);
   brakeLightsDEPRECATED @19 :Bool;
-  steeringRateLimited @29 :Bool;   # if the torque is limited by the rate limiter  
+  steeringRateLimitedDEPRECATED @29 :Bool;   # if the torque is limited by the rate limiter  
 }
 
 # ******* radar state @ 20hz *******

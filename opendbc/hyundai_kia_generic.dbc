@@ -1516,6 +1516,7 @@ BO_ 865 ADAS_PRK_11: 8 ADAS_PRK
 BO_ 882 ELECT_GEAR: 8 XXX
  SG_ Elect_Gear_Shifter : 16|4@1+ (1,0) [0|7] ""  CLU
  SG_ Elect_Gear_Step : 22|3@0+ (1,0) [0|7] "" XXX
+ SG_ Elect_Motor_Speed : 0|8@1+ (1,0) [0|255] "" XXX
 
 BO_ 881 E_EMS11: 8 XXX
  SG_ Brake_Pedal_Pos : 0|8@1+ (1,0) [0|127] "" XXX
@@ -1530,6 +1531,7 @@ BO_ 881 E_EMS11: 8 XXX
 
 BO_ 1355 EV_PC6: 8 CGW
  SG_ CF_Vcu_SbwWarnMsg : 16|3@1+ (1,0) [0|7] "" Vector__XXX
+ SG_ CF_Vcu_ChargeMeter : 33|8@0+ (1,0) [0|255] "" XXX
 
 BO_ 1430 EV_PC2: 8 CGW
  SG_ CR_Ldc_ActVol_LS_V : 32|8@1+ (0.1,0) [0|0] "V" Vector__XXX
@@ -1649,7 +1651,7 @@ CM_ "BO_ E_EMS11: All (plug-in) hybrids use this gas signal: CR_Vcu_AccPedDep_Po
 CM_ SG_ 1348 SpeedLim_Nav_Clu "Speed limit displayed on Nav, Cluster and HUD";
 
 VAL_ 274 CUR_GR 1 "D" 2 "D" 3 "D" 4 "D" 5 "D" 6 "D" 7 "D" 8 "D" 14 "R" 0 "P";
-VAL_ 871 CF_Lvr_Gear 5 "D" 8 "S" 6 "N" 7 "R" 0 "P";
+VAL_ 871 CF_Lvr_Gear 12 "T" 5 "D" 8 "S" 6 "N" 7 "R" 0 "P";
 VAL_ 882 Elect_Gear_Shifter 5 "D" 8 "S" 6 "N" 7 "R" 0 "P";
 VAL_ 905 ACCMode 0 "off" 1 "enabled" 2 "driver_override" 3 "off_maybe_fault" 4 "cancelled";
 VAL_ 909 CF_VSM_Warn 2 "FCW" 3 "AEB";

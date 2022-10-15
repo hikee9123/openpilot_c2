@@ -22,7 +22,7 @@ class CarInterface(CarInterfaceBase):
 
     ret.dashcamOnly = candidate in PREGLOBAL_CARS
 
-    ret.steerRateCost = 0.7
+    #ret.steerRateCost = 0.7
     ret.steerLimitTimer = 0.4
 
     if candidate == CAR.ASCENT:
@@ -111,7 +111,7 @@ class CarInterface(CarInterfaceBase):
 
     ret = self.CS.update(self.cp, self.cp_cam)
 
-    ret.steeringRateLimited = self.CC.steer_rate_limited if self.CC is not None else False
+    #ret.steeringRateLimited = self.CC.steer_rate_limited if self.CC is not None else False
 
     ret.events = self.create_common_events(ret).to_msg()
 
