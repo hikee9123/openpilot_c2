@@ -142,7 +142,7 @@ class Controls:
     # cleanup old params
     if not self.CP.experimentalLongitudinalAvailable:
       params.remove("EndToEndLong")
-      params.remove("ExperimentalLongitudinalEnabled")
+      # params.remove("ExperimentalLongitudinalEnabled")
 
     self.CC = car.CarControl.new_message()
     self.CS_prev = car.CarState.new_message()
@@ -798,11 +798,11 @@ class Controls:
       CC.actuatorsOutput = self.last_actuators
       self.steer_limited = abs(CC.actuators.steer - CC.actuatorsOutput.steer) > 1e-2      
 
-    if self.drivermonitor:
-      force_decel = (self.sm['driverMonitoringState'].awarenessStatus < 0.) or \
-                    (self.state == State.softDisabling)
-    else:
-      force_decel = False
+    #if self.drivermonitor:
+    force_decel = (self.sm['driverMonitoringState'].awarenessStatus < 0.) or \
+                  (self.state == State.softDisabling)
+    #else:
+    #  force_decel = False
 
     # Curvature & Steering angle
     params = self.sm['liveParameters']
