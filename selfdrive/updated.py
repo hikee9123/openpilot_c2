@@ -42,7 +42,7 @@ from common.params import Params
 from system.hardware import  EON, TICI, HARDWARE
 from system.swaglog import cloudlog
 from selfdrive.controls.lib.alertmanager import set_offroad_alert
-from selfdrive.version import is_tested_branch
+from system.version import is_tested_branch
 
 LOCK_FILE = os.getenv("UPDATER_LOCK_FILE", "/tmp/safe_staging_overlay.lock")
 STAGING_ROOT = os.getenv("UPDATER_STAGING_ROOT", "/data/safe_staging")
