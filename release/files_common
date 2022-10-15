@@ -58,8 +58,7 @@ common/transformations/transformations.pyx
 
 common/api/__init__.py
 
-models/supercombo.dlc
-models/dmonitoring_model_q.dlc
+
 
 release/*
 
@@ -67,12 +66,13 @@ tools/lib/*
 
 installer/updater/updater
 
-selfdrive/version.py
 
 selfdrive/__init__.py
 selfdrive/sentry.py
 system/swaglog.py
-selfdrive/logmessaged.py
+system/logmessaged.py
+system/version.py
+
 selfdrive/tombstoned.py
 selfdrive/updated.py
 selfdrive/rtshield.py
@@ -296,6 +296,7 @@ selfdrive/locationd/models/constants.py
 selfdrive/locationd/models/live_kf.h
 selfdrive/locationd/models/live_kf.cc
 
+selfdrive/locationd/torqued.py
 selfdrive/locationd/calibrationd.py
 
 system/logcatd/SConscript
@@ -355,6 +356,7 @@ selfdrive/ui/soundd/*.cc
 selfdrive/ui/soundd/*.h
 selfdrive/ui/soundd/soundd
 selfdrive/ui/soundd/.gitignore
+selfdrive/ui/translations/*
 
 selfdrive/ui/qt/*.cc
 selfdrive/ui/qt/*.h
@@ -416,6 +418,8 @@ selfdrive/modeld/models/driving.cc
 selfdrive/modeld/models/driving.h
 selfdrive/modeld/models/dmonitoring.cc
 selfdrive/modeld/models/dmonitoring.h
+selfdrive/modeld/models/supercombo.dlc
+selfdrive/modeld/models/dmonitoring_model_q.dlc
 
 selfdrive/modeld/transforms/loadyuv.cc
 selfdrive/modeld/transforms/loadyuv.h
