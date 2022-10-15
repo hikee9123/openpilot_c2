@@ -10,7 +10,7 @@
 #include <QMessageBox>
 #include <QProcess>
 
-#include "selfdrive/hardware/hw.h"
+#include "system/hardware/hw.h"
 #include "selfdrive/ui/qt/widgets/controls.h"
 #include "selfdrive/ui/ui.h"
 

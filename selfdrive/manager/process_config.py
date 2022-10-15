@@ -1,6 +1,6 @@
 import os
 
-from selfdrive.hardware import EON, TICI, PC
+from system.hardware import EON, TICI, PC
 from selfdrive.manager.process import PythonProcess, NativeProcess, DaemonProcess
 
 WEBCAM = os.getenv("USE_WEBCAM") is not None
@@ -8,14 +8,14 @@ WEBCAM = os.getenv("USE_WEBCAM") is not None
 procs = [
   DaemonProcess("manage_athenad", "selfdrive.athena.manage_athenad", "AthenadPid"),
   # due to qualcomm kernel bugs SIGKILLing camerad sometimes causes page table corruption
-  NativeProcess("camerad", "selfdrive/camerad", ["./camerad"], unkillable=True, driverview=True),
-  NativeProcess("clocksd", "selfdrive/clocksd", ["./clocksd"]),
+  NativeProcess("camerad", "system/camerad", ["./camerad"], unkillable=True, driverview=True),
+  NativeProcess("clocksd", "system/clocksd", ["./clocksd"]),
   NativeProcess("dmonitoringmodeld", "selfdrive/modeld", ["./dmonitoringmodeld"], enabled=(not PC or WEBCAM), driverview=True),
-  NativeProcess("logcatd", "selfdrive/logcatd", ["./logcatd"]),
+  NativeProcess("logcatd", "system/logcatd", ["./logcatd"]),
   NativeProcess("loggerd", "selfdrive/loggerd", ["./loggerd"]),
   NativeProcess("modeld", "selfdrive/modeld", ["./modeld"]),
   NativeProcess("navd", "selfdrive/ui/navd", ["./navd"], enabled=(PC or TICI), persistent=True),
-  NativeProcess("proclogd", "selfdrive/proclogd", ["./proclogd"]),
+  NativeProcess("proclogd", "system/proclogd", ["./proclogd"]),
   NativeProcess("sensord", "selfdrive/sensord", ["./sensord"], enabled=not PC, persistent=EON, sigkill=EON),
   NativeProcess("ubloxd", "selfdrive/locationd", ["./ubloxd"], enabled=(not PC or WEBCAM)),
   NativeProcess("ui", "selfdrive/ui", ["./ui"], persistent=True, watchdog_max_dt=(5 if TICI else None)),
@@ -41,8 +41,8 @@ procs = [
 
   # EON only
   PythonProcess("rtshield", "selfdrive.rtshield", enabled=EON),
-  PythonProcess("shutdownd", "selfdrive.hardware.eon.shutdownd", enabled=EON),
-  PythonProcess("androidd", "selfdrive.hardware.eon.androidd", enabled=EON, persistent=True),
+  PythonProcess("shutdownd", "system.hardware.eon.shutdownd", enabled=EON),
+  PythonProcess("androidd", "system.hardware.eon.androidd", enabled=EON, persistent=True),
 
   # Experimental
   PythonProcess("rawgpsd", "selfdrive.sensord.rawgps.rawgpsd", enabled=os.path.isfile("/persist/comma/use-quectel-rawgps")),

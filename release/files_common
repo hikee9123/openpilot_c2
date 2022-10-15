@@ -71,7 +71,7 @@ selfdrive/version.py
 
 selfdrive/__init__.py
 selfdrive/sentry.py
-selfdrive/swaglog.py
+system/swaglog.py
 selfdrive/logmessaged.py
 selfdrive/tombstoned.py
 selfdrive/updated.py
@@ -190,9 +190,9 @@ selfdrive/car/tesla/carstate.py
 selfdrive/car/tesla/interface.py
 selfdrive/car/mock/*.py
 
-selfdrive/clocksd/.gitignore
-selfdrive/clocksd/SConscript
-selfdrive/clocksd/clocksd.cc
+system/clocksd/.gitignore
+system/clocksd/SConscript
+system/clocksd/clocksd.cc
 
 selfdrive/debug/*.py
 
@@ -256,24 +256,24 @@ selfdrive/controls/lib/longitudinal_mpc_lib/.gitignore
 selfdrive/controls/lib/lateral_mpc_lib/*
 selfdrive/controls/lib/longitudinal_mpc_lib/*
 
-selfdrive/hardware/__init__.py
-selfdrive/hardware/base.h
-selfdrive/hardware/base.py
-selfdrive/hardware/hw.h
-selfdrive/hardware/eon/__init__.py
-selfdrive/hardware/eon/androidd.py
-selfdrive/hardware/eon/shutdownd.py
-selfdrive/hardware/eon/hardware.h
-selfdrive/hardware/eon/hardware.py
-selfdrive/hardware/eon/neos.py
-selfdrive/hardware/eon/neos.json
-selfdrive/hardware/eon/updater
-selfdrive/hardware/tici/__init__.py
-selfdrive/hardware/tici/hardware.py
-selfdrive/hardware/tici/amplifier.py
-selfdrive/hardware/tici/iwlist.py
-selfdrive/hardware/pc/__init__.py
-selfdrive/hardware/pc/hardware.py
+system/hardware/__init__.py
+system/hardware/base.h
+system/hardware/base.py
+system/hardware/hw.h
+system/hardware/eon/__init__.py
+system/hardware/eon/androidd.py
+system/hardware/eon/shutdownd.py
+system/hardware/eon/hardware.h
+system/hardware/eon/hardware.py
+system/hardware/eon/neos.py
+system/hardware/eon/neos.json
+system/hardware/eon/updater
+system/hardware/tici/__init__.py
+system/hardware/tici/hardware.py
+system/hardware/tici/amplifier.py
+system/hardware/tici/iwlist.py
+system/hardware/pc/__init__.py
+system/hardware/pc/hardware.py
 
 selfdrive/locationd/__init__.py
 selfdrive/locationd/.gitignore
@@ -298,14 +298,14 @@ selfdrive/locationd/models/live_kf.cc
 
 selfdrive/locationd/calibrationd.py
 
-selfdrive/logcatd/SConscript
-selfdrive/logcatd/logcatd_android.cc
-selfdrive/logcatd/logcatd_systemd.cc
+system/logcatd/SConscript
+system/logcatd/logcatd_android.cc
+system/logcatd/logcatd_systemd.cc
 
-selfdrive/proclogd/SConscript
-selfdrive/proclogd/main.cc
-selfdrive/proclogd/proclog.cc
-selfdrive/proclogd/proclog.h
+system/proclogd/SConscript
+system/proclogd/main.cc
+system/proclogd/proclog.cc
+system/proclogd/proclog.h
 
 selfdrive/loggerd/SConscript
 selfdrive/loggerd/encoder.h
@@ -369,30 +369,30 @@ selfdrive/ui/qt/text_aarch64
 selfdrive/ui/replay/*.cc
 selfdrive/ui/replay/*.h
 
-selfdrive/camerad/SConscript
-selfdrive/camerad/main.cc
+system/camerad/SConscript
+system/camerad/main.cc
 
-selfdrive/camerad/snapshot/*
-selfdrive/camerad/include/*
-selfdrive/camerad/cameras/camera_common.h
-selfdrive/camerad/cameras/camera_common.cc
-selfdrive/camerad/cameras/camera_qcom.cc
-selfdrive/camerad/cameras/camera_qcom.h
-selfdrive/camerad/cameras/camera_replay.cc
-selfdrive/camerad/cameras/camera_replay.h
-selfdrive/camerad/cameras/debayer.cl
-selfdrive/camerad/cameras/sensor_i2c.h
-selfdrive/camerad/cameras/sensor2_i2c.h
+system/camerad/snapshot/*
+system/camerad/include/*
+system/camerad/cameras/camera_common.h
+system/camerad/cameras/camera_common.cc
+system/camerad/cameras/camera_qcom.cc
+system/camerad/cameras/camera_qcom.h
+system/camerad/cameras/camera_replay.cc
+system/camerad/cameras/camera_replay.h
+system/camerad/cameras/debayer.cl
+system/camerad/cameras/sensor_i2c.h
+system/camerad/cameras/sensor2_i2c.h
 
-selfdrive/camerad/transforms/rgb_to_yuv.cc
-selfdrive/camerad/transforms/rgb_to_yuv.h
-selfdrive/camerad/transforms/rgb_to_yuv.cl
-selfdrive/camerad/transforms/rgb_to_yuv_test.cc
+system/camerad/transforms/rgb_to_yuv.cc
+system/camerad/transforms/rgb_to_yuv.h
+system/camerad/transforms/rgb_to_yuv.cl
+system/camerad/transforms/rgb_to_yuv_test.cc
 
-selfdrive/camerad/imgproc/conv.cl
-selfdrive/camerad/imgproc/pool.cl
-selfdrive/camerad/imgproc/utils.cc
-selfdrive/camerad/imgproc/utils.h
+system/camerad/imgproc/conv.cl
+system/camerad/imgproc/pool.cl
+system/camerad/imgproc/utils.cc
+system/camerad/imgproc/utils.h
 
 selfdrive/manager/__init__.py
 selfdrive/manager/build.py

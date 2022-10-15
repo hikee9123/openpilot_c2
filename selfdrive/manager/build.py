@@ -10,8 +10,8 @@ from pathlib import Path
 from common.basedir import BASEDIR
 from common.spinner import Spinner
 from common.text_window import TextWindow
-from selfdrive.hardware import TICI
-from selfdrive.swaglog import cloudlog, add_file_handler
+from system.hardware import TICI
+from system.swaglog import cloudlog, add_file_handler
 from selfdrive.version import is_dirty
 
 MAX_CACHE_SIZE = 4e9 if "CI" in os.environ else 2e9

@@ -15,7 +15,7 @@ from common.basedir import BASEDIR
 from common.timeout import Timeout
 from common.params import Params
 from selfdrive.controls.lib.events import EVENTS, ET
-from selfdrive.hardware import EON, TICI
+from system.hardware import EON, TICI
 from selfdrive.loggerd.config import ROOT
 from selfdrive.test.helpers import set_params_enabled, release_only
 from tools.lib.logreader import LogReader
@@ -48,8 +48,8 @@ PROCS = {
 
 if EON:
   PROCS.update({
-    "selfdrive.hardware.eon.androidd": 0.4,
-    "selfdrive.hardware.eon.shutdownd": 0.4,
+    "system.hardware.eon.androidd": 0.4,
+    "system.hardware.eon.shutdownd": 0.4,
   })
 
 if TICI:

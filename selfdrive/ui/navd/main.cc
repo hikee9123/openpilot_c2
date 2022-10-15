@@ -8,7 +8,7 @@
 #include "selfdrive/ui/qt/maps/map_helpers.h"
 #include "selfdrive/ui/navd/route_engine.h"
 #include "selfdrive/ui/navd/map_renderer.h"
-#include "selfdrive/hardware/hw.h"
+#include "system/hardware/hw.h"
 #include "selfdrive/common/params.h"
 
 void sigHandler(int s) {

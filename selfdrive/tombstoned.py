@@ -10,10 +10,10 @@ import glob
 from typing import NoReturn
 
 from common.file_helpers import mkdirs_exists_ok
-from selfdrive.hardware import TICI
+from system.hardware import TICI
 from selfdrive.loggerd.config import ROOT
 import selfdrive.sentry as sentry
-from selfdrive.swaglog import cloudlog
+from system.swaglog import cloudlog
 from selfdrive.version import get_commit
 
 MAX_SIZE = 100000 * 10  # mal size is 40-100k, allow up to 1M

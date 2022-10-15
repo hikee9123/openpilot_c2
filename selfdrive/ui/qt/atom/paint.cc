@@ -11,7 +11,7 @@
 #include "selfdrive/common/timing.h"
 #include "selfdrive/ui/qt/util.h"
 
-#include "selfdrive/logcatd/traffic_sign.h"
+#include "system/logcatd/traffic_sign.h"
 
 
 
