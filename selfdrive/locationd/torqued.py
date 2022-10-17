@@ -98,9 +98,16 @@ class TorqueEstimator:
     self.offline_friction = 0.0
     self.offline_latAccelFactor = 0.0
     self.resets = 0.0
-    self.use_params = CP.carName in ALLOWED_CARS
+    #self.use_params = CP.carName in ALLOWED_CARS
 
-    #self.use_params = True # params.get("TorqueLiveTuning")   #CP.carFingerprint in ALLOWED_FINGERPRINTS 
+    TorqueLiveTuning = params.get("TorqueLiveTuning")
+    if TorqueLiveTuning is None:
+      self.use_params = False
+    elif  TorqueLiveTuning:
+      self.use_params = True
+    else:
+      self.use_params = False
+
 
     if CP.lateralTuning.which() == 'torque':
       self.offline_friction = CP.lateralTuning.torque.friction
