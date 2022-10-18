@@ -163,22 +163,6 @@ void CTunWidget::FramePID(QVBoxLayout *parent)
   pKf->SetControl( 0.0, 0.1, 0.00001 );
   box_layout->addWidget( pKf );
 
-  //box_layout->addWidget(new PidKp());
-  //box_layout->addWidget(new PidKi());
-  //box_layout->addWidget(new PidKd());
-  //box_layout->addWidget(new PidKf());
-  
-  /*
-  MenuControl *pMenu2 = new MenuControl( 
-    "OpkrMaxDriverAngleWait",
-    "Driver to Steer",
-    "Controls smooth torque by the driver  From OpkrMaxSteeringAngle. def:0.002(5sec)",
-    "../assets/offroad/icon_shell.png"    
-    );
-  pMenu2->SetControl( 0, 1, 0.001 );
-  pMenu2->SetString( 0, "Not");
-  box_layout->addWidget( pMenu2 ); 
-*/
 
   m_pPanel->ConfirmButton( box_layout );
 }
