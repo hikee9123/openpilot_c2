@@ -263,13 +263,7 @@ void  CTunWidget::FrameTOROUE(int nMode, QVBoxLayout *parent)
    pDeadzone->SetControl( 0, 5, 0.1 ); 
    box_layout->addWidget( pDeadzone );
 
-   MenuControl *pLiveTuning = new MenuControl( 
-    "TorqueLiveTuning",
-    "Live Tuning",
-    "Tune while driving. def:1"
-    );
-   pLiveTuning->SetControl( 0, 1, 1 ); 
-   box_layout->addWidget( pLiveTuning );
+
 
   box_layout->addWidget(horizontal_line());
 
@@ -300,6 +294,8 @@ void  CTunWidget::FrameTOROUE(int nMode, QVBoxLayout *parent)
 
 
   box_layout->addWidget(new TorqueUseAngle());
+  box_layout->addWidget(new TorqueUseLiveTuning());
+  
 
   if( nMode == 0 )
     m_pPanel->ConfirmButton( box_layout );
