@@ -100,6 +100,8 @@ class TorqueEstimator:
     self.resets = 0.0
     #self.use_params = CP.carName in ALLOWED_CARS
 
+    params = Params()
+
     TorqueLiveTuning = params.get("TorqueLiveTuning")
     if TorqueLiveTuning is None:
       self.use_params = False
@@ -128,7 +130,7 @@ class TorqueEstimator:
     self.max_friction = (1.0 + FRICTION_SANITY) * self.offline_friction
 
     # try to restore cached params
-    params = Params()
+
     params_cache = params.get("LiveTorqueCarParams")
     torque_cache = params.get("LiveTorqueParameters")
     if params_cache is not None and torque_cache is not None:
