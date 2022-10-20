@@ -260,7 +260,8 @@ class TorqueEstimator:
 
 
 def main(sm=None, pm=None):
-  config_realtime_process(5 if TICI else 2, Priority.CTRL_LOW)
+  config_realtime_process([0, 1, 2, 3], 5)
+  #config_realtime_process(5 if TICI else 2, Priority.CTRL_LOW)
 
   if sm is None:
     sm = messaging.SubMaster(['carControl', 'carState', 'liveLocationKalman'], poll=['liveLocationKalman'])
