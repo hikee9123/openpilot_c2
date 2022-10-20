@@ -111,6 +111,8 @@ class TorqueEstimator:
     else:
       self.use_params = False
 
+    print('TorqueLiveTuning = {}'.format( self.use_params ) )
+
 
     if CP.lateralTuning.which() == 'torque':
       self.offline_friction = CP.lateralTuning.torque.friction
