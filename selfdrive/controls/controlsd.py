@@ -363,7 +363,7 @@ class Controls:
     else:
       if not SIMULATION and not self.rk.lagging:
         if CS.vEgo < 0.1:
-          pass        
+          pass
         if not self.sm.all_alive(self.camera_packets):
           self.events.add(EventName.cameraMalfunction)
         elif not self.sm.all_freq_ok(self.camera_packets):
