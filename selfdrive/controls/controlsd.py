@@ -620,16 +620,14 @@ class Controls:
     sr = max(params.steerRatio, 0.1)
 
     # atom
+
     if self.OpkrLiveSteerRatio == 2:  # FIX
       sr = max(self.CP.steerRatio, 5.0)
-      #str_log1 = '2.Fix sR={:.2f}'.format( sr )
     elif self.OpkrLiveSteerRatio == 1:  
       steerRatio = self.update_modelToSteerRatio( params.steerRatio )
       sr = max(steerRatio, 5.0)
-      #str_log1 = 'sR={:.2f},{:.2f}'.format( params.steerRatio, sr )
-    #else: 
-      #str_log1 = '0.sR={:.2f}'.format( sr )
-    #trace1.printf1( '{}'.format( str_log1 ) )      
+
+    str_log1 = 'sR={:.2f}'.format( sr )
 
 
     self.VM.update_params(x, sr)
@@ -640,8 +638,8 @@ class Controls:
       if self.sm.all_checks(['liveTorqueParameters']) and torque_params.useParams:
         self.LaC.update_live_torque_params(torque_params.latAccelFactorFiltered, torque_params.latAccelOffsetFiltered, torque_params.frictionCoefficientFiltered)
         str_log1 = 'LV={:.0f} LAF={:.2f} FC={:.3f} LAO={:.3f} '.format( torque_params.liveValid, torque_params.latAccelFactorFiltered, torque_params.frictionCoefficientFiltered, torque_params.latAccelOffsetFiltered )
-        trace1.printf1( '{}'.format( str_log1 ) )   
 
+    trace1.printf1( '{}'.format( str_log1 ) )
     lat_plan = self.sm['lateralPlan']
     long_plan = self.sm['longitudinalPlan']
 
