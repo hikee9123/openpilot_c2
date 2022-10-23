@@ -12,6 +12,7 @@ import cereal.messaging as messaging
 from common.conversions import Conversions as CV
 from panda import ALTERNATIVE_EXPERIENCE
 from system.swaglog import cloudlog
+from system.version import is_tested_branch, get_short_branch
 from selfdrive.boardd.boardd import can_list_to_can_capnp
 from selfdrive.car.car_helpers import get_car, get_startup_event, get_one_can
 from selfdrive.controls.lib.lane_planner import CAMERA_OFFSET
@@ -68,6 +69,9 @@ ENABLED_STATES = (State.preEnabled, *ACTIVE_STATES)
 class Controls:
   def __init__(self, sm=None, pm=None, can_sock=None, CI=None):
     config_realtime_process(4 if TICI else 3, Priority.CTRL_HIGH)
+
+    # Ensure the current branch is cached, otherwise the first iteration of controlsd lags
+    self.branch = get_short_branch("")
 
     # Setup sockets
     self.pm = pm
@@ -133,6 +137,9 @@ class Controls:
       safety_config.safetyModel = car.CarParams.SafetyModel.noOutput
       self.CP.safetyConfigs = [safety_config]
 
+    if is_tested_branch():
+      self.CP.experimentalLongitudinalAvailable = False
+
     # Write CarParams for radard
     cp_bytes = self.CP.to_bytes()
     params.put("CarParams", cp_bytes)
@@ -141,8 +148,9 @@ class Controls:
 
     # cleanup old params
     if not self.CP.experimentalLongitudinalAvailable:
-      params.remove("EndToEndLong")
       params.remove("ExperimentalLongitudinalEnabled")
+    if not self.CP.openpilotLongitudinalControl:
+      params.remove("EndToEndLong")
 
     self.CC = car.CarControl.new_message()
     self.CS_prev = car.CarState.new_message()
@@ -639,7 +647,7 @@ class Controls:
       torque_params = self.sm['liveTorqueParameters']
       if self.sm.all_checks(['liveTorqueParameters']) and torque_params.useParams:
         self.LaC.update_live_torque_params(torque_params.latAccelFactorFiltered, torque_params.latAccelOffsetFiltered, torque_params.frictionCoefficientFiltered)
-        str_log1 = 'LV={:.0f} LAF={:.2f} FC={:.3f} LAO={:.3f} '.format( torque_params.liveValid, torque_params.latAccelFactorFiltered, torque_params.frictionCoefficientFiltered, torque_params.latAccelOffsetFiltered )
+        str_log1 = 'LV={:.0f} LAF={:.2f} FC={:.3f} LAO={:.3f} LAG={:.0f}'.format( torque_params.liveValid, torque_params.latAccelFactorFiltered, torque_params.frictionCoefficientFiltered, torque_params.latAccelOffsetFiltered, self.rk._debug_dt )
 
     trace1.printf1( '{}'.format( str_log1 ) )
     lat_plan = self.sm['lateralPlan']
