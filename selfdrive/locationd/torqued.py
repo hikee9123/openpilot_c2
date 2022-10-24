@@ -103,7 +103,7 @@ class TorqueEstimator:
 
     params = Params()
 
-    TorqueLiveTuning = params.get("TorqueLiveTuning")
+    TorqueLiveTuning = params.get_bool("TorqueLiveTuning")
     if TorqueLiveTuning is None:
       self.use_params = False
     elif  TorqueLiveTuning:
