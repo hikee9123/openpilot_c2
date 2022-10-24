@@ -223,7 +223,7 @@ class Controls:
     # atom
     self.update_command = None
     self.openpilot_mode = 10
-    LiveSteerRatio = params.get("OpkrLiveSteerRatio")
+    LiveSteerRatio = params.get_bool("OpkrLiveSteerRatio")
     if LiveSteerRatio is not None:
       self.OpkrLiveSteerRatio = int(LiveSteerRatio)
     else:
