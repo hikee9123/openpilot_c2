@@ -10,7 +10,7 @@ import cereal.messaging as messaging
 from cereal import log
 
 
-MIN_SPEED = .3
+MIN_SPEED = 1.5
 
 
 class LateralPlanner:
