@@ -647,7 +647,7 @@ class Controls:
       torque_params = self.sm['liveTorqueParameters']
       if self.sm.all_checks(['liveTorqueParameters']) and torque_params.useParams:
         self.LaC.update_live_torque_params(torque_params.latAccelFactorFiltered, torque_params.latAccelOffsetFiltered, torque_params.frictionCoefficientFiltered)
-        str_log1 = 'LV={:.0f} LAF={:.2f} FC={:.3f} LAO={:.3f} LAG={:.2f}'.format( torque_params.liveValid, torque_params.latAccelFactorFiltered, torque_params.frictionCoefficientFiltered, torque_params.latAccelOffsetFiltered, self.rk._debug_dt )
+        str_log1 = 'LV={:.0f} LAF={:.2f} FC={:.3f} LAO={:.3f} LAG={:.4f}'.format( torque_params.liveValid, torque_params.latAccelFactorFiltered, torque_params.frictionCoefficientFiltered, torque_params.latAccelOffsetFiltered, self.rk._debug_dt )
 
     trace1.printf1( '{}'.format( str_log1 ) )
     lat_plan = self.sm['lateralPlan']
