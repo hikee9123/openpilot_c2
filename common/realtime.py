@@ -61,6 +61,7 @@ class Ratekeeper:
     self._process_name = getproctitle()
     self._dts = deque([self._interval], maxlen=100)
     self._last_monitor_time = sec_since_boot()
+    self._expected_dt = self._interval * 1.2    
     self._last_dts = 0
     self._debug_dt = "0"
 
@@ -75,9 +76,8 @@ class Ratekeeper:
   @property
   def lagging(self) -> bool:
     avg_dt = sum(self._dts) / len(self._dts)
-    expected_dt = self._interval * (1 / 0.9)
-    self._debug_dt = '{:.4f}  {:.4f}  {:.0f}'.format( avg_dt, self._last_dts, self._frame )   #- expected_dt
-    return avg_dt > expected_dt
+    self._debug_dt = '{:.4f}  {:.4f}'.format( avg_dt, self._last_dts)   #- expected_dt
+    return avg_dt > self._expected_dt
 
   # Maintain loop rate by calling this at the end of each loop
   def keep_time(self) -> bool:
