@@ -72,7 +72,7 @@ class TestCarInterfaces(unittest.TestCase):
 
 if __name__ == "__main__":
   params = Params()
-  TorqueLiveTuning = params.get("TorqueLiveTuning")
+  TorqueLiveTuning = params.get_bool("TorqueLiveTuning")
 
   print('TorqueLiveTuning={}'.format( TorqueLiveTuning ) )
   if TorqueLiveTuning is None:
