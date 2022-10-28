@@ -22,7 +22,7 @@ const double SANE_GPS_UNCERTAINTY = 1500.0; // m
 
 // TODO: GPS sensor time offsets are empirically calculated
 // They should be replaced with synced time from a real clock
-const double GPS_LOCATION_SENSOR_TIME_OFFSET = 0.630; // s
+//const double GPS_LOCATION_SENSOR_TIME_OFFSET = 0.630; // s
 const double GPS_LOCATION_EXTERNAL_SENSOR_TIME_OFFSET = 0.095; // s
 
 static VectorXd floatlist2vector(const capnp::List<float, capnp::Kind::PRIMITIVE>::Reader& floatlist) {
@@ -449,6 +449,8 @@ void Localizer::handle_msg(const cereal::Event::Reader& log) {
   this->time_check(t);
   if (log.isSensorEvents()) {
     this->handle_sensors(t, log.getSensorEvents());
+//  } else if (log.isGpsLocation()) {
+//    this->handle_gps(t, log.getGpsLocation(), GPS_LOCATION_SENSOR_TIME_OFFSET);    
   } else if (log.isGpsLocationExternal()) {
     this->handle_gps(t, log.getGpsLocationExternal(), GPS_LOCATION_EXTERNAL_SENSOR_TIME_OFFSET);
   } else if (log.isCarState()) {
