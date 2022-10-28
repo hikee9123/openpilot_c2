@@ -446,7 +446,7 @@ void Localizer::handle_msg(const cereal::Event::Reader& log) {
   double t = log.getLogMonoTime() * 1e-9;
   this->time_check(t);
   if (log.isSensorEvents()) {
-    this->handle_sensors(t, log.getSensorEvents());
+    this->handle_sensor(t, log.getSensorEvents());
   } else if (log.isGpsLocationExternal()) {
     this->handle_gps(t, log.getGpsLocationExternal(), GPS_LOCATION_EXTERNAL_SENSOR_TIME_OFFSET);
   } else if (log.isCarState()) {
