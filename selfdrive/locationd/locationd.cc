@@ -495,17 +495,17 @@ void Localizer::determine_gps_mode(double current_time) {
 
 int Localizer::locationd_thread() {
   const char* gps_location_socket;
-  if (Params().getBool("UbloxAvailable", true)) {
+  //if (Params().getBool("UbloxAvailable", true)) {
     gps_location_socket = "gpsLocationExternal";
-  } else {
-    gps_location_socket = "gpsLocation";
-  }
+  //} else {
+  //  gps_location_socket = "gpsLocation";
+  //}
   const std::initializer_list<const char *> service_list = {gps_location_socket, "cameraOdometry", "liveCalibration", 
-                                                          "carState", "carParams", "accelerometer", "gyroscope"};
+                                                          "carState", "carParams", "sensorEvents"};
   PubMaster pm({"liveLocationKalman"});
 
   // TODO: remove carParams once we're always sending at 100Hz
-  SubMaster sm(service_list, {}, nullptr, {gps_location_socket, "carParams"});
+  SubMaster sm(service_list, nullptr, {gps_location_socket, "carParams"});
 
   uint64_t cnt = 0;
   bool filterInitialized = false;
@@ -524,11 +524,11 @@ int Localizer::locationd_thread() {
     }
 
     // 100Hz publish for notcars, 20Hz for cars
-    const char* trigger_msg = sm["carParams"].getCarParams().getNotCar() ? "accelerometer" : "cameraOdometry";
+    const char* trigger_msg = sm["carParams"].getCarParams().getNotCar() ? "sensorEvents" : "cameraOdometry";
     if (sm.updated(trigger_msg)) {
       bool inputsOK = sm.allAliveAndValid();
       bool gpsOK = this->isGpsOK();
-      bool sensorsOK = sm.allAliveAndValid({"accelerometer", "gyroscope"});
+      bool sensorsOK = sm.allAliveAndValid({"sensorEvents"});
 
       MessageBuilder msg_builder;
       kj::ArrayPtr<capnp::byte> bytes = this->get_message_bytes(msg_builder, inputsOK, sensorsOK, gpsOK, filterInitialized);
