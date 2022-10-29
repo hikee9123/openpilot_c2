@@ -91,16 +91,15 @@ class Controls:
       self.log_sock = messaging.sub_sock('androidLog')
 
     self.params = Params()
-    self.joystick_mode = self.params.get_bool("JoystickDebugMode") #or (self.CP.notCar and sm is None)
-    joystick_packet = ['testJoystick'] if self.joystick_mode else []
-    
     self.sm = sm
     if self.sm is None:
-      ignore = ['driverCameraState', 'managerState'] if SIMULATION else None
+      ignore = ['testJoystick']
+      if SIMULATION:
+        ignore += ['driverCameraState', 'managerState']
       self.sm = messaging.SubMaster(['deviceState', 'pandaStates', 'peripheralState', 'modelV2', 'liveCalibration',
                                      'driverMonitoringState', 'longitudinalPlan', 'lateralPlan', 'liveLocationKalman',
-                                     'managerState', 'liveParameters', 'radarState','liveTorqueParameters',
-                                     'liveNaviData','updateEvents' ] + self.camera_packets + joystick_packet,
+                                     'managerState', 'liveParameters', 'radarState','liveTorqueParameters', 'testJoystick',
+                                     'liveNaviData','updateEvents' ] + self.camera_packets,
                                      ignore_alive=ignore, ignore_avg_freq=['radarState', 'longitudinalPlan','driverMonitoringState' 'updateEvents'])
 
     if CI is None:
@@ -108,11 +107,12 @@ class Controls:
       print("Waiting for CAN messages...")
       get_one_can(self.can_sock)
 
-      self.CI, self.CP = get_car(self.can_sock, self.pm.sock['sendcan'])
+      num_pandas = len(messaging.recv_one_retry(self.sm.sock['pandaStates']).pandaStates)
+      self.CI, self.CP = get_car(self.can_sock, self.pm.sock['sendcan'], num_pandas)
     else:
       self.CI, self.CP = CI, CI.CP
 
-
+    self.joystick_mode = self.params.get_bool("JoystickDebugMode") or (self.CP.notCar and sm is None)
 
     # set alternative experiences from parameters
     self.disengage_on_accelerator = self.params.get_bool("DisengageOnAccelerator")
@@ -223,7 +223,7 @@ class Controls:
     # atom
     self.update_command = None
     self.openpilot_mode = 10
-    LiveSteerRatio = self.params.get_bool("OpkrLiveSteerRatio")
+    LiveSteerRatio = self.params.get("OpkrLiveSteerRatio")
     if LiveSteerRatio is not None:
       self.OpkrLiveSteerRatio = int(LiveSteerRatio)
     else:
@@ -837,8 +837,6 @@ class Controls:
 
     force_decel = (self.sm['driverMonitoringState'].awarenessStatus < 0.) or \
                   (self.state == State.softDisabling)
-    #else:
-    #  force_decel = False
 
     # Curvature & Steering angle
     lp = self.sm['liveParameters']
