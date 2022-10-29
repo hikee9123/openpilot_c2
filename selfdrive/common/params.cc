@@ -248,6 +248,8 @@ std::unordered_map<std::string, uint32_t> keys = {
     {"OpkrPathOffsetAdj", PERSISTENT}, 
     {"OpkrLeftLaneOffset", PERSISTENT}, 
     {"OpkrRightLaneOffset", PERSISTENT}, 
+    {"OpkrSteerRatio", PERSISTENT}, 
+    
 
     // Navi
     {"OpkrNaviSelect", PERSISTENT},    

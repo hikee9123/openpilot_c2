@@ -25,6 +25,7 @@ class CarInterface(CarInterfaceBase):
     CP.laneParam.pathOffsetAdj = float( Params().get("OpkrPathOffsetAdj", encoding="utf8") )
     CP.laneParam.leftLaneOffset = float( Params().get("OpkrLeftLaneOffset", encoding="utf8") )
     CP.laneParam.rightLaneOffset = float( Params().get("OpkrRightLaneOffset", encoding="utf8") )
+    CP.steerRatio = float( Params().get("OpkrSteerRatio", encoding="utf8") )
 
   @staticmethod
   def get_tunning_params( tune ):

@@ -101,6 +101,7 @@ def manager_init() -> None:
     ("OpkrPathOffsetAdj", "0"), 
     ("OpkrLeftLaneOffset", "0"), 
     ("OpkrRightLaneOffset", "0"), 
+    ("OpkrSteerRatio", "16.5"), 
   ]
   if not PC:
     default_params.append(("LastUpdateTime", datetime.datetime.utcnow().isoformat().encode('utf8')))
