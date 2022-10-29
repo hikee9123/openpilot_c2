@@ -91,7 +91,7 @@ class Controls:
       self.log_sock = messaging.sub_sock('androidLog')
 
     self.params = Params()
-    self.joystick_mode = self.params.get_bool("JoystickDebugMode") or (self.CP.notCar and sm is None)
+    self.joystick_mode = self.params.get_bool("JoystickDebugMode") #or (self.CP.notCar and sm is None)
     joystick_packet = ['testJoystick'] if self.joystick_mode else []
     
     self.sm = sm
