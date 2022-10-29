@@ -90,9 +90,10 @@ class Controls:
     if TICI:
       self.log_sock = messaging.sub_sock('androidLog')
 
+    self.params = Params()
     self.joystick_mode = self.params.get_bool("JoystickDebugMode") or (self.CP.notCar and sm is None)
     joystick_packet = ['testJoystick'] if self.joystick_mode else []
-    self.params = Params()
+    
     self.sm = sm
     if self.sm is None:
       ignore = ['driverCameraState', 'managerState'] if SIMULATION else None
