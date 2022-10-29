@@ -412,8 +412,9 @@ class Controls:
         service_list = self.sm.alive.keys()
         for s in service_list:
           if s not in self.sm.ignore_alive:
-            print('{} = alive={} freq_ok={} valid={}'.format( s, self.sm.alive[s], self.sm.freq_ok[s], self.sm.valid[s] ) )
-         
+            if  self.sm.alive[s] == False or self.sm.freq_ok[s] == False or self.sm.valid[s] == False:
+              print('{} = alive={} freq_ok={} valid={}'.format( s, self.sm.alive[s], self.sm.freq_ok[s], self.sm.valid[s] ) )
+  
     else:
       self.logged_comm_issue = None
 
