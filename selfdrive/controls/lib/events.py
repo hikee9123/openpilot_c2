@@ -32,7 +32,7 @@ class ET:
   ENABLE = 'enable'
   PRE_ENABLE = 'preEnable'
   OVERRIDE_LATERAL = 'overrideLateral'
-  OVERRIDE_LONGITUDINAL = 'overrideLongitudinal'  
+  OVERRIDE_LONGITUDINAL = 'overrideLongitudinal'
   NO_ENTRY = 'noEntry'
   WARNING = 'warning'
   USER_DISABLE = 'userDisable'

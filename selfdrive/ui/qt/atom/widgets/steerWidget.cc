@@ -392,6 +392,15 @@ void CLaneWidget::FrameLane(QWidget *parent)
   pMenu2->SetControl( -5, 5, 0.1 );
   menu_layout->addWidget( pMenu2 );
 
+
+  MenuControl *pMenu3 = new MenuControl( 
+    "OpkrSteerRatio",
+    "SteerRatio value",
+    "SteerRatio def:16.5"
+    );
+  pMenu3->SetControl( 10, 20, 0.1 );
+  menu_layout->addWidget( pMenu3 );  
+
   m_pPanel->ConfirmButton( menu_layout, 2 );
 }
 
