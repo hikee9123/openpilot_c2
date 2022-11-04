@@ -19,7 +19,7 @@ class Service:
     self.frequency = frequency
     self.decimation = decimation
 
-DCAM_FREQ = 1. if not TICI else 20.
+DCAM_FREQ = 5. if not TICI else 20.
 
 services = {
   # service: (should_log, frequency, qlog decimation (optional))
