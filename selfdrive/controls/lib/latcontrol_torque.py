@@ -23,7 +23,6 @@ LOW_SPEED_FACTOR = 200
 class LatControlTorque(LatControl):
   def __init__(self, CP, CI):
     super().__init__(CP, CI)
-    self.steer_max = 1.    
     self.torque_params = CP.lateralTuning.torque
     self.pid = PIDController(self.torque_params.kp, self.torque_params.ki,
                              k_f=self.torque_params.kf, pos_limit=self.steer_max, neg_limit=-self.steer_max)
