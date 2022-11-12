@@ -6,6 +6,8 @@
 #include <eigen3/Eigen/Dense>
 
 #include "cereal/messaging/messaging.h"
+#include "common/transformations/orientation.hpp"
+
 #include "cereal/visionipc/visionipc_client.h"
 #include "selfdrive/common/clutil.h"
 #include "selfdrive/common/params.h"
@@ -104,10 +106,10 @@ void run_model(ModelState &model, VisionIpcClient &vipc_client_main, VisionIpcCl
         continue;
       }
 
-      if (std::abs((int64_t)meta_main.timestamp_sof - (int64_t)meta_extra.timestamp_sof) > 10000000ULL) {
+      if (std::abs((int64_t)get_ts(meta_main) - (int64_t)get_ts(meta_extra) > 10000000ULL) {
         LOGE("frames out of sync! main: %d (%.5f), extra: %d (%.5f)",
-          meta_main.frame_id, double(meta_main.timestamp_sof) / 1e9,
-          meta_extra.frame_id, double(meta_extra.timestamp_sof) / 1e9);
+          meta_main.frame_id, double(get_ts(meta_main)) / 1e9,
+          meta_extra.frame_id, double(get_ts(meta_extra)) / 1e9);
       }
     } else {
       // Use single camera
