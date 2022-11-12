@@ -1637,7 +1637,7 @@ struct DriverMonitoringState @0xb83cda094a1da284 {
   isLowStd @13 :Bool;
   hiStdCount @14 :UInt32;
   isActiveMode @16 :Bool;
-  isRHD @4 :Bool; @4 :Bool;
+  isRHD @4 :Bool;
 
   isPreviewDEPRECATED @15 :Bool;
   rhdCheckedDEPRECATED @5 :Bool;
