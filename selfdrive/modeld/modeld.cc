@@ -115,6 +115,7 @@ void run_model(ModelState &model, VisionIpcClient &vipc_client_main, VisionIpcCl
     // TODO: path planner timeout?
     sm.update(0);
     int desire = ((int)sm["lateralPlan"].getLateralPlan().getDesire());
+    bool is_rhd = ((bool)sm["driverMonitoringState"].getDriverMonitoringState().getIsRHD());    
     frame_id = sm["roadCameraState"].getRoadCameraState().getFrameId();
     if (sm.updated("liveCalibration")) {
       auto extrinsic_matrix = sm["liveCalibration"].getLiveCalibration().getExtrinsicMatrix();
@@ -133,8 +134,15 @@ void run_model(ModelState &model, VisionIpcClient &vipc_client_main, VisionIpcCl
       vec_desire[desire] = 1.0;
     }
 
+    float frame_drop_ratio = frames_dropped / (1 + frames_dropped);
+    bool prepare_only = vipc_dropped_frames > 0;
+
+    if (prepare_only) {
+      LOGE("skipping model eval. Dropped %d frames", vipc_dropped_frames);
+    }
+
     double mt1 = millis_since_boot();
-    ModelOutput *model_output = model_eval_frame(&model, buf_main, buf_extra, model_transform_main, model_transform_extra, vec_desire);
+    ModelOutput *model_output = model_eval_frame(&model, buf_main, buf_extra, model_transform_main, model_transform_extra, vec_desire, is_rhd, prepare_only);    
     double mt2 = millis_since_boot();
     float model_execution_time = (mt2 - mt1) / 1000.0;
 
@@ -147,7 +155,7 @@ void run_model(ModelState &model, VisionIpcClient &vipc_client_main, VisionIpcCl
     }
     run_count++;
 
-    float frame_drop_ratio = frames_dropped / (1 + frames_dropped);
+
 
     model_publish(pm, meta_main.frame_id, meta_extra.frame_id, frame_id, frame_drop_ratio, *model_output, meta_main.timestamp_eof, model_execution_time,
                   kj::ArrayPtr<const float>(model.output.data(), model.output.size()), live_calib_seen);

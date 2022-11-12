@@ -53,6 +53,7 @@ void model_init(ModelState* s, cl_device_id device_id, cl_context context) {
 #endif
 }
 
+
 ModelOutput* model_eval_frame(ModelState* s, VisionBuf* buf, VisionBuf* wbuf,
                               const mat3 &transform, const mat3 &transform_wide, float *desire_in, bool is_rhd, bool prepare_only) {
 #ifdef DESIRE
