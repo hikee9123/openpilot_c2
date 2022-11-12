@@ -4,8 +4,8 @@
 #include <cstring>
 #include <map>
 
-#include "common/clutil.h"
-#include "common/timing.h"
+#include "selfdrive/common/clutil.h"
+#include "selfdrive/common/timing.h"
 
 map<pair<cl_kernel, int>, string> g_args;
 map<pair<cl_kernel, int>, int> g_args_size;
