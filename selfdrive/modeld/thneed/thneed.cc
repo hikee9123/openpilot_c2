@@ -229,11 +229,7 @@ Thneed::Thneed(bool do_clinit, cl_context _context) {
   debug = (thneed_debug_env != NULL) ? atoi(thneed_debug_env) : 0;
 }
 
-void Thneed::stop() {
-  find_inputs_outputs();
-  printf("Thneed::stop: recorded %lu commands\n", cmds.size());
-  record = 0;
-}
+
 
 void Thneed::find_inputs_outputs() {
   cl_int err;
@@ -345,37 +341,8 @@ void Thneed::execute(float **finputs, float *foutput, bool slow) {
   }
 }
 
-void Thneed::clinit() {
-  device_id = cl_get_device_id(CL_DEVICE_TYPE_DEFAULT);
-  context = CL_CHECK_ERR(clCreateContext(NULL, 1, &device_id, NULL, NULL, &err));
-  //cl_command_queue_properties props[3] = {CL_QUEUE_PROPERTIES, CL_QUEUE_PROFILING_ENABLE, 0};
-  cl_command_queue_properties props[3] = {CL_QUEUE_PROPERTIES, 0, 0};
-  command_queue = CL_CHECK_ERR(clCreateCommandQueueWithProperties(context, device_id, props, &err));
-  printf("Thneed::clinit done\n");
-}
-
-cl_int Thneed::clexec() {
-  printf("Thneed::clexec: running %lu queued kernels\n", kq.size());
-  for (auto &k : kq) {
-    if (record) ckq.push_back(k);
-    cl_int ret = k->exec();
-    assert(ret == CL_SUCCESS);
-  }
-  return clFinish(command_queue);
-}
 
 // *********** OpenCL interceptor ***********
-
-cl_int thneed_clSetKernelArg(cl_kernel kernel, cl_uint arg_index, size_t arg_size, const void *arg_value) {
-  g_args_size[make_pair(kernel, arg_index)] = arg_size;
-  if (arg_value != NULL) {
-    g_args[make_pair(kernel, arg_index)] = string((char*)arg_value, arg_size);
-  } else {
-    g_args[make_pair(kernel, arg_index)] = string("");
-  }
-  cl_int ret = clSetKernelArg(kernel, arg_index, arg_size, arg_value);
-  return ret;
-}
 
 cl_int thneed_clEnqueueNDRangeKernel(cl_command_queue command_queue,
   cl_kernel kernel,
@@ -455,99 +422,6 @@ void *dlsym(void *handle, const char *symbol) {
   }
 }
 
-// *********** CLQueuedKernel ***********
-
-CLQueuedKernel::CLQueuedKernel(Thneed *lthneed,
-                               cl_kernel _kernel,
-                               cl_uint _work_dim,
-                               const size_t *_global_work_size,
-                               const size_t *_local_work_size) {
-  thneed = lthneed;
-  kernel = _kernel;
-  work_dim = _work_dim;
-  assert(work_dim <= 3);
-  for (int i = 0; i < work_dim; i++) {
-    global_work_size[i] = _global_work_size[i];
-    local_work_size[i] = _local_work_size[i];
-  }
-
-  char _name[0x100];
-  clGetKernelInfo(kernel, CL_KERNEL_FUNCTION_NAME, sizeof(_name), _name, NULL);
-  name = string(_name);
-  clGetKernelInfo(kernel, CL_KERNEL_NUM_ARGS, sizeof(num_args), &num_args, NULL);
-
-  // get args
-  for (int i = 0; i < num_args; i++) {
-    char arg_name[0x100];
-    clGetKernelArgInfo(kernel, i, CL_KERNEL_ARG_NAME, sizeof(arg_name), arg_name, NULL);
-    arg_names.push_back(string(arg_name));
-    clGetKernelArgInfo(kernel, i, CL_KERNEL_ARG_TYPE_NAME, sizeof(arg_name), arg_name, NULL);
-    arg_types.push_back(string(arg_name));
-
-    args.push_back(g_args[make_pair(kernel, i)]);
-    args_size.push_back(g_args_size[make_pair(kernel, i)]);
-  }
-
-  // get program
-  clGetKernelInfo(kernel, CL_KERNEL_PROGRAM, sizeof(program), &program, NULL);
-}
-
-int CLQueuedKernel::get_arg_num(const char *search_arg_name) {
-  for (int i = 0; i < num_args; i++) {
-    if (arg_names[i] == search_arg_name) return i;
-  }
-  printf("failed to find %s in %s\n", search_arg_name, name.c_str());
-  assert(false);
-}
-
-cl_int CLQueuedKernel::exec() {
-  if (kernel == NULL) {
-    kernel = clCreateKernel(program, name.c_str(), NULL);
-    arg_names.clear();
-    arg_types.clear();
-
-    for (int j = 0; j < num_args; j++) {
-      char arg_name[0x100];
-      clGetKernelArgInfo(kernel, j, CL_KERNEL_ARG_NAME, sizeof(arg_name), arg_name, NULL);
-      arg_names.push_back(string(arg_name));
-      clGetKernelArgInfo(kernel, j, CL_KERNEL_ARG_TYPE_NAME, sizeof(arg_name), arg_name, NULL);
-      arg_types.push_back(string(arg_name));
-
-      cl_int ret;
-      if (args[j].size() != 0) {
-        assert(args[j].size() == args_size[j]);
-        ret = thneed_clSetKernelArg(kernel, j, args[j].size(), args[j].data());
-      } else {
-        ret = thneed_clSetKernelArg(kernel, j, args_size[j], NULL);
-      }
-      assert(ret == CL_SUCCESS);
-    }
-  }
-
-  if (thneed->debug >= 1) {
-    debug_print(thneed->debug >= 2);
-  }
-
-  return clEnqueueNDRangeKernel(thneed->command_queue,
-    kernel, work_dim, NULL, global_work_size, local_work_size, 0, NULL, NULL);
-}
-
-uint64_t CLQueuedKernel::benchmark() {
-  uint64_t ret = 0;
-  int old_record = thneed->record;
-  thneed->record = 0;
-  clFinish(thneed->command_queue);
-  // TODO: benchmarking at a lower level will make this more accurate
-  for (int i = 0; i < 10; i++) {
-    uint64_t sb = nanos_since_boot();
-    exec();
-    clFinish(thneed->command_queue);
-    uint64_t et = nanos_since_boot() - sb;
-    if (ret == 0 || et < ret) ret = et;
-  }
-  thneed->record = old_record;
-  return ret;
-}
 
 void CLQueuedKernel::debug_print(bool verbose) {
   printf("%p %56s -- ", kernel, name.c_str());
