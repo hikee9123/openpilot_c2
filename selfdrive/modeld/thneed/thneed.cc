@@ -215,7 +215,9 @@ void CachedCommand::exec() {
 
 // *********** Thneed ***********
 
-Thneed::Thneed(bool do_clinit) {
+Thneed::Thneed(bool do_clinit, cl_context _context) {
+  // TODO: QCOM2 actually requires a different context
+  //context = _context;
   if (do_clinit) clinit();
   assert(g_fd != -1);
   fd = g_fd;
@@ -297,7 +299,7 @@ void Thneed::execute(float **finputs, float *foutput, bool slow) {
   if (debug >= 1) tb = nanos_since_boot();
 
   // ****** copy inputs
-  copy_inputs(finputs);
+  copy_inputs(finputs, true);
 
   // ****** set power constraint
   int ret;
