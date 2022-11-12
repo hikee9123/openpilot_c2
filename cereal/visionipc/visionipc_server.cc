@@ -36,6 +36,7 @@ void VisionIpcServer::create_buffers(VisionStreamType type, size_t num_buffers, 
 
   size_t size = 0;
   size_t stride = 0; // Only used for RGB
+  size_t uv_offset = 0;  
 
   if (rgb) {
     visionbuf_compute_aligned_width_and_height(width, height, &aligned_w, &aligned_h);
@@ -43,6 +44,8 @@ void VisionIpcServer::create_buffers(VisionStreamType type, size_t num_buffers, 
     stride = aligned_w * 3;
   } else {
     size = width * height * 3 / 2;
+    stride = width;
+    uv_offset = width * height;
   }
 
   // Create map + alloc requested buffers
@@ -54,7 +57,7 @@ void VisionIpcServer::create_buffers(VisionStreamType type, size_t num_buffers, 
 
     if (device_id) buf->init_cl(device_id, ctx);
 
-    rgb ? buf->init_rgb(width, height, stride) : buf->init_yuv(width, height);
+    rgb ? buf->init_rgb(width, height, stride) : buf->init_yuv(width, height, stride, uv_offset);
 
     buffers[type].push_back(buf);
   }
