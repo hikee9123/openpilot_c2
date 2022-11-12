@@ -16,9 +16,7 @@
 
 Thneed *g_thneed = NULL;
 int g_fd = -1;
-map<pair<cl_kernel, int>, string> g_args;
-map<pair<cl_kernel, int>, int> g_args_size;
-map<cl_program, string> g_program_source;
+extern map<cl_program, string> g_program_source;
 
 void hexdump(uint8_t *d, int len) {
   assert((len%4) == 0);
