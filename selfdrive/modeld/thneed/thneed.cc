@@ -12,7 +12,7 @@
 #include "selfdrive/common/clutil.h"
 #include "selfdrive/common/timing.h"
 //#define RUN_DISASSEMBLER
-#define RUN_OPTIMIZER
+
 
 Thneed *g_thneed = NULL;
 int g_fd = -1;
@@ -231,41 +231,6 @@ Thneed::Thneed(bool do_clinit, cl_context _context) {
 
 
 
-void Thneed::find_inputs_outputs() {
-  cl_int err;
-  if (inputs.size() > 0) return;
-
-  // save the global inputs/outputs
-  for (auto &k : kq) {
-    for (int i = 0; i < k->num_args; i++) {
-      if (k->name == "zero_pad_image_float" && k->arg_names[i] == "input") {
-        cl_mem aa = *(cl_mem*)(k->args[i].data());
-        input_clmem.push_back(aa);
-
-        size_t sz;
-        clGetMemObjectInfo(aa, CL_MEM_SIZE, sizeof(sz), &sz, NULL);
-        input_sizes.push_back(sz);
-
-        void *ret = clEnqueueMapBuffer(command_queue, aa, CL_TRUE, CL_MAP_WRITE, 0, sz, 0, NULL, NULL, &err);
-        assert(err == CL_SUCCESS);
-        inputs.push_back(ret);
-      }
-
-      if (k->name == "image2d_to_buffer_float" && k->arg_names[i] == "output") {
-        output = *(cl_mem*)(k->args[i].data());
-      }
-    }
-  }
-}
-
-void Thneed::copy_inputs(float **finputs) {
-  //cl_int ret;
-  for (int idx = 0; idx < inputs.size(); ++idx) {
-    if (debug >= 1) printf("copying %lu -- %p -> %p\n", input_sizes[idx], finputs[idx], inputs[idx]);
-    if (finputs[idx] != NULL) memcpy(inputs[idx], finputs[idx], input_sizes[idx]);
-  }
-}
-
 void Thneed::copy_output(float *foutput) {
   if (output != NULL) {
     size_t sz;
@@ -385,9 +350,6 @@ cl_int thneed_clFinish(cl_command_queue command_queue) {
   Thneed *thneed = g_thneed;
 
   if (thneed != NULL && thneed->record) {
-    #ifdef RUN_OPTIMIZER
-      thneed->optimize();
-    #endif
     return thneed->clexec();
   } else {
     return clFinish(command_queue);
