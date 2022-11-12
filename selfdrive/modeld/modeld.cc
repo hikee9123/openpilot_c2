@@ -106,7 +106,7 @@ void run_model(ModelState &model, VisionIpcClient &vipc_client_main, VisionIpcCl
         continue;
       }
 
-      if (std::abs((int64_t)get_ts(meta_main) - (int64_t)get_ts(meta_extra) > 10000000ULL) {
+      if (std::abs((int64_t)get_ts(meta_main) - (int64_t)get_ts(meta_extra)) > 10000000ULL) {
         LOGE("frames out of sync! main: %d (%.5f), extra: %d (%.5f)",
           meta_main.frame_id, double(get_ts(meta_main)) / 1e9,
           meta_extra.frame_id, double(get_ts(meta_extra)) / 1e9);
