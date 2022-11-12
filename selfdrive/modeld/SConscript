@@ -24,7 +24,7 @@ common_src = [
 
 thneed_src = [
   "thneed/thneed_common.cc",
-  "thneed/thneed_qcom2.cc",
+  "thneed/thneed.cc",
   "thneed/serialize.cc",
   "runners/thneedmodel.cc",
 ]
