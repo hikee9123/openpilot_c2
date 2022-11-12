@@ -10,8 +10,8 @@
 
 #include "selfdrive/modeld/models/dmonitoring.h"
 
-constexpr int MODEL_WIDTH = 320;
-constexpr int MODEL_HEIGHT = 640;
+constexpr int MODEL_WIDTH = 1440;
+constexpr int MODEL_HEIGHT = 960;
 
 template <class T>
 static inline T *get_buffer(std::vector<T> &buf, const size_t size) {
@@ -19,29 +19,12 @@ static inline T *get_buffer(std::vector<T> &buf, const size_t size) {
   return buf.data();
 }
 
-static inline void init_yuv_buf(std::vector<uint8_t> &buf, const int width, int height) {
-  uint8_t *y = get_buffer(buf, width * height * 3 / 2);
-  uint8_t *u = y + width * height;
-  uint8_t *v = u + (width / 2) * (height / 2);
-
-  // needed on comma two to make the padded border black
-  // equivalent to RGB(0,0,0) in YUV space
-  memset(y, 16, width * height);
-  memset(u, 128, (width / 2) * (height / 2));
-  memset(v, 128, (width / 2) * (height / 2));
-}
-
 void dmonitoring_init(DMonitoringModelState* s) {
-  s->is_rhd = Params().getBool("IsRHD");
-  for (int x = 0; x < std::size(s->tensor); ++x) {
-    s->tensor[x] = (x - 128.f) * 0.0078125f;
-  }
-  init_yuv_buf(s->resized_buf, MODEL_WIDTH, MODEL_HEIGHT);
 
 #ifdef USE_ONNX_MODEL
-  s->m = new ONNXModel("models/dmonitoring_model.onnx", &s->output[0], OUTPUT_SIZE, USE_DSP_RUNTIME);
+  s->m = new ONNXModel("models/dmonitoring_model.onnx", &s->output[0], OUTPUT_SIZE, USE_DSP_RUNTIME, false, true);
 #else
-  s->m = new SNPEModel("models/dmonitoring_model_q.dlc", &s->output[0], OUTPUT_SIZE, USE_DSP_RUNTIME);
+  s->m = new SNPEModel("models/dmonitoring_model_q.dlc", &s->output[0], OUTPUT_SIZE, USE_DSP_RUNTIME, false, true);
 #endif
 
   s->m->addCalib(s->calib, CALIB_LEN);
