@@ -18,45 +18,33 @@
 #include "selfdrive/ui/qt/atom/TuningPanel.h"
 
 
-class CSteerWidget : public QFrame 
+class CSteerWidget : public CGroupWidget 
 {
   Q_OBJECT
 
 public:
-  explicit CSteerWidget(TuningPanel *panel,QWidget *parent = 0);
-  ~CSteerWidget();
+  explicit CSteerWidget( TuningPanel *panel );
 
-private:
-  void showEvent(QShowEvent *event) override;
-  void hideEvent(QHideEvent *event) override;
+public:
+  enum emType {
+    TP_NORMAL = 0,
+    TP_SMOOTH,
+    TP_ALL,
+  };    
 
-public slots:  
-  void refresh();
-
-
-private:
-  void  FrameSmooth(QWidget *parent);
-  void  FrameNormal(QWidget *parent);
 
  private:
-  Params params; 
-  QLabel *icon_label;
-  QPixmap  pix_plus;
-  QPixmap  pix_minus;
-
-
-  QVBoxLayout *main_layout;
-  QPushButton *title_label;
-  QHBoxLayout *hlayout;
-  QLabel *description = nullptr;  
-
   TuningPanel  *m_pPanel;
   QPushButton  *method_label;
-  int    m_nSelect;
-  int    m_bShow;
+  int    m_nMethod;
+  Params params;
 
-   QFrame *m_pChildFrame1;
-   QFrame *m_pChildFrame2;
+private:
+  void  FrameNormal(QVBoxLayout *parent=nullptr); 
+  void  FrameSmooth(QVBoxLayout *parent=nullptr);
+public slots:  
+  virtual void refresh(int nID = 0);  
+
 };
 
 
@@ -65,7 +53,7 @@ class CLaneWidget : public QFrame
   Q_OBJECT
 
 public:
-  explicit CLaneWidget(TuningPanel *panel, QWidget *parent = 0);
+  explicit CLaneWidget( TuningPanel *panel, QWidget *parent=nullptr );
   ~CLaneWidget();
 
 private:
