@@ -101,7 +101,7 @@ CTunWidget::CTunWidget( TuningPanel *panel, QWidget *parent) : QFrame(parent)
 
 
 
-  main_layout->addStretch();
+  //main_layout->addStretch();
   refresh();
 }
 
@@ -163,22 +163,6 @@ void CTunWidget::FramePID(QVBoxLayout *parent)
   pKf->SetControl( 0.0, 0.1, 0.00001 );
   box_layout->addWidget( pKf );
 
-  //box_layout->addWidget(new PidKp());
-  //box_layout->addWidget(new PidKi());
-  //box_layout->addWidget(new PidKd());
-  //box_layout->addWidget(new PidKf());
-  
-  /*
-  MenuControl *pMenu2 = new MenuControl( 
-    "OpkrMaxDriverAngleWait",
-    "Driver to Steer",
-    "Controls smooth torque by the driver  From OpkrMaxSteeringAngle. def:0.002(5sec)",
-    "../assets/offroad/icon_shell.png"    
-    );
-  pMenu2->SetControl( 0, 1, 0.001 );
-  pMenu2->SetString( 0, "Not");
-  box_layout->addWidget( pMenu2 ); 
-*/
 
   m_pPanel->ConfirmButton( box_layout );
 }
@@ -263,13 +247,7 @@ void  CTunWidget::FrameTOROUE(int nMode, QVBoxLayout *parent)
    pDeadzone->SetControl( 0, 5, 0.1 ); 
    box_layout->addWidget( pDeadzone );
 
-   MenuControl *pLiveTuning = new MenuControl( 
-    "TorqueLiveTuning",
-    "Live Tuning",
-    "Tune while driving. def:1"
-    );
-   pLiveTuning->SetControl( 0, 1, 1 ); 
-   box_layout->addWidget( pLiveTuning );
+
 
   box_layout->addWidget(horizontal_line());
 
@@ -300,6 +278,8 @@ void  CTunWidget::FrameTOROUE(int nMode, QVBoxLayout *parent)
 
 
   box_layout->addWidget(new TorqueUseAngle());
+  box_layout->addWidget(new TorqueUseLiveTuning());
+  
 
   if( nMode == 0 )
     m_pPanel->ConfirmButton( box_layout );

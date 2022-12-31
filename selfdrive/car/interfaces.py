@@ -111,7 +111,6 @@ class CarInterfaceBase(ABC):
     ret.steerControlType = car.CarParams.SteerControlType.torque
     ret.minSteerSpeed = 0.
     ret.wheelSpeedFactor = 1.0
-    ret.maxLateralAccel = float('nan')
 
     ret.pcmCruise = True     # openpilot's state is tied to the PCM's cruise state on most cars
     ret.minEnableSpeed = -1. # enable is done by stock ACC, so ignore this
@@ -136,17 +135,6 @@ class CarInterfaceBase(ABC):
     ret.maxLateralAccel = 3.0    
     return ret
 
-  @staticmethod
-  def configure_torque_tune(candidate, tune, steering_angle_deadzone_deg=0.0, use_steering_angle=True):
-    tune.init('torque')
-    tune.torque.useSteeringAngle = use_steering_angle
-    tune.torque.kp = 1.0
-    tune.torque.kf = 1.0
-    tune.torque.ki = 0.1
-    tune.torque.friction = 2.9
-    tune.torque.latAccelFactor = 0
-    tune.torque.latAccelOffset = 0.0
-    tune.torque.steeringAngleDeadzoneDeg = steering_angle_deadzone_deg
 
   @abstractmethod
   def _update(self, c: car.CarControl) -> car.CarState:

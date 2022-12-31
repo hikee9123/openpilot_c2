@@ -8,7 +8,7 @@ import numpy as np
 import cereal.messaging as messaging
 from cereal import car
 from common.params import Params, put_nonblocking
-from common.realtime import set_realtime_priority, DT_MDL
+from common.realtime import config_realtime_process, DT_MDL
 from common.numpy_fast import clip
 from selfdrive.locationd.models.car_kf import CarKalman, ObservationKind, States
 from selfdrive.locationd.models.constants import GENERATED_DIR
@@ -94,7 +94,7 @@ class ParamsLearner:
       self.speed = msg.vEgo
 
       in_linear_region = abs(self.steering_angle) < 45 or not self.steering_pressed
-      self.active = self.speed > 5 and in_linear_region
+      self.active = self.speed > 1 and in_linear_region
 
       if self.active:
         self.kf.predict_and_observe(t, ObservationKind.STEER_ANGLE, np.array([[math.radians(msg.steeringAngleDeg)]]))
@@ -107,8 +107,7 @@ class ParamsLearner:
 
 
 def main(sm=None, pm=None):
-  gc.disable()
-  set_realtime_priority(5)
+  config_realtime_process([0, 1, 2, 3], 5)
 
   if sm is None:
     sm = messaging.SubMaster(['liveLocationKalman', 'carState'], poll=['liveLocationKalman'])

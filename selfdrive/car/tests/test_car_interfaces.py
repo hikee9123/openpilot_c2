@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 import unittest
 import importlib
+from common.params import Params
 from parameterized import parameterized
 
 from cereal import car
@@ -12,6 +13,8 @@ class TestCarInterfaces(unittest.TestCase):
 
   @parameterized.expand([(car,) for car in all_known_cars()])
   def test_car_interfaces(self, car_name):
+
+
     if car_name in FINGERPRINTS:
       fingerprint = FINGERPRINTS[car_name][0]
     else:
@@ -68,4 +71,15 @@ class TestCarInterfaces(unittest.TestCase):
       radar_interface._update([radar_interface.trigger_msg])
 
 if __name__ == "__main__":
+  params = Params()
+  TorqueLiveTuning = params.get_bool("TorqueLiveTuning")
+
+  print('TorqueLiveTuning={}'.format( TorqueLiveTuning ) )
+  if TorqueLiveTuning is None:
+    print('0.None')
+  elif  TorqueLiveTuning:
+    print('1.True')
+  else:
+    print('2.False')
+
   unittest.main()

@@ -166,6 +166,10 @@ class CarState(CarStateBase):
     if self.CP.atompilotLongitudinalControl:
        limit_kph = 20
 
+    delta = abs(set_speed_kph - self.clu_Vanz)
+    if delta <= 2:
+      set_speed_kph = self.clu_Vanz
+
     if set_speed_kph < limit_kph:
       set_speed_kph = limit_kph
 
