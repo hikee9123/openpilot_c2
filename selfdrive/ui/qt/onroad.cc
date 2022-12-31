@@ -199,7 +199,7 @@ void NvgWindow::updateState(const UIState &s) {
   if (cruise_set && !s.scene.is_metric) {
     maxspeed *= KM_TO_MILE;
   }
- // QString maxspeed_str = cruise_set ? QString::number(std::nearbyint(maxspeed)) : "??;
+ // QString maxspeed_str = cruise_set ? QString::number(std::nearbyint(maxspeed)) : "-";
   float cur_speed = std::max(0.0, sm["carState"].getCarState().getVEgo() * (s.scene.is_metric ? MS_TO_KPH : MS_TO_MPH));
 
   float speed_limit = 0;// s.scene.liveNaviData.getSpeedLimit();
@@ -242,8 +242,8 @@ void NvgWindow::drawHud(QPainter &p) {
   bg.setColorAt(1, QColor::fromRgbF(0, 0, 0, 0));
   p.fillRect(0, 0, width(), header_h, bg);
 
-  QString speedLimitStr;// = (speedLimit > 1) ? QString::number(std::nearbyint(speedLimit)) : "??;
-  QString setSpeedStr = is_cruise_set ? QString::number(std::nearbyint(setSpeed)) : "??;
+  QString speedLimitStr;// = (speedLimit > 1) ? QString::number(std::nearbyint(speedLimit)) : "-";
+  QString setSpeedStr = is_cruise_set ? QString::number(std::nearbyint(setSpeed)) : "-";
 
   // Draw outer box + border to contain set speed and speed limit
   int has_eu_speed_limit = 0;  
