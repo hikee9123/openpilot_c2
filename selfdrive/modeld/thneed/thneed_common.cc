@@ -204,6 +204,8 @@ void CLQueuedKernel::debug_print(bool verbose) {
   }
 }
 
+
+
 cl_int thneed_clSetKernelArg(cl_kernel kernel, cl_uint arg_index, size_t arg_size, const void *arg_value) {
   g_args_size[make_pair(kernel, arg_index)] = arg_size;
   if (arg_value != NULL) {
