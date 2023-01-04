@@ -3,7 +3,7 @@ from ast import Assert
 import pathlib, sys
 sys.path.insert(0, str(pathlib.Path(__file__).parent.parent))
 from collections import defaultdict
-import pyopencl as cl
+#import pyopencl as cl
 
 
 import os
