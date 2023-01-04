@@ -229,16 +229,6 @@ Thneed::Thneed(bool do_clinit, cl_context _context) {
 
 
 
-void Thneed::copy_output(float *foutput) {
-  if (output != NULL) {
-    size_t sz;
-    clGetMemObjectInfo(output, CL_MEM_SIZE, sizeof(sz), &sz, NULL);
-    if (debug >= 1) printf("copying %lu for output %p -> %p\n", sz, output, foutput);
-    clEnqueueReadBuffer(command_queue, output, CL_TRUE, 0, sz, foutput, 0, NULL, NULL);
-  } else {
-    printf("CAUTION: model output is NULL, does it have no outputs?\n");
-  }
-}
 
 void Thneed::wait() {
   struct kgsl_device_waittimestamp_ctxtid wait;
