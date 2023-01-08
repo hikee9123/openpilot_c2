@@ -62,7 +62,7 @@ def manager_init() -> None:
     ("OpkratomLongitudinal", "0"), 
 
 
-    ("OpkrMaxAngleLimit", "85"),
+    ("OpkrMaxAngleLimit", "90"),
     ("OpkrSteerMethod", "0"),
     ("OpkrMaxSteeringAngle", "85"),
     ("OpkrMaxDriverAngleWait", "0.002"),
@@ -101,6 +101,7 @@ def manager_init() -> None:
     ("OpkrPathOffsetAdj", "0"), 
     ("OpkrLeftLaneOffset", "0"), 
     ("OpkrRightLaneOffset", "0"), 
+    ("OpkrSteerRatio", "16.5"), 
   ]
   if not PC:
     default_params.append(("LastUpdateTime", datetime.datetime.utcnow().isoformat().encode('utf8')))
@@ -192,6 +193,11 @@ def manager_thread() -> None:
   enableLogger = params.get_bool("UploadRaw")
   if not enableLogger:
     ignore += ["loggerd","logmessaged","deleter","tombstoned","uploader","statsd"]
+
+
+  TorqueLiveTuning = params.get_bool("TorqueLiveTuning")
+  if not TorqueLiveTuning:
+    ignore += ["torqued"]
 
   if params.get("DongleId", encoding='utf8') in (None, UNREGISTERED_DONGLE_ID):
     ignore += ["manage_athenad", "uploader"]

@@ -97,6 +97,7 @@ std::unordered_map<std::string, uint32_t> keys = {
     {"CurrentRoute", CLEAR_ON_MANAGER_START | CLEAR_ON_IGNITION_ON},
     {"DisablePowerDown", PERSISTENT},
     {"EndToEndLong", PERSISTENT},
+    {"ExperimentalLongitudinalEnabled", PERSISTENT},
     {"DisableRadar", PERSISTENT}, // WARNING: THIS DISABLES AEB
     {"DisableUpdates", PERSISTENT},
     {"DisengageOnAccelerator", PERSISTENT},
@@ -247,6 +248,8 @@ std::unordered_map<std::string, uint32_t> keys = {
     {"OpkrPathOffsetAdj", PERSISTENT}, 
     {"OpkrLeftLaneOffset", PERSISTENT}, 
     {"OpkrRightLaneOffset", PERSISTENT}, 
+    {"OpkrSteerRatio", PERSISTENT}, 
+    
 
     // Navi
     {"OpkrNaviSelect", PERSISTENT},    

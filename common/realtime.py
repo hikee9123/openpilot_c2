@@ -2,8 +2,8 @@
 import gc
 import os
 import time
-from typing import Optional
-
+from collections import deque
+from typing import Optional, List, Union
 from setproctitle import getproctitle  # pylint: disable=no-name-in-module
 
 from common.clock import sec_since_boot  # pylint: disable=no-name-in-module, import-error
@@ -35,22 +35,23 @@ class Priority:
 
 def set_realtime_priority(level: int) -> None:
   if not PC:
-    os.sched_setscheduler(0, os.SCHED_FIFO, os.sched_param(level))  # type: ignore[attr-defined]
+    os.sched_setscheduler(0, os.SCHED_FIFO, os.sched_param(level))  # pylint: disable=no-member
 
 
-def set_core_affinity(core: int) -> None:
+def set_core_affinity(cores: List[int]) -> None:
   if not PC:
-    os.sched_setaffinity(0, [core,])   # type: ignore[attr-defined]
+    os.sched_setaffinity(0, cores)  # pylint: disable=no-member
 
 
-def config_realtime_process(core: int, priority: int) -> None:
+def config_realtime_process(cores: Union[int, List[int]], priority: int) -> None:
   gc.disable()
   set_realtime_priority(priority)
-  set_core_affinity(core)
+  c = cores if isinstance(cores, list) else [cores, ]
+  set_core_affinity(c)
 
 
 class Ratekeeper:
-  def __init__(self, rate: int, print_delay_threshold: Optional[float] = 0.0) -> None:
+  def __init__(self, rate: float, print_delay_threshold: Optional[float] = 0.0) -> None:
     """Rate in Hz for ratekeeping. print_delay_threshold must be nonnegative."""
     self._interval = 1. / rate
     self._next_frame_time = sec_since_boot() + self._interval
@@ -58,6 +59,11 @@ class Ratekeeper:
     self._frame = 0
     self._remaining = 0.0
     self._process_name = getproctitle()
+    self._dts = deque([self._interval], maxlen=100)
+    self._last_monitor_time = sec_since_boot()
+    self._expected_dt = self._interval * 1.2    
+    self._last_dts = 0
+    self._debug_dt = "0"
 
   @property
   def frame(self) -> int:
@@ -66,6 +72,12 @@ class Ratekeeper:
   @property
   def remaining(self) -> float:
     return self._remaining
+
+  @property
+  def lagging(self) -> bool:
+    avg_dt = sum(self._dts) / len(self._dts)
+    self._debug_dt = '{:.4f}  {:.4f}'.format( avg_dt, self._last_dts)   #- expected_dt
+    return avg_dt > self._expected_dt
 
   # Maintain loop rate by calling this at the end of each loop
   def keep_time(self) -> bool:
@@ -76,6 +88,11 @@ class Ratekeeper:
 
   # this only monitor the cumulative lag, but does not enforce a rate
   def monitor_time(self) -> bool:
+    prev = self._last_monitor_time
+    self._last_monitor_time = sec_since_boot()
+    self._last_dts = self._last_monitor_time - prev
+    self._dts.append( self._last_dts )
+
     lagged = False
     remaining = self._next_frame_time - sec_since_boot()
     self._next_frame_time += self._interval

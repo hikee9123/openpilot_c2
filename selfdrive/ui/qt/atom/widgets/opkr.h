@@ -956,6 +956,19 @@ public:
 };
 
 
+class TorqueUseLiveTuning : public ToggleControl {
+  Q_OBJECT
+
+public:
+  TorqueUseLiveTuning() : ToggleControl("TorqueLiveTuning", "Use TorqueLiveTuning On/Off", "../assets/offroad/icon_shell.png", Params().getBool("TorqueLiveTuning")) {
+    QObject::connect(this, &TorqueUseLiveTuning::toggleFlipped, [=](int state) {
+      bool status = state ? true : false;
+      Params().putBool("TorqueLiveTuning", status);
+    });
+  }
+};
+
+
 
 class CruiseGapTR : public AbstractControl {
   Q_OBJECT
