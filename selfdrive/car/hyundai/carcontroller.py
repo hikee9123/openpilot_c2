@@ -37,9 +37,8 @@ class CarController():
     self.scc12_cnt = 0
     
     self.NC = NaviControl(self.params, CP)
-
     self.gas = 0
-    
+    self.stop_cnt = 0
 
 
     # hud
@@ -174,20 +173,21 @@ class CarController():
 
   
   def update_scc12(self, can_sends,  c, CS ):
-    actuators = c.actuators
     enabled = c.enabled and CS.out.cruiseState.accActive
-    accel = actuators.accel if enabled else 0
-    #if accel < 0:
-    #  accel = interp(accel - CS.out.aEgo, [-1.0, -0.5], [2 * accel, accel])
-    accel = clip(accel, CarControllerParams.ACCEL_MIN, CarControllerParams.ACCEL_MAX)
+    accel = CS.aReqValue
 
-    if (CS.aReqValue > accel)  and CS.clu_Vanz > 3:
-      #can_sends.append( create_scc12(self.packer, accel, enabled, self.scc12_cnt, self.scc_live, CS.scc12 ) )
-      pass
-    else:
-      accel = CS.aReqValue
+    if CS.lead_distance > 10:
+      self.stop_cnt = 0
+    elif enabled and accel > -0.01:
+      if CS.out.aEgo < 0.1:
+        self.stop_cnt = 10
+      elif self.stop_cnt < 5:
+        accel = -0.01
+        can_sends.append( create_scc12(self.packer, accel, enabled, self.scc12_cnt, self.scc_live, CS.scc12 ) )
+      else:
+        self.stop_cnt -= 1  
 
-    can_sends.append( create_scc12(self.packer, accel, enabled, self.scc12_cnt, self.scc_live, CS.scc12 ) )
+    
     self.accel = accel
     return can_sends    
 
@@ -235,6 +235,7 @@ class CarController():
 
     if not lkas_active:
       apply_steer = 0
+      self.stop_cnt = 0
       self.steer_timer_apply_torque = 0
     elif self.CP.smoothSteer.method == 1:
       apply_steer = self.smooth_steer( apply_steer, CS )
@@ -273,13 +274,13 @@ class CarController():
     else:
       self.update_ASCC( can_sends, c, CS )
 
-
-    if self.CP.atompilotLongitudinalControl:
-      if (self.frame % 2 == 0) and CS.cruise_set_mode == 2:
-        self.update_scc12( can_sends, c, CS )
-        self.scc12_cnt += 1
-    else:
-      self.accel = CS.aReqValue
+      if self.CP.atompilotLongitudinalControl:
+        enabled = c.enabled and CS.out.cruiseState.accActive
+        if (self.frame % 2 == 0) and enabled and CS.cruise_set_mode == 2:
+          self.update_scc12( can_sends, c, CS )
+          self.scc12_cnt += 1
+      else:
+        self.accel = CS.aReqValue
       
     # 20 Hz LFA MFA message
     if self.frame % 5 == 0:
