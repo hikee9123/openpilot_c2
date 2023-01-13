@@ -93,14 +93,14 @@ class Controls:
     self.params = Params()
     self.sm = sm
     if self.sm is None:
-      ignore = ['testJoystick']
+      ignore = ['liveTorqueParameters','testJoystick']
       if SIMULATION:
         ignore += ['driverCameraState', 'managerState']
       self.sm = messaging.SubMaster(['deviceState', 'pandaStates', 'peripheralState', 'modelV2', 'liveCalibration',
                                      'driverMonitoringState', 'longitudinalPlan', 'lateralPlan', 'liveLocationKalman',
                                      'managerState', 'liveParameters', 'radarState','liveTorqueParameters', 'testJoystick',
                                      'liveNaviData','updateEvents' ] + self.camera_packets,
-                                     ignore_alive=ignore, ignore_avg_freq=['radarState', 'longitudinalPlan','driverMonitoringState' 'updateEvents'])
+                                     ignore_alive=ignore, ignore_avg_freq=['radarState', 'longitudinalPlan','driverMonitoringState','updateEvents'])
 
     if CI is None:
       # wait for one pandaState and one CAN packet
