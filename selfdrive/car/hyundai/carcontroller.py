@@ -144,7 +144,7 @@ class CarController():
     if self.stop_cnt > 0:
       self.stop_cnt -= 1
 
-    accel_val = interp( CS.lead_distance, [0, 30], [ -0.1, 0 ] )
+    accel_val = interp( CS.lead_distance, [0, 30], [ -0.15, 0 ] )
 
     if CS.lead_distance > 20:
       self.stop_cnt = 0
