@@ -132,11 +132,7 @@ class CarController():
     str_log1 = 'MODE={:.0f} vF={:.1f}  DIST={:.2f}'.format( CS.cruise_set_mode, vFuture, CS.lead_distance )
     trace1.printf2( '{}'.format( str_log1 ) )
 
-    #distance = self.NC.get_auto_resume( CS )
-
-
-
-    str_log1 = 'TG={:.1f}   aRV={:.2f} '.format( apply_steer,  CS.aReqValue  )
+    str_log1 = 'TG={:.1f}   aRV={:.2f} , {:.2f}'.format( apply_steer,  CS.aReqValue, self.accel  )
     trace1.printf3( '{}'.format( str_log1 ) )
   
 
@@ -145,17 +141,19 @@ class CarController():
     enabled = c.enabled and CS.out.cruiseState.accActive
     accel = CS.aReqValue
 
-    if CS.lead_distance > 10:
+    if self.stop_cnt > 0:
+      self.stop_cnt -= 1
+
+    accel_val = interp( CS.lead_distance, [0, 30], [ -0.1, 0 ] )
+
+    if CS.lead_distance > 20:
       self.stop_cnt = 0
-    elif enabled and accel > -0.01:
-      if CS.out.aEgo < 0.1:
-        self.stop_cnt = 10
-      elif self.stop_cnt < 5:
-        accel = -0.01
+    elif enabled and accel > accel_val and CS.out.vEgo < 10:
+      if self.stop_cnt < 5:
+        accel = accel_val
         can_sends.append( create_scc12(self.packer, accel, enabled, self.scc12_cnt, self.scc_live, CS.scc12 ) )
         self.scc12_cnt += 1
-      else:
-        self.stop_cnt -= 1  
+
 
     
     self.accel = accel
@@ -169,6 +167,7 @@ class CarController():
     elif CS.out.cruiseState.accActive:
       if CS.out.cruiseState.standstill and not self.CP.opkrAutoResume:
         btn_signal = None
+        self.stop_cnt = 100
       else:
         btn_signal = self.NC.update( c, CS, self.frame )
         if btn_signal != None:
