@@ -131,8 +131,8 @@ class CarController():
     vFuture = c.hudControl.vFuture * 3.6
     str_log1 = 'MODE={:.0f} vF={:.1f}  DIST={:.2f}'.format( CS.cruise_set_mode, vFuture, CS.lead_distance )
     trace1.printf2( '{}'.format( str_log1 ) )
-
-    str_log1 = 'TG={:.1f}   aRV={:.2f} , {:.2f}'.format( apply_steer,  CS.aReqValue, self.accel  )
+    scc_log = CS.scc12["CR_VSM_Alive"] 
+    str_log1 = 'TG={:.1f}   aRV={:.2f} , {:.2f}'.format( apply_steer,  CS.aReqValue, self.accel , scc_log )
     trace1.printf3( '{}'.format( str_log1 ) )
   
 
@@ -227,7 +227,7 @@ class CarController():
     if self.frame == 0: # initialize counts from last received count signals
       self.lkas11_cnt = CS.lkas11["CF_Lkas_MsgCount"] + 1
  
-    self.scc12_cnt = CS.scc12["CR_VSM_Alive"] + 1  
+    self.scc12_cnt = CS.scc12["CR_VSM_Alive"]+ 1  
     self.lkas11_cnt %= 0x10
     self.scc12_cnt %= 0x0F
 
