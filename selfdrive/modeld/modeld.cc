@@ -19,6 +19,38 @@
 
 ExitHandler do_exit;
 
+/*
+mat3 update_calibration(Eigen::Matrix<float, 3, 4> &extrinsics, bool wide_camera, bool bigmodel_frame) {
+  static const auto ground_from_medmodel_frame = (Eigen::Matrix<float, 3, 3>() <<
+     0.00000000e+00, 0.00000000e+00, 1.00000000e+00,
+    -1.09890110e-03, 0.00000000e+00, 2.81318681e-01,
+    -1.84808520e-20, 9.00738606e-04, -4.28751576e-02).finished();
+
+  static const auto ground_from_sbigmodel_frame = (Eigen::Matrix<float, 3, 3>() <<
+     0.00000000e+00,  7.31372216e-19,  1.00000000e+00,
+    -2.19780220e-03,  4.11497335e-19,  5.62637363e-01,
+    -5.46146580e-20,  1.80147721e-03, -2.73464241e-01).finished();
+
+  const auto cam_intrinsics = Eigen::Matrix<float, 3, 3, Eigen::RowMajor>(wide_camera ? ecam_intrinsic_matrix.v : fcam_intrinsic_matrix.v);
+  static const mat3 yuv_transform = get_model_yuv_transform();
+
+  auto ground_from_model_frame = bigmodel_frame ? ground_from_sbigmodel_frame : ground_from_medmodel_frame;
+  auto camera_frame_from_road_frame = cam_intrinsics * extrinsics;
+  Eigen::Matrix<float, 3, 3> camera_frame_from_ground;
+  camera_frame_from_ground.col(0) = camera_frame_from_road_frame.col(0);
+  camera_frame_from_ground.col(1) = camera_frame_from_road_frame.col(1);
+  camera_frame_from_ground.col(2) = camera_frame_from_road_frame.col(3);
+
+  auto warp_matrix = camera_frame_from_ground * ground_from_model_frame;
+  mat3 transform = {};
+  for (int i=0; i<3*3; i++) {
+    transform.v[i] = warp_matrix(i / 3, i % 3);
+  }
+  return matmul3(yuv_transform, transform);
+}
+*/
+
+
 mat3 update_calibration(Eigen::Vector3d device_from_calib_euler, bool wide_camera, bool bigmodel_frame) {
   /*
      import numpy as np
@@ -43,7 +75,7 @@ mat3 update_calibration(Eigen::Vector3d device_from_calib_euler, bool wide_camer
 
 
   const auto cam_intrinsics = Eigen::Matrix<float, 3, 3, Eigen::RowMajor>(wide_camera ? ecam_intrinsic_matrix.v : fcam_intrinsic_matrix.v);
-  Eigen::Matrix<float, 3, 3, Eigen::RowMajor>  device_from_calib = euler2rot(device_from_calib_euler);
+  Eigen::Matrix<float, 3, 3, Eigen::RowMajor>  device_from_calib = euler2rot(device_from_calib_euler).cast <float> ();
   auto calib_from_model = bigmodel_frame ? calib_from_sbigmodel : calib_from_medmodel;
   auto camera_from_calib = cam_intrinsics * view_from_device * device_from_calib;
   auto warp_matrix = camera_from_calib * calib_from_model;
