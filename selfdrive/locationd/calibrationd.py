@@ -68,7 +68,7 @@ class Calibrator:
     # Read saved calibration
     params = Params()
     calibration_params = params.get("CalibrationParams")
-    self.wide_camera = TICI and params.get_bool('EnableWideCamera')
+    self.wide_camera = False # TICI and params.get_bool('EnableWideCamera')
     rpy_init = RPY_INIT
     wide_from_device_euler = WIDE_FROM_DEVICE_EULER_INIT
     valid_blocks = 0
