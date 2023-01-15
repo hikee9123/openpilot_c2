@@ -229,7 +229,7 @@ class Calibrator:
       liveCalibration.rpyCalib = [0, 0, 0]
       liveCalibration.rpyCalibSpread = self.calib_spread.tolist()
 
-    print( {}.format( liveCalibration ) )
+    print( '{}'.format( liveCalibration ) )
     return msg
 
   def send_data(self, pm: messaging.PubMaster) -> None:
