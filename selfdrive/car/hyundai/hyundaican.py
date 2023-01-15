@@ -193,16 +193,15 @@ def create_mdps12(packer, frame, mdps12):
 
   return packer.make_can_msg("MDPS12", 2, values)   # 0
 
-def create_scc12(packer, apply_accel, enabled, frame, scc_live, scc12):
-  values = scc12
-  values["aReqRaw"] = apply_accel if enabled else 0 #aReqMax
-  values["aReqValue"] = apply_accel if enabled else 0 #aReqMin
-  values["CR_VSM_Alive"] = frame % 0x0F
-  values["CR_VSM_ChkSum"] = 0
-  if not scc_live:
-    values["ACCMode"] = 1  if enabled else 0 # 2 if gas padel pressed
+def create_scc12(packer, apply_accel, enabled, frame, gas_pressed, stopping):
+  scc12_values = {
+    "ACCMode": 2 if enabled and gas_pressed else 1 if enabled else 0,
+    "StopReq": 1 if stopping else 0,
+    "aReqRaw": apply_accel,
+    "aReqValue": apply_accel,  # stock ramps up and down respecting jerk limit until it reaches aReqRaw
+    "CR_VSM_Alive": frame % 0xF,
+  }
+  scc12_dat = packer.make_can_msg("SCC12", 0, scc12_values)[2]
+  scc12_values["CR_VSM_ChkSum"] = 0x10 - sum(sum(divmod(i, 16)) for i in scc12_dat) % 0x10  
 
-  dat = packer.make_can_msg("SCC12", 0, values)[2]
-  values["CR_VSM_ChkSum"] = 16 - sum([sum(divmod(i, 16)) for i in dat]) % 16
-
-  return packer.make_can_msg("SCC12", 0, values)
+  return packer.make_can_msg("SCC12", 0, scc12_values)

@@ -56,7 +56,7 @@ class CarInterface(CarInterfaceBase):
       ret.experimentalLongitudinalAvailable = candidate not in (LEGACY_SAFETY_MODE_CAR)
       ret.openpilotLongitudinalControl = experimental_long and (candidate not in (LEGACY_SAFETY_MODE_CAR))
     
-    ret.pcmCruise = not ret.openpilotLongitudinalControl
+    ret.pcmCruise = False #not ret.openpilotLongitudinalControl
 
 
 
@@ -368,8 +368,7 @@ class CarInterface(CarInterfaceBase):
 
   @staticmethod
   def init(CP, logcan, sendcan):
-    if CP.openpilotLongitudinalControl:
-      disable_ecu(logcan, sendcan, addr=0x7d0, com_cont_req=b'\x28\x83\x01')
+    pass
 
   def _update(self, c):
     ret = self.CS.update(self.cp, self.cp_cam, c)
@@ -380,38 +379,6 @@ class CarInterface(CarInterfaceBase):
     if self.CS.brake_error:
       events.add(EventName.brakeUnavailable)
 
-
-    if self.CS.CP.openpilotLongitudinalControl:
-      buttonEvents = []
-
-      if self.CS.cruise_buttons != self.CS.prev_cruise_buttons:
-        be = car.CarState.ButtonEvent.new_message()
-        be.type = ButtonType.unknown
-        if self.CS.cruise_buttons != 0:
-          be.pressed = True
-          but = self.CS.cruise_buttons
-        else:
-          be.pressed = False
-          but = self.CS.prev_cruise_buttons
-        if but == Buttons.RES_ACCEL:
-          be.type = ButtonType.accelCruise
-        elif but == Buttons.SET_DECEL:
-          be.type = ButtonType.decelCruise
-        elif but == Buttons.GAP_DIST:
-          be.type = ButtonType.gapAdjustCruise
-        elif but == Buttons.CANCEL:
-          be.type = ButtonType.cancel
-        buttonEvents.append(be)
-
-        ret.buttonEvents = buttonEvents
-
-        for b in ret.buttonEvents:
-          # do enable on both accel and decel buttons
-          if b.type in (ButtonType.accelCruise, ButtonType.decelCruise) and not b.pressed:
-            events.add(EventName.buttonEnable)
-          # do disable on button down
-          if b.type == ButtonType.cancel and b.pressed:
-            events.add(EventName.buttonCancel)
 
     # low speed steer alert hysteresis logic (only for cars with steer cut off above 10 m/s)
     if ret.vEgo < (self.CP.minSteerSpeed + 2.) and self.CP.minSteerSpeed > 10.:

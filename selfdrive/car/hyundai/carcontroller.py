@@ -4,7 +4,8 @@ from common.realtime import DT_CTRL
 from common.numpy_fast import clip, interp
 from common.conversions import Conversions as CV
 from selfdrive.car import apply_std_steer_torque_limits
-from selfdrive.car.hyundai.hyundaican import create_lkas11, create_clu11, create_lfahda_mfc, create_acc_commands, create_acc_opt, create_frt_radar_opt, create_mdps12, create_hda_mfc, create_scc12
+from selfdrive.car.hyundai.hyundaican import create_lkas11, create_clu11, create_lfahda_mfc, create_mdps12, create_hda_mfc, create_scc12
+from selfdrive.car.hyundai import hyundaican
 from selfdrive.car.hyundai.values import Buttons, CarControllerParams, CAR, FEATURES
 from opendbc.can.packer import CANPacker
 
@@ -131,16 +132,17 @@ class CarController():
     vFuture = c.hudControl.vFuture * 3.6
     str_log1 = 'MODE={:.0f} vF={:.1f}  DIST={:.2f}'.format( CS.cruise_set_mode, vFuture, CS.lead_distance )
     trace1.printf2( '{}'.format( str_log1 ) )
-    scc_log1 = CS.scc12["CR_VSM_Alive"] 
+    scc_log1 = '{}'.format( CS.scc12["CR_VSM_Alive"]  )
     str_log1 = 'TG={:.1f}   aRV={:.2f} , {:.2f}, {}'.format( apply_steer,  CS.aReqValue, self.accel , scc_log1 )
     trace1.printf3( '{}'.format( str_log1 ) )
   
 
   
   def update_scc12(self, can_sends,  c, CS ):
+    actuators = c.actuators
     enabled = c.enabled and CS.out.cruiseState.accActive
     accel = CS.aReqValue
-
+    stopping = actuators.longControlState == LongCtrlState.stopping
     if self.stop_cnt > 0:
       self.stop_cnt -= 1
 
@@ -151,7 +153,10 @@ class CarController():
     elif enabled and accel > accel_val and CS.out.vEgo < 10:
       if self.stop_cnt < 5:
         accel = accel_val
-        can_sends.append( create_scc12(self.packer, accel, enabled, self.scc12_cnt, self.scc_live, CS.scc12 ) )
+        #can_sends.append( create_scc12(self.packer, accel, enabled, self.scc12_cnt, self.scc_live, CS.scc12 ) )
+        gas_pressed = c.cruiseControl.override
+        can_sends.extend( hyundaican.create_scc12(self.packer, accel, enabled, self.scc12_cnt, gas_pressed, stopping) )            
+
         self.scc12_cnt += 1
 
 
@@ -176,12 +181,12 @@ class CarController():
         else:
           self.resume_cnt = 0
 
-        enabled = c.enabled and CS.out.cruiseState.accActive
-        if enabled and self.CP.atompilotLongitudinalControl:
-          if (self.frame % 2 == 0) and CS.cruise_set_mode == 2:
-            self.update_scc12( can_sends, c, CS )
-        else:
-          self.accel = CS.aReqValue
+        if self.CP.atompilotLongitudinalControl:
+          if c.enabled and CS.out.cruiseState.accActive:
+            if (self.frame % 2 == 0) and CS.cruise_set_mode == 2:
+              self.update_scc12( can_sends, c, CS )
+          else:
+            self.accel = 0
 
     return  can_sends
 
