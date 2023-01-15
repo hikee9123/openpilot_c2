@@ -264,7 +264,6 @@ def calibrationd_thread(sm: Optional[messaging.SubMaster] = None, pm: Optional[m
       if DEBUG and new_rpy is not None:
         print('got new rpy', new_rpy)
 
-    print( '{}'.format( sm['carParams'] ) )
     # 4Hz driven by cameraOdometry
     if sm.frame % 5 == 0:
       calibrator.send_data(pm)
