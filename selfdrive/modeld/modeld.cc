@@ -57,7 +57,7 @@ mat3 update_calibration(Eigen::Matrix<float, 3, 4> &extrinsics, bool wide_camera
 }
 
 
-
+/*
 mat3 update_calibration_(Eigen::Vector3d device_from_calib_euler, bool wide_camera, bool bigmodel_frame) {
   
   //   import numpy as np
@@ -99,7 +99,7 @@ mat3 update_calibration_(Eigen::Vector3d device_from_calib_euler, bool wide_came
   static const mat3 yuv_transform = get_model_yuv_transform();
   return matmul3(yuv_transform, transform);
 }
-
+*/
 
 static uint64_t get_ts(const VisionIpcBufExtra &extra) {
   return Hardware::TICI() ? extra.timestamp_sof : extra.timestamp_eof;
