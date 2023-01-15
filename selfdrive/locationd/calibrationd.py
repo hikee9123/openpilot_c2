@@ -68,6 +68,7 @@ class Calibrator:
     # Read saved calibration
     params = Params()
     calibration_params = params.get("CalibrationParams")
+    self.wide_camera = TICI and params.get_bool('EnableWideCamera')
     rpy_init = RPY_INIT
     wide_from_device_euler = WIDE_FROM_DEVICE_EULER_INIT
     valid_blocks = 0
@@ -167,7 +168,10 @@ class Calibrator:
     self.old_rpy_weight = min(0.0, self.old_rpy_weight - 1/SMOOTH_CYCLES)
 
     straight_and_fast = ((self.v_ego > MIN_SPEED_FILTER) and (trans[0] > MIN_SPEED_FILTER) and (abs(rot[2]) < MAX_YAW_RATE_FILTER))
-    angle_std_threshold = MAX_VEL_ANGLE_STD
+    if self.wide_camera:
+      angle_std_threshold = 4*MAX_VEL_ANGLE_STD
+    else:
+      angle_std_threshold = MAX_VEL_ANGLE_STD
     certain_if_calib = ((np.arctan2(trans_std[1], trans[0]) < angle_std_threshold) or
                         (self.valid_blocks < INPUTS_NEEDED))
     if not (straight_and_fast and certain_if_calib):
@@ -179,14 +183,18 @@ class Calibrator:
     new_rpy = euler_from_rot(rot_from_euler(self.get_smooth_rpy()).dot(rot_from_euler(observed_rpy)))
     new_rpy = sanity_clip(new_rpy)
 
-    if len(wide_from_device_euler) == 3:
-      new_wide_from_device_euler = np.array(wide_from_device_euler)
-    else:
-      new_wide_from_device_euler = WIDE_FROM_DEVICE_EULER_INIT
-    self.rpys[self.block_idx] = (self.idx*self.rpys[self.block_idx] +
-                                 (BLOCK_SIZE - self.idx) * new_rpy) / float(BLOCK_SIZE)
-    self.wide_from_device_eulers[self.block_idx] = (self.idx*self.wide_from_device_eulers[self.block_idx] +
-                                                    (BLOCK_SIZE - self.idx) * new_wide_from_device_euler) / float(BLOCK_SIZE)
+    self.rpys[self.block_idx] = (self.idx*self.rpys[self.block_idx] + (BLOCK_SIZE - self.idx) * new_rpy) / float(BLOCK_SIZE)
+
+    if self.wide_camera:
+      if len(wide_from_device_euler) == 3:
+        new_wide_from_device_euler = np.array(wide_from_device_euler)
+      else:
+        new_wide_from_device_euler = WIDE_FROM_DEVICE_EULER_INIT
+
+      self.wide_from_device_eulers[self.block_idx] = (self.idx*self.wide_from_device_eulers[self.block_idx] +
+                                                      (BLOCK_SIZE - self.idx) * new_wide_from_device_euler) / float(BLOCK_SIZE)
+
+
     self.idx = (self.idx + 1) % BLOCK_SIZE
     if self.idx == 0:
       self.block_idx += 1
@@ -210,7 +218,7 @@ class Calibrator:
     liveCalibration.extrinsicMatrix = extrinsic_matrix.flatten().tolist()
     liveCalibration.rpyCalib = smooth_rpy.tolist()
     liveCalibration.rpyCalibSpread = self.calib_spread.tolist()
-    #liveCalibration.wideFromDeviceEuler = self.wide_from_device_euler.tolist()
+    liveCalibration.wideFromDeviceEuler = self.wide_from_device_euler.tolist()
 
     if self.not_car:
       extrinsic_matrix = get_view_frame_from_road_frame(0, 0, 0, model_height)
