@@ -56,7 +56,7 @@ class CarInterface(CarInterfaceBase):
       ret.experimentalLongitudinalAvailable = candidate not in (LEGACY_SAFETY_MODE_CAR)
       ret.openpilotLongitudinalControl = experimental_long and (candidate not in (LEGACY_SAFETY_MODE_CAR))
     
-    ret.pcmCruise = False #not ret.openpilotLongitudinalControl
+    ret.pcmCruise = True #not ret.openpilotLongitudinalControl
 
 
 
