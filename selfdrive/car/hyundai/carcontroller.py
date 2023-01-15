@@ -133,7 +133,7 @@ class CarController():
     str_log1 = 'TG={:.1f}  DIST={:.2f}'.format(  apply_steer, CS.lead_distance )
     trace1.printf2( '{}'.format( str_log1 ) )
     scc_log1 = '{}'.format( CS.scc12["CR_VSM_Alive"]  )
-    str_log1 = 'MODE={:.0f} LC={:.0f} vF={:.1f}  aRV={:.2f} , {:.2f}, {}'.format( CS.cruise_set_mode, actuators.longControlState, vFuture, CS.aReqValue, self.accel , scc_log1 )
+    str_log1 = 'MODE={:.0f} vF={:.1f}  aRV={:.2f} , {:.2f}, {}'.format( CS.cruise_set_mode, vFuture, CS.aReqValue, self.accel , scc_log1 )
     trace1.printf3( '{}'.format( str_log1 ) )
   
 
