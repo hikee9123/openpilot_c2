@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 import math
 import numpy as np
-from common.numpy_fast import interp
+from common.numpy_fast import interp, clip
 
 import cereal.messaging as messaging
 from common.conversions import Conversions as CV
