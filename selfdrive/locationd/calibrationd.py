@@ -210,7 +210,7 @@ class Calibrator:
     liveCalibration.extrinsicMatrix = extrinsic_matrix.flatten().tolist()
     liveCalibration.rpyCalib = smooth_rpy.tolist()
     liveCalibration.rpyCalibSpread = self.calib_spread.tolist()
-    liveCalibration.wideFromDeviceEuler = self.wide_from_device_euler.tolist()
+    #liveCalibration.wideFromDeviceEuler = self.wide_from_device_euler.tolist()
 
     if self.not_car:
       extrinsic_matrix = get_view_frame_from_road_frame(0, 0, 0, model_height)
