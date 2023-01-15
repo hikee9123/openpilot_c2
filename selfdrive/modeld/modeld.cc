@@ -19,8 +19,15 @@
 
 ExitHandler do_exit;
 
-/*
+
 mat3 update_calibration(Eigen::Matrix<float, 3, 4> &extrinsics, bool wide_camera, bool bigmodel_frame) {
+  
+  //   import numpy as np
+  //   from common.transformations.model import medmodel_frame_from_road_frame
+  //   medmodel_frame_from_ground = medmodel_frame_from_road_frame[:, (0, 1, 3)]
+  //   ground_from_medmodel_frame = np.linalg.inv(medmodel_frame_from_ground)
+
+
   static const auto ground_from_medmodel_frame = (Eigen::Matrix<float, 3, 3>() <<
      0.00000000e+00, 0.00000000e+00, 1.00000000e+00,
     -1.09890110e-03, 0.00000000e+00, 2.81318681e-01,
@@ -48,16 +55,16 @@ mat3 update_calibration(Eigen::Matrix<float, 3, 4> &extrinsics, bool wide_camera
   }
   return matmul3(yuv_transform, transform);
 }
-*/
 
 
+/*
 mat3 update_calibration(Eigen::Vector3d device_from_calib_euler, bool wide_camera, bool bigmodel_frame) {
-  /*
-     import numpy as np
-     from common.transformations.model import medmodel_frame_from_calib_frame
-     medmodel_frame_from_calib_frame = medmodel_frame_from_calib_frame[:, :3]
-     calib_from_smedmodel_frame = np.linalg.inv(medmodel_frame_from_calib_frame)
-  */
+  
+  //   import numpy as np
+  //   from common.transformations.model import medmodel_frame_from_calib_frame
+  //   medmodel_frame_from_calib_frame = medmodel_frame_from_calib_frame[:, :3]
+  //   calib_from_smedmodel_frame = np.linalg.inv(medmodel_frame_from_calib_frame)
+  
   static const auto calib_from_medmodel = (Eigen::Matrix<float, 3, 3>() <<
      0.00000000e+00, 0.00000000e+00, 1.00000000e+00,
      1.09890110e-03, 0.00000000e+00, -2.81318681e-01,
@@ -75,8 +82,7 @@ mat3 update_calibration(Eigen::Vector3d device_from_calib_euler, bool wide_camer
 
 
   const auto cam_intrinsics = Eigen::Matrix<float, 3, 3, Eigen::RowMajor>(wide_camera ? ecam_intrinsic_matrix.v : fcam_intrinsic_matrix.v);
-  //Eigen::Matrix<float, 3, 3, Eigen::RowMajor>  device_from_calib = euler2rot(device_from_calib_euler).cast <float> ();
-  auto device_from_calib = Eigen::Matrix<float, 3, 3, Eigen::RowMajor>( euler2rot(device_from_calib_euler).cast <float> ());
+  Eigen::Matrix<float, 3, 3, Eigen::RowMajor>  device_from_calib = euler2rot(device_from_calib_euler).cast <float> ();
   auto calib_from_model = bigmodel_frame ? calib_from_sbigmodel : calib_from_medmodel;
   auto camera_from_calib = cam_intrinsics * view_from_device * device_from_calib;
   auto warp_matrix = camera_from_calib * calib_from_model;
@@ -88,6 +94,7 @@ mat3 update_calibration(Eigen::Vector3d device_from_calib_euler, bool wide_camer
   static const mat3 yuv_transform = get_model_yuv_transform();
   return matmul3(yuv_transform, transform);
 }
+*/
 
 static uint64_t get_ts(const VisionIpcBufExtra &extra) {
   return Hardware::TICI() ? extra.timestamp_sof : extra.timestamp_eof;
@@ -155,6 +162,7 @@ void run_model(ModelState &model, VisionIpcClient &vipc_client_main, VisionIpcCl
     int desire = ((int)sm["lateralPlan"].getLateralPlan().getDesire());
     frame_id = sm["roadCameraState"].getRoadCameraState().getFrameId();
     if (sm.updated("liveCalibration")) {
+      /*
       auto rpy_calib = sm["liveCalibration"].getLiveCalibration().getRpyCalib();
       Eigen::Vector3d device_from_calib_euler;
       for (int i=0; i<3; i++) {
@@ -162,8 +170,8 @@ void run_model(ModelState &model, VisionIpcClient &vipc_client_main, VisionIpcCl
       }
       model_transform_main = update_calibration(device_from_calib_euler, main_wide_camera, false);
       model_transform_extra = update_calibration(device_from_calib_euler, Hardware::TICI(), true);
-
-      /*
+      */
+      
       auto extrinsic_matrix = sm["liveCalibration"].getLiveCalibration().getExtrinsicMatrix();
       Eigen::Matrix<float, 3, 4> extrinsic_matrix_eigen;
       for (int i = 0; i < 4*3; i++) {
@@ -171,7 +179,7 @@ void run_model(ModelState &model, VisionIpcClient &vipc_client_main, VisionIpcCl
       }
       model_transform_main = update_calibration(extrinsic_matrix_eigen, main_wide_camera, false);
       model_transform_extra = update_calibration(extrinsic_matrix_eigen, Hardware::TICI(), true);
-      */
+      
       live_calib_seen = true;
     }
 
