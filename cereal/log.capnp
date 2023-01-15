@@ -757,6 +757,9 @@ struct ModelDataV2 {
 
   meta @12 :MetaData;
 
+  # Model perceived motion
+  temporalPose @21 :Pose;  
+
   # All SI units and in device frame
   struct XYZTData {
     x @0 :List(Float32);
@@ -820,6 +823,13 @@ struct ModelDataV2 {
     brake4MetersPerSecondSquaredProbs @5 :List(Float32);
     brake5MetersPerSecondSquaredProbs @6 :List(Float32);
   }
+
+  struct Pose {
+    trans @0 :List(Float32); # m/s in device frame
+    rot @1 :List(Float32); # rad/s in device frame
+    transStd @2 :List(Float32); # std m/s in device frame
+    rotStd @3 :List(Float32); # std rad/s in device frame
+  }  
 }
 
 struct EncodeIndex {
@@ -1744,6 +1754,8 @@ struct CameraOdometry {
   rot @1 :List(Float32); # rad/s in device frame
   transStd @2 :List(Float32); # std m/s in device frame
   rotStd @3 :List(Float32); # std rad/s in device frame
+  wideFromDeviceEuler @6 :List(Float32);
+  wideFromDeviceEulerStd @7 :List(Float32);  
 }
 
 struct Sentinel {

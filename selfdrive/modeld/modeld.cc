@@ -117,14 +117,23 @@ void run_model(ModelState &model, VisionIpcClient &vipc_client_main, VisionIpcCl
     int desire = ((int)sm["lateralPlan"].getLateralPlan().getDesire());
     frame_id = sm["roadCameraState"].getRoadCameraState().getFrameId();
     if (sm.updated("liveCalibration")) {
+      auto rpy_calib = sm["liveCalibration"].getLiveCalibration().getRpyCalib();
+      Eigen::Vector3d device_from_calib_euler;
+      for (int i=0; i<3; i++) {
+        device_from_calib_euler(i) = rpy_calib[i];
+      }
+      model_transform_main = update_calibration(device_from_calib_euler, main_wide_camera, false);
+      model_transform_extra = update_calibration(device_from_calib_euler, Hardware::TICI(), true);
+
+      /*
       auto extrinsic_matrix = sm["liveCalibration"].getLiveCalibration().getExtrinsicMatrix();
       Eigen::Matrix<float, 3, 4> extrinsic_matrix_eigen;
       for (int i = 0; i < 4*3; i++) {
         extrinsic_matrix_eigen(i / 4, i % 4) = extrinsic_matrix[i];
       }
-
       model_transform_main = update_calibration(extrinsic_matrix_eigen, main_wide_camera, false);
       model_transform_extra = update_calibration(extrinsic_matrix_eigen, Hardware::TICI(), true);
+      */
       live_calib_seen = true;
     }
 

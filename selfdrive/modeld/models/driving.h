@@ -188,6 +188,20 @@ struct ModelOutputPose {
 };
 static_assert(sizeof(ModelOutputPose) == sizeof(ModelOutputXYZ)*4);
 
+struct ModelOutputWideFromDeviceEuler {
+  ModelOutputXYZ mean;
+  ModelOutputXYZ std;
+};
+static_assert(sizeof(ModelOutputWideFromDeviceEuler) == sizeof(ModelOutputXYZ)*2);
+
+struct ModelOutputTemporalPose {
+  ModelOutputXYZ velocity_mean;
+  ModelOutputXYZ rotation_mean;
+  ModelOutputXYZ velocity_std;
+  ModelOutputXYZ rotation_std;
+};
+static_assert(sizeof(ModelOutputTemporalPose) == sizeof(ModelOutputXYZ)*4);
+
 struct ModelOutputDisengageProb {
   float gas_disengage;
   float brake_disengage;
@@ -238,9 +252,11 @@ struct ModelOutput {
   const ModelOutputLaneLines lane_lines;
   const ModelOutputRoadEdges road_edges;
   const ModelOutputLeads leads;
-  const ModelOutputStopLines stop_lines;
   const ModelOutputMeta meta;
   const ModelOutputPose pose;
+  const ModelOutputStopLines stop_lines;
+  const ModelOutputWideFromDeviceEuler wide_from_device_euler;
+  const ModelOutputTemporalPose temporal_pose;  
 };
 
 constexpr int OUTPUT_SIZE = sizeof(ModelOutput) / sizeof(float);
