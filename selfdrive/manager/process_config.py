@@ -1,9 +1,19 @@
 import os
 
+from cereal import car
+from common.params import Params
 from system.hardware import EON, TICI, PC
 from selfdrive.manager.process import PythonProcess, NativeProcess, DaemonProcess
 
 WEBCAM = os.getenv("USE_WEBCAM") is not None
+
+
+def notcar(started: bool, params: Params, CP: car.CarParams) -> bool:
+  return CP.notCar  # type: ignore
+
+def logging(started, params, CP: car.CarParams) -> bool:
+  run = (not CP.notCar) or not params.get_bool("DisableLogging")
+  return started and run
 
 procs = [
   DaemonProcess("manage_athenad", "selfdrive.athena.manage_athenad", "AthenadPid"),
