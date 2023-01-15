@@ -182,9 +182,9 @@ void run_model(ModelState &model, VisionIpcClient &vipc_client_main, VisionIpcCl
       for (int i = 0; i < 4*3; i++) {
         extrinsic_matrix_eigen(i / 4, i % 4) = extrinsic_matrix[i];
       }
+
       model_transform_main = update_calibration(extrinsic_matrix_eigen, main_wide_camera, false);
       model_transform_extra = update_calibration(extrinsic_matrix_eigen, Hardware::TICI(), true);
-      
       live_calib_seen = true;
     }
 
