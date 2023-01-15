@@ -85,7 +85,7 @@ mat3 update_calibration_(Eigen::Vector3d device_from_calib_euler, bool wide_came
   Eigen::Matrix3d  device_cal = euler2rot(device_from_calib_euler);
 
 
-  Eigen::Matrix<float, 3, 3, Eigen::RowMajor>  device_from_calib = cam_intrinsics;
+  Eigen::Matrix<float, 3, 3, Eigen::RowMajor>  device_from_calib = device_cal;
 
 
   auto calib_from_model = bigmodel_frame ? calib_from_sbigmodel : calib_from_medmodel;
