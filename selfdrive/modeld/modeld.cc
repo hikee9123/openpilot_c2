@@ -6,9 +6,6 @@
 #include <eigen3/Eigen/Dense>
 
 #include "cereal/messaging/messaging.h"
-#include "common/transformations/orientation.hpp"
-
-
 #include "cereal/visionipc/visionipc_client.h"
 #include "selfdrive/common/clutil.h"
 #include "selfdrive/common/params.h"
@@ -19,15 +16,13 @@
 
 ExitHandler do_exit;
 
-
 mat3 update_calibration(Eigen::Matrix<float, 3, 4> &extrinsics, bool wide_camera, bool bigmodel_frame) {
-  
-  //   import numpy as np
-  //   from common.transformations.model import medmodel_frame_from_road_frame
-  //   medmodel_frame_from_ground = medmodel_frame_from_road_frame[:, (0, 1, 3)]
-  //   ground_from_medmodel_frame = np.linalg.inv(medmodel_frame_from_ground)
-
-
+  /*
+     import numpy as np
+     from common.transformations.model import medmodel_frame_from_road_frame
+     medmodel_frame_from_ground = medmodel_frame_from_road_frame[:, (0, 1, 3)]
+     ground_from_medmodel_frame = np.linalg.inv(medmodel_frame_from_ground)
+  */
   static const auto ground_from_medmodel_frame = (Eigen::Matrix<float, 3, 3>() <<
      0.00000000e+00, 0.00000000e+00, 1.00000000e+00,
     -1.09890110e-03, 0.00000000e+00, 2.81318681e-01,
@@ -55,51 +50,6 @@ mat3 update_calibration(Eigen::Matrix<float, 3, 4> &extrinsics, bool wide_camera
   }
   return matmul3(yuv_transform, transform);
 }
-
-
-/*
-mat3 update_calibration_(Eigen::Vector3d device_from_calib_euler, bool wide_camera, bool bigmodel_frame) {
-  
-  //   import numpy as np
-  //   from common.transformations.model import medmodel_frame_from_calib_frame
-  //   medmodel_frame_from_calib_frame = medmodel_frame_from_calib_frame[:, :3]
-  //   calib_from_smedmodel_frame = np.linalg.inv(medmodel_frame_from_calib_frame)
-  
-  static const auto calib_from_medmodel = (Eigen::Matrix<float, 3, 3>() <<
-     0.00000000e+00, 0.00000000e+00, 1.00000000e+00,
-     1.09890110e-03, 0.00000000e+00, -2.81318681e-01,
-    -2.25466395e-20, 1.09890110e-03,-5.23076923e-02).finished();
-
-  static const auto calib_from_sbigmodel = (Eigen::Matrix<float, 3, 3>() <<
-     0.00000000e+00,  7.31372216e-19,  1.00000000e+00,
-     2.19780220e-03,  4.11497335e-19, -5.62637363e-01,
-    -6.66298828e-20,  2.19780220e-03, -3.33626374e-01).finished();
-
-  static const auto view_from_device = (Eigen::Matrix<float, 3, 3>() <<
-     0.0,  1.0,  0.0,
-     0.0,  0.0,  1.0,
-     1.0,  0.0,  0.0).finished();
-
-
-  const auto cam_intrinsics = Eigen::Matrix<float, 3, 3, Eigen::RowMajor>(wide_camera ? ecam_intrinsic_matrix.v : fcam_intrinsic_matrix.v);
-  Eigen::Matrix3d  device_from_calib = euler2rot(device_from_calib_euler);
-
-
-  //Eigen::Matrix<float, 3, 3, Eigen::RowMajor>  device_from_calib = device_cal;
-
-
-  auto calib_from_model = bigmodel_frame ? calib_from_sbigmodel : calib_from_medmodel;
-  auto camera_from_calib = cam_intrinsics * view_from_device * device_from_calib;
-  auto warp_matrix = camera_from_calib * calib_from_model;
-
-  mat3 transform = {};
-  for (int i=0; i<3*3; i++) {
-    transform.v[i] = warp_matrix(i / 3, i % 3);
-  }
-  static const mat3 yuv_transform = get_model_yuv_transform();
-  return matmul3(yuv_transform, transform);
-}
-*/
 
 static uint64_t get_ts(const VisionIpcBufExtra &extra) {
   return Hardware::TICI() ? extra.timestamp_sof : extra.timestamp_eof;
@@ -167,16 +117,6 @@ void run_model(ModelState &model, VisionIpcClient &vipc_client_main, VisionIpcCl
     int desire = ((int)sm["lateralPlan"].getLateralPlan().getDesire());
     frame_id = sm["roadCameraState"].getRoadCameraState().getFrameId();
     if (sm.updated("liveCalibration")) {
-      /*
-      auto rpy_calib = sm["liveCalibration"].getLiveCalibration().getRpyCalib();
-      Eigen::Vector3d device_from_calib_euler;
-      for (int i=0; i<3; i++) {
-        device_from_calib_euler(i) = rpy_calib[i];
-      }
-      model_transform_main = update_calibration_(device_from_calib_euler, main_wide_camera, false);
-      model_transform_extra = update_calibration_(device_from_calib_euler, Hardware::TICI(), true);
-      */
-      
       auto extrinsic_matrix = sm["liveCalibration"].getLiveCalibration().getExtrinsicMatrix();
       Eigen::Matrix<float, 3, 4> extrinsic_matrix_eigen;
       for (int i = 0; i < 4*3; i++) {
