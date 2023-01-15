@@ -229,7 +229,7 @@ class Calibrator:
       liveCalibration.rpyCalib = [0, 0, 0]
       liveCalibration.rpyCalibSpread = self.calib_spread.tolist()
 
-    print( '{}'.format( liveCalibration ) )
+
     return msg
 
   def send_data(self, pm: messaging.PubMaster) -> None:
@@ -264,6 +264,7 @@ def calibrationd_thread(sm: Optional[messaging.SubMaster] = None, pm: Optional[m
       if DEBUG and new_rpy is not None:
         print('got new rpy', new_rpy)
 
+    print( '{}'.format( sm['carParams'] ) )
     # 4Hz driven by cameraOdometry
     if sm.frame % 5 == 0:
       calibrator.send_data(pm)
