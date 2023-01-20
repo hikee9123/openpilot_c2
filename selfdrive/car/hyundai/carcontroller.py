@@ -155,10 +155,7 @@ class CarController():
         accel = accel_val
         gas_pressed = c.cruiseControl.override
         can_sends.extend( hyundaican.create_scc12(self.packer, accel, enabled, self.scc12_cnt, gas_pressed, stopping) )            
-
-
-
-    
+   
     self.accel = accel
     return can_sends    
 
