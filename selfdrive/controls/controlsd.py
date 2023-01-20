@@ -767,6 +767,7 @@ class Controls:
     if len(angular_rate_value) > 2:
       CC.angularVelocity = angular_rate_value
 
+    CC.cruiseControl.override = self.enabled and not CC.longActive and self.CP.atompilotLongitudinalControl
     CC.cruiseControl.cancel = CS.cruiseState.enabled and (not self.enabled or not self.CP.pcmCruise)
     if self.joystick_mode and self.sm.rcv_frame['testJoystick'] > 0 and self.sm['testJoystick'].buttons[0]:
       CC.cruiseControl.cancel = True
@@ -881,6 +882,7 @@ class Controls:
     controlsState.canErrorCounter = self.can_rcv_timeout_counter
     controlsState.output = float(lac_log.output)
     controlsState.steeringAngleDesiredDegDEPRECATED = angle_steers_des
+    controlsState.experimentalMode = self.CP.atompilotLongitudinalControl    
     controlsState.alertTextMsg1 = str(log_alertTextMsg1)
     controlsState.alertTextMsg2 = str(log_alertTextMsg2)
     controlsState.alertTextMsg3 = str(log_alertTextMsg3)
