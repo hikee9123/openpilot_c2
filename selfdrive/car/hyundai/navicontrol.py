@@ -56,7 +56,7 @@ class NaviControl():
 
 
   def button_status(self, CS ): 
-    if not CS.acc_active or CS.cruise_buttons != Buttons.NONE or CS.out.brakePressed or CS.out.brakeLightsDEPRECATED or CS.out.gasPressed: 
+    if not CS.acc_active or CS.cruise_buttons != Buttons.NONE or CS.out.brakePressed  or CS.out.gasPressed: 
       self.wait_timer2 = 100 
     elif self.wait_timer2: 
       self.wait_timer2 -= 1
