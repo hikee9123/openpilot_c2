@@ -93,14 +93,14 @@ class Controls:
     self.params = Params()
     self.sm = sm
     if self.sm is None:
-      ignore = ['testJoystick']
+      ignore = ['liveTorqueParameters','testJoystick']
       if SIMULATION:
         ignore += ['driverCameraState', 'managerState']
       self.sm = messaging.SubMaster(['deviceState', 'pandaStates', 'peripheralState', 'modelV2', 'liveCalibration',
                                      'driverMonitoringState', 'longitudinalPlan', 'lateralPlan', 'liveLocationKalman',
                                      'managerState', 'liveParameters', 'radarState','liveTorqueParameters', 'testJoystick',
                                      'liveNaviData','updateEvents' ] + self.camera_packets,
-                                     ignore_alive=ignore, ignore_avg_freq=['radarState', 'longitudinalPlan','driverMonitoringState' 'updateEvents'])
+                                     ignore_alive=ignore, ignore_avg_freq=['radarState', 'longitudinalPlan','driverMonitoringState','updateEvents'])
 
     if CI is None:
       # wait for one pandaState and one CAN packet
@@ -659,7 +659,7 @@ class Controls:
     # Check which actuators can be enabled
     CC.latActive = self.active and not CS.steerFaultTemporary and not CS.steerFaultPermanent and \
                    CS.vEgo > self.CP.minSteerSpeed and not CS.standstill
-    CC.longActive = self.active and not self.events.any(ET.OVERRIDE_LONGITUDINAL) and self.CP.openpilotLongitudinalControl
+    CC.longActive = self.active and not self.events.any(ET.OVERRIDE_LONGITUDINAL) and self.CP.atompilotLongitudinalControl
 
     actuators = CC.actuators
     actuators.longControlState = self.LoC.long_control_state
@@ -767,6 +767,7 @@ class Controls:
     if len(angular_rate_value) > 2:
       CC.angularVelocity = angular_rate_value
 
+    CC.cruiseControl.override = self.enabled and not CC.longActive and self.CP.atompilotLongitudinalControl
     CC.cruiseControl.cancel = CS.cruiseState.enabled and (not self.enabled or not self.CP.pcmCruise)
     if self.joystick_mode and self.sm.rcv_frame['testJoystick'] > 0 and self.sm['testJoystick'].buttons[0]:
       CC.cruiseControl.cancel = True
@@ -881,6 +882,7 @@ class Controls:
     controlsState.canErrorCounter = self.can_rcv_timeout_counter
     controlsState.output = float(lac_log.output)
     controlsState.steeringAngleDesiredDegDEPRECATED = angle_steers_des
+    controlsState.experimentalMode = self.CP.atompilotLongitudinalControl    
     controlsState.alertTextMsg1 = str(log_alertTextMsg1)
     controlsState.alertTextMsg2 = str(log_alertTextMsg2)
     controlsState.alertTextMsg3 = str(log_alertTextMsg3)

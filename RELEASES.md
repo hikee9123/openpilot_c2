@@ -1,4 +1,4 @@
-Version 0.8.17 (2022-XX-XX)
+Version 0.8.17 (2023-01-12)
 ========================
 * New driving model
   * Nuclear Grade Model
@@ -8,6 +8,7 @@ Version 0.8.17 (2022-XX-XX)
 * UI updates
   * Improved update experience
   * Border turns grey while overriding steering
+* mappy update
 
 Version 0.8.16 (2022-10-15)
 ========================

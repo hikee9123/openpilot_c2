@@ -56,8 +56,8 @@ class NaviControl():
 
 
   def button_status(self, CS ): 
-    if not CS.acc_active or CS.cruise_buttons != Buttons.NONE or CS.out.brakePressed or CS.out.gasPressed: 
-      self.wait_timer2 = 50 
+    if not CS.acc_active or CS.cruise_buttons != Buttons.NONE or CS.out.brakePressed  or CS.out.gasPressed: 
+      self.wait_timer2 = 100 
     elif self.wait_timer2: 
       self.wait_timer2 -= 1
     else:
@@ -189,7 +189,7 @@ class NaviControl():
 
     if self.auto_resume_time <= 1 and v_ego_kph < 0.1:
       dRel1 = CS.lead_distance
-      if dRel1 > 5 or dRel1 == 0:
+      if dRel1 > 6 or dRel1 == 0:
         self.event_navi_alert = EventName.manualRestart
 
 
@@ -255,7 +255,7 @@ class NaviControl():
       self.gasPressed_time -= 1
       if self.gasPressed_time <= 0:
         cruise_set_speed = CS.clu_Vanz - 5
-    elif CS.cruise_set_mode == 2:  # comma long control speed.
+    elif CS.cruise_set_mode == 5:  # comma long control speed.
       vFuture = c.hudControl.vFuture * CV.MS_TO_KPH
       ctrl_speed = min( vFuture, ctrl_speed )
 
