@@ -153,5 +153,6 @@ class LongitudinalPlanner:
     longitudinalPlan.fcw = self.fcw
 
     longitudinalPlan.solverExecutionTime = self.mpc.solve_time
-
+    longitudinalPlan.trafficState = self.mpc.trafficState
+    
     pm.send('longitudinalPlan', plan_send)

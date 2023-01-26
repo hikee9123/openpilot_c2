@@ -203,6 +203,8 @@ class LongitudinalMpc:
     self.reset()
     self.source = SOURCES[2]
 
+    self.trafficState = 0    
+
   def reset(self):
     # self.solver = AcadosOcpSolverCython(MODEL_NAME, ACADOS_SOLVER_TYPE, N)
     self.solver.reset()
