@@ -156,8 +156,8 @@ class LongitudinalPlanner:
     longitudinalPlan.trafficState = self.mpc.trafficState
 
     #longitudinalPlan.crashDistance = self.mpc.crash_distance
-    longitudinalPlan.leadFcw2 = self.mpc.lead_fcw2
-    longitudinalPlan.leadFcw1 = self.mpc.lead_fcw1 
+    #longitudinalPlan.leadFcw2 = self.mpc.lead_fcw2
+    #longitudinalPlan.leadFcw1 = self.mpc.lead_fcw1 
 
     
     
