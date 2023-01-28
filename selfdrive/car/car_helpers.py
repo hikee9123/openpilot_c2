@@ -183,10 +183,11 @@ def get_car(logcan, sendcan, num_pandas=1):
     candidate = "mock"
     candidate = CAR.GRANDEUR_HEV_19
 
-  disable_radar = Params().get_bool("DisableRadar")
+  experimental_long = Params().get_bool("ExperimentalLongitudinalEnabled")
+  #disable_radar = Params().get_bool("DisableRadar")
 
   CarInterface, CarController, CarState = interfaces[candidate]
-  CP = CarInterface.get_params(candidate, fingerprints, car_fw, disable_radar)
+  CP = CarInterface.get_params(candidate, fingerprints, car_fw, experimental_long)
   CP.carVin = vin
   CP.carFw = car_fw
   CP.fingerprintSource = source
