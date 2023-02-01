@@ -87,9 +87,9 @@ class NaviControl():
       if standstill:
         self.last_lead_distance = 0
         self.seq_command = 5
-      elif delta_speed > 1:
+      elif delta_speed >= 1:
         self.seq_command = 1
-      elif delta_speed < -1:
+      elif delta_speed <= -1:
         self.seq_command = 2
       return None
 
