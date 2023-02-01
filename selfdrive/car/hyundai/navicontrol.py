@@ -124,7 +124,7 @@ class NaviControl():
       standstill = CS.out.cruiseState.standstill
       if not standstill:
         self.seq_command = 0
-      elif CS.lead_distance < 4:
+      elif CS.lead_distance <= 5:
         self.last_lead_distance = 0
       elif self.last_lead_distance == 0:  
         self.last_lead_distance = CS.lead_distance
