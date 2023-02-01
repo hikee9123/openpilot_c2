@@ -164,7 +164,7 @@ class CarState(CarStateBase):
 
     limit_kph = 30
     delta = abs(set_speed_kph - self.VSetDis)
-    if delta <= 2:
+    if delta <= 5:
       set_speed_kph = self.VSetDis
 
     if set_speed_kph < limit_kph:
