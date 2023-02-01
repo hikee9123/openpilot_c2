@@ -163,9 +163,9 @@ class CarState(CarStateBase):
         set_speed_kph -=  1
 
     limit_kph = 30
-    delta = abs(set_speed_kph - self.clu_Vanz)
+    delta = abs(set_speed_kph - self.VSetDis)
     if delta <= 2:
-      set_speed_kph = self.clu_Vanz
+      set_speed_kph = self.VSetDis
 
     if set_speed_kph < limit_kph:
       set_speed_kph = limit_kph
