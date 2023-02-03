@@ -132,7 +132,17 @@ class CarController():
     vFuture = c.hudControl.vFuture * 3.6
     str_log1 = 'TG={:.1f}  DIST={:.2f}'.format(  apply_steer, CS.lead_distance )
     trace1.printf2( '{}'.format( str_log1 ) )
-    scc_log2 = '{}'.format( CS.scc12["CR_VSM_Alive"]  )
+
+    if actuators.longControlState == LongCtrlState.off:
+      scc_log2 = 'off'
+    elif actuators.longControlState == LongCtrlState.pid:
+      scc_log2 = 'pid'
+    elif actuators.longControlState == LongCtrlState.stopping:
+      scc_log2 = 'stop'
+    elif actuators.longControlState == LongCtrlState.starting:
+      scc_log2 = 'start'
+
+
     str_log1 = 'MODE={:.0f} vF={:.1f}  aRV={:.2f} , {:.2f}, {}'.format( CS.cruise_set_mode, vFuture, CS.aReqValue, self.accel , scc_log2 )
     trace1.printf3( '{}'.format( str_log1 ) )
   
@@ -176,12 +186,13 @@ class CarController():
         else:
           self.resume_cnt = 0
 
-        if self.CP.atompilotLongitudinalControl:
-          if c.enabled and CS.out.cruiseState.accActive:
-            if (self.frame % 2 == 0) and CS.cruise_set_mode == 2:
-              self.update_scc12( can_sends, c, CS )
-          else:
-            self.accel = 0
+        #if self.CP.atompilotLongitudinalControl:
+        #  if c.enabled and CS.out.cruiseState.accActive:
+        #    if (self.frame % 2 == 0) and CS.cruise_set_mode == 2:
+        #      self.update_scc12( can_sends, c, CS )
+        #      self.scc12_cnt += 1
+        #  else:
+        #    self.accel = 0
 
     return  can_sends
 
@@ -226,8 +237,8 @@ class CarController():
 
     if self.frame == 0: # initialize counts from last received count signals
       self.lkas11_cnt = CS.lkas11["CF_Lkas_MsgCount"] + 1
- 
-    self.scc12_cnt = CS.scc12["CR_VSM_Alive"] + 1  
+      self.scc12_cnt = CS.scc12["CR_VSM_Alive"] + 1  
+  
     self.lkas11_cnt %= 0x10
     self.scc12_cnt %= 0x0F
 

@@ -203,6 +203,11 @@ class LongitudinalMpc:
     self.reset()
     self.source = SOURCES[2]
 
+    self.trafficState = 0
+    self.crash_distance = 0
+    self.lead_fcw2 = 0
+    self.lead_fcw1 = 0
+
   def reset(self):
     # self.solver = AcadosOcpSolverCython(MODEL_NAME, ACADOS_SOLVER_TYPE, N)
     self.solver.reset()
@@ -370,6 +375,9 @@ class LongitudinalMpc:
     self.params[:,4] = T_FOLLOW
 
     self.run()
+    self.lead_fcw2 = lead_xv_0[FCW_IDXS,0]
+    self.lead_fcw1 = self.x_sol[FCW_IDXS,0]
+    self.crash_distance = lead_xv_0[FCW_IDXS,0] - self.x_sol[FCW_IDXS,0]
     if (np.any(lead_xv_0[FCW_IDXS,0] - self.x_sol[FCW_IDXS,0] < CRASH_DISTANCE) and
             radarstate.leadOne.modelProb > 0.9):
       self.crash_cnt += 1

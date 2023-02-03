@@ -338,6 +338,9 @@ class CarInterface(CarInterfaceBase):
     CarInterface.get_tunning_params( ret )
     CarInterface.get_normal_params( 0, ret )
 
+
+    ret.startingState = True
+    ret.startAccel = 1.0
     # these cars require a special panda safety mode due to missing counters and checksums in the messages
     if candidate in LEGACY_SAFETY_MODE_CAR:
       ret.safetyConfigs = [get_safety_config(car.CarParams.SafetyModel.hyundaiLegacy)]
