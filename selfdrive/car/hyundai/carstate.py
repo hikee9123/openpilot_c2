@@ -59,6 +59,8 @@ class CarState(CarStateBase):
     self.enagage_status = 0
     self.cruise_buttons_old = 0
 
+    self.cruise_available_old = False
+
 
   def engage_control( self, ret, c ):
     left_lane = c.hudControl.leftLaneVisible 
@@ -72,6 +74,11 @@ class CarState(CarStateBase):
     elif self.acc_mode:
       self.enagage_status = 2
       self.engage_enable = True
+    elif self.cruise_available_old != ret.cruiseState.available:
+      self.cruise_available_old = ret.cruiseState.available
+      if self.cruise_available_old:
+        self.enagage_status = 2
+        self.engage_enable = True
 
     if self.cruise_buttons_old == self.cruise_buttons:
       if self.engage_enable:
