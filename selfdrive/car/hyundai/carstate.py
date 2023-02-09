@@ -77,7 +77,7 @@ class CarState(CarStateBase):
     elif self.cruise_available_old != ret.cruiseState.available:
       self.cruise_available_old = ret.cruiseState.available
       if self.cruise_available_old:
-        self.enagage_status = 2
+        self.enagage_status = 1
         self.engage_enable = True
 
     if self.cruise_buttons_old == self.cruise_buttons:
