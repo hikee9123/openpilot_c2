@@ -22,12 +22,14 @@ class NaviControl():
     self.seq_command = 0
     self.target_speed = 0
     self.set_point = 0
+
+    self.wait_timer1 = 0
     self.wait_timer2 = 0
     self.set_speed_kph = 0
  
 
 
-    self.gasPressed_time = 0
+
 
 
     self.frame_camera = 0
@@ -52,16 +54,36 @@ class NaviControl():
 
     self.auto_resume_time = 0
 
+    self.auto_brakePress_speed_set = False  #  gasPressed에 따른 속도 Setting
+
 
 
 
   def button_status(self, CS ): 
     if not CS.acc_active or CS.cruise_buttons != Buttons.NONE or CS.out.brakePressed  or CS.out.gasPressed: 
       self.wait_timer2 = 100 
+
+      if CS.out.cruiseState.standstill:
+        self.auto_brakePress_speed_set = False
+      elif CS.cruise_set_mode == 5:
+        if CS.out.gasPressed:
+          self.wait_timer2 = 0          
+          if self.wait_timer1 > 0:
+            self.wait_timer1 -= 1
+          else:
+            self.wait_timer1 = 200
+            self.auto_brakePress_speed_set = True
+          return 1
+        elif CS.out.brakePressed:
+          self.wait_timer2 = 500
+          self.auto_brakePress_speed_set = True
+
     elif self.wait_timer2: 
       self.wait_timer2 -= 1
     else:
+      self.wait_timer1 = 200
       return 1
+
     return 0
 
 
@@ -87,6 +109,10 @@ class NaviControl():
       if standstill:
         self.last_lead_distance = 0
         self.seq_command = 5
+        self.auto_brakePress_speed_set = False
+      elif self.auto_brakePress_speed_set:
+        self.auto_brakePress_speed_set = False
+        self.seq_command = 2  # set
       elif delta_speed >= 1:
         self.seq_command = 1
       elif delta_speed <= -1:
@@ -104,7 +130,7 @@ class NaviControl():
       return Buttons.RES_ACCEL
 
 
-  def case_2(self, CS):  # dec
+  def case_2(self, CS):  # dec  (set)
       self.btn_cnt += 1
       if self.target_speed == self.VSetDis:
         self.btn_cnt = 0
@@ -248,21 +274,16 @@ class NaviControl():
 
 
   def auto_speed_control( self, c, CS, ctrl_speed ):
-    cruise_set_speed = 0
-    if CS.gasPressed:
-      self.gasPressed_time = 100
-    elif self.gasPressed_time > 0:
-      self.gasPressed_time -= 1
-      if self.gasPressed_time <= 0:
-        cruise_set_speed = CS.clu_Vanz - 5
-    elif CS.cruise_set_mode == 5:  # comma long control speed.
+    #cruise_set_speed = 0
+
+    if CS.cruise_set_mode == 5:  # comma long control speed.
       vFuture = c.hudControl.vFuture * CV.MS_TO_KPH
       ctrl_speed = min( vFuture, ctrl_speed )
 
 
 
-    if cruise_set_speed > 30:
-      CS.set_cruise_speed( cruise_set_speed )  
+    #if cruise_set_speed > 30:
+    #  CS.set_cruise_speed( cruise_set_speed )    # setting speed change
 
     return  ctrl_speed
 
