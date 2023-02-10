@@ -130,7 +130,9 @@ class CarController():
   def update_debug(self, CS, c, apply_steer ):
     actuators = c.actuators
     vFuture = c.hudControl.vFuture * 3.6
-    str_log1 = 'TG={:.1f}  DIST={:.2f}'.format(  apply_steer, CS.lead_distance )
+
+    
+    str_log1 = 'TG={:.1f}  DIST={:.2f}  AV={},{}'.format(  apply_steer, CS.lead_distance, CS.cruise_available_old, CS.out.cruiseState.available  )
     trace1.printf2( '{}'.format( str_log1 ) )
 
     if actuators.longControlState == LongCtrlState.off:

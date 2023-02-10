@@ -58,7 +58,7 @@ class CarState(CarStateBase):
     self.engage_enable = False
     self.cruise_buttons_old = 0
 
-    self.cruise_available_old = False
+    self.cruise_available_old = 0
 
 
   def engage_control( self, ret, c ):
