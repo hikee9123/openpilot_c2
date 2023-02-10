@@ -56,7 +56,6 @@ class CarState(CarStateBase):
     self.cruise_available = False
     self.acc_mode = False
     self.engage_enable = False
-    self.enagage_status = 0
     self.cruise_buttons_old = 0
 
     self.cruise_available_old = False
@@ -68,16 +67,13 @@ class CarState(CarStateBase):
     status_flag = 0
     if not ret.cruiseState.available or ret.gearShifter != GearShifter.drive or ret.seatbeltUnlatched or ret.doorOpen:
       status_flag = 1
-      self.enagage_status = 0
       self.engage_enable = False
       self.time_delay_int = 100
     elif self.acc_mode:
-      self.enagage_status = 2
       self.engage_enable = True
     elif self.cruise_available_old != ret.cruiseState.available:
       self.cruise_available_old = ret.cruiseState.available
       if self.cruise_available_old:
-        self.enagage_status = 1
         self.engage_enable = True
 
     if self.cruise_buttons_old == self.cruise_buttons:
@@ -103,9 +99,7 @@ class CarState(CarStateBase):
       return  self.engage_enable
     elif self.cruise_buttons == Buttons.GAP_DIST:
       self.engage_enable = True
-      self.enagage_status = 1
     elif self.cruise_buttons == Buttons.CANCEL:
-      self.enagage_status = 0
       self.time_delay_int = 1000
       self.engage_enable = False
 
@@ -263,7 +257,7 @@ class CarState(CarStateBase):
       ret.cruiseState.modeSel = self.cruise_set_mode
 
 
-      self.cruise_available = cp_cruise.vl["SCC11"]["MainMode_ACC"] == 1
+      self.cruise_available = cp_cruise.vl["SCC11"]["MainMode_ACC"] != 0
       self.acc_mode = cp_cruise.vl["SCC12"]["ACCMode"] != 0
       ret.cruiseState.available = self.cruise_available
       ret.cruiseState.standstill = cp_cruise.vl["SCC11"]["SCCInfoDisplay"] == 4.
