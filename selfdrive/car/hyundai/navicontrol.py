@@ -67,14 +67,13 @@ class NaviControl():
         self.auto_brakePress_speed_set = False
       elif CS.cruise_set_mode == 5:
         if not CS.cruise_acc_active_atom:
-          self.wait_timer1 = 50
+          self.wait_timer1 = 60
         elif CS.out.gasPressed:
           self.wait_timer2 = 0          
           if self.wait_timer1 > 0:
             self.wait_timer1 -= 1
-          else:
-            self.wait_timer1 = 200
-            if self.cruiseState_speed  > CS.clu_Vanz:
+          elif self.cruiseState_speed  > CS.clu_Vanz:
+              self.wait_timer1 = 200              
               self.auto_brakePress_speed_set = True
           return self.auto_brakePress_speed_set
         elif not CS.acc_active:
@@ -285,7 +284,6 @@ class NaviControl():
       ctrl_speed = min( vFuture, ctrl_speed )
 
 
-
     #if cruise_set_speed > 30:
     #  CS.set_cruise_speed( cruise_set_speed )    # setting speed change
 
@@ -293,7 +291,7 @@ class NaviControl():
 
 
   def update(self, c, CS, frame ):  
-    self.log_msg = ' {} {} {}'.format( self.auto_brakePress_speed_set, self.wait_timer1, frame   )
+    self.log_msg = ' {} {} {}  {}'.format( self.auto_brakePress_speed_set, self.wait_timer1, frame, CS.cruise_set_speed_kph   )
     self.sm.update(0)
     # send scc to car if longcontrol enabled and SCC not on bus 0 or ont live
     btn_signal = None

@@ -44,7 +44,6 @@ class CarState(CarStateBase):
 
     # acc button 
     self.prev_clu_CruiseSwState = 0
-    self.prev_acc_active = 0
     self.prev_acc_set_btn = False
     self.acc_active = 0
     self.cruise_set_speed_kph = 0
@@ -111,10 +110,6 @@ class CarState(CarStateBase):
 
   #@staticmethod
   def cruise_speed_button( self ):
-    if self.prev_acc_active != self.acc_active:
-      self.prev_acc_active = self.acc_active
-      self.cruise_set_speed_kph = self.clu_Vanz
-
     set_speed_kph = self.cruise_set_speed_kph
     if not self.cruise_available:
       if self.prev_clu_CruiseSwState != self.cruise_buttons:
@@ -135,7 +130,7 @@ class CarState(CarStateBase):
     if not self.prev_acc_set_btn:
       self.prev_acc_set_btn = self.acc_active
       if self.cruise_acc_active_atom:
-        return self.cruise_set_speed_kph
+        return self.cruise_set_speed_kph      
       elif self.cruise_buttons == Buttons.RES_ACCEL:   # up 
         self.cruise_set_speed_kph = self.VSetDis
       else:
@@ -144,6 +139,7 @@ class CarState(CarStateBase):
 
     elif self.prev_acc_set_btn != self.acc_active:
       self.prev_acc_set_btn = self.acc_active
+
 
 
     if self.prev_clu_CruiseSwState == self.cruise_buttons:
