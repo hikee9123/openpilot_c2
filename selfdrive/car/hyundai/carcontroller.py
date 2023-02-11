@@ -132,7 +132,7 @@ class CarController():
     vFuture = c.hudControl.vFuture * 3.6
 
     
-    str_log1 = 'TG={:.1f}  DIST={:.2f}  AV={},{}'.format(  apply_steer, CS.lead_distance, CS.cruise_available_old, CS.out.cruiseState.available  )
+    str_log1 = 'TG={:.1f}  DIST={:.2f}  NC={}'.format(  apply_steer, CS.lead_distance, self.NC.log_msg )
     trace1.printf2( '{}'.format( str_log1 ) )
 
     if actuators.longControlState == LongCtrlState.off:

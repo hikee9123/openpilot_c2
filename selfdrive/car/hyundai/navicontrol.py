@@ -55,8 +55,8 @@ class NaviControl():
     self.auto_resume_time = 0
 
     self.auto_brakePress_speed_set = False  #  gasPressed에 따른 속도 Setting
-
-
+    self.cruiseState_speed = 30
+    self.log_msg = 'None'
 
 
   def button_status(self, CS ): 
@@ -72,7 +72,8 @@ class NaviControl():
             self.wait_timer1 -= 1
           else:
             self.wait_timer1 = 500
-            self.auto_brakePress_speed_set = True
+            if self.cruiseState_speed  < CS.clu_Vanz:
+              self.auto_brakePress_speed_set = True
           return 1
         else:
           self.wait_timer1 = 500    
@@ -139,9 +140,9 @@ class NaviControl():
       return Buttons.SET_DECEL
 
   def case_3(self, CS):  # None
+      self.auto_brakePress_speed_set = False    
       self.btn_cnt += 1
       if self.btn_cnt > 6: 
-        self.auto_brakePress_speed_set = False
         self.seq_command = 0
       return None
 
@@ -286,15 +287,16 @@ class NaviControl():
 
 
   def update(self, c, CS, frame ):  
+    self.log_msg = ' {} {}'.format( self.auto_brakePress_speed_set, self.wait_timer1   )
     self.sm.update(0)
     # send scc to car if longcontrol enabled and SCC not on bus 0 or ont live
     btn_signal = None
     if not self.button_status( CS  ):
       pass
     elif CS.acc_active:
-      cruiseState_speed = CS.out.cruiseState.speed * CV.MS_TO_KPH      
-      kph_set_vEgo = self.get_navi_speed(  self.sm , CS, cruiseState_speed, frame )
-      self.ctrl_speed = min( cruiseState_speed, kph_set_vEgo)
+      self.cruiseState_speed = CS.out.cruiseState.speed * CV.MS_TO_KPH      
+      kph_set_vEgo = self.get_navi_speed(  self.sm , CS, self.cruiseState_speed, frame )
+      self.ctrl_speed = min( self.cruiseState_speed, kph_set_vEgo)
 
       if CS.cruise_set_mode:
         self.ctrl_speed = self.auto_speed_control( c, CS, self.ctrl_speed )
