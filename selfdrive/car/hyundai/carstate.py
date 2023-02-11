@@ -66,6 +66,7 @@ class CarState(CarStateBase):
     right_lane = c.hudControl.rightLaneVisible     
     status_flag = 0
     if not ret.cruiseState.available or ret.gearShifter != GearShifter.drive or ret.seatbeltUnlatched or ret.doorOpen:
+      self.cruise_available_old = ret.cruiseState.available
       status_flag = 1
       self.engage_enable = False
       self.time_delay_int = 100
