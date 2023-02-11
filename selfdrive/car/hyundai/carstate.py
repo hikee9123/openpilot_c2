@@ -113,7 +113,7 @@ class CarState(CarStateBase):
     if self.cruise_set_speed_kph < 1:
       self.cruise_set_speed_kph = self.VSetDis
 
-    set_speed_kph = self.cruise_set_speed_kph
+
     if not self.cruise_available:
       if self.prev_clu_CruiseSwState != self.cruise_buttons:
         self.prev_clu_CruiseSwState = self.cruise_buttons
@@ -146,11 +146,10 @@ class CarState(CarStateBase):
 
 
     if self.prev_clu_CruiseSwState == self.cruise_buttons:
-      return set_speed_kph
+      return self.cruise_set_speed_kph
     self.prev_clu_CruiseSwState = self.cruise_buttons
-    set_speed_kph = self.VSetDis
-    self.cruise_set_speed_kph = set_speed_kph
-    return  set_speed_kph
+    self.cruise_set_speed_kph = self.VSetDis
+    return  self.cruise_set_speed_kph
 
 
 

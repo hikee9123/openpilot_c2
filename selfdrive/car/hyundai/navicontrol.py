@@ -114,7 +114,10 @@ class NaviControl():
         self.seq_command = 5
         self.auto_brakePress_speed_set = False
       elif self.auto_brakePress_speed_set:
-        self.seq_command = 2  # set
+        if not CS.acc_active:
+          self.seq_command = 7  # set
+        else:
+          self.seq_command = 2  # set
       elif not CS.acc_active:
         pass
       elif delta_speed >= 1:
@@ -171,6 +174,16 @@ class NaviControl():
         self.btn_cnt = 0
         self.seq_command = 3
       return Buttons.SET_DECEL
+
+  def case_7(self, CS):  # acc (set)
+      self.btn_cnt += 1
+      if self.acc_active:
+        self.btn_cnt = 0
+        self.seq_command = 3            
+      elif self.btn_cnt > 10:
+        self.btn_cnt = 0
+        self.seq_command = 3
+      return Buttons.SET_DECEL      
 
 
   def ascc_button_control( self, CS, set_speed ):
