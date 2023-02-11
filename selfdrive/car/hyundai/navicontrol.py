@@ -74,7 +74,7 @@ class NaviControl():
             self.wait_timer1 = 500
             if self.cruiseState_speed  < CS.clu_Vanz:
               self.auto_brakePress_speed_set = True
-          return 1
+          return self.auto_brakePress_speed_set
         else:
           self.wait_timer1 = 500    
 
