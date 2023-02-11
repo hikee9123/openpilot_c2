@@ -71,17 +71,19 @@ class NaviControl():
           if self.wait_timer1 > 0:
             self.wait_timer1 -= 1
           else:
-            self.wait_timer1 = 100
+            self.wait_timer1 = 200
             if self.cruiseState_speed  > CS.clu_Vanz:
               self.auto_brakePress_speed_set = True
           return self.auto_brakePress_speed_set
+        elif not CS.acc_active:
+          self.wait_timer1 = 100
         else:
-          self.wait_timer1 = 200    
+          self.wait_timer1 = 300
 
     elif self.wait_timer2: 
       self.wait_timer2 -= 1
     else:
-      self.wait_timer1 = 300
+      self.wait_timer1 = 500
       return 1
 
     return 0

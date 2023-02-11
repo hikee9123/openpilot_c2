@@ -57,8 +57,8 @@ class CarState(CarStateBase):
     self.acc_mode = False
     self.engage_enable = False
     self.cruise_buttons_old = 0
-
     self.cruise_available_old = 0
+    self.cruise_acc_active_atom = False
 
 
   def engage_control( self, ret, c ):
@@ -260,6 +260,13 @@ class CarState(CarStateBase):
       ret.cruiseState.cruiseSwState = self.cruise_buttons
       ret.cruiseState.modeSel = self.cruise_set_mode
 
+      if self.cruise_set_mode == 5:
+        if self.acc_active:
+          self.cruise_acc_active_atom = True
+        elif self.cruise_buttons == Buttons.CANCEL:
+          self.cruise_acc_active_atom = False
+      else:
+        self.cruise_acc_active_atom = self.acc_active
 
       self.cruise_available = cp_cruise.vl["SCC11"]["MainMode_ACC"] != 0
       self.acc_mode = cp_cruise.vl["SCC12"]["ACCMode"] != 0
@@ -271,7 +278,7 @@ class CarState(CarStateBase):
       if self.acc_active:
         speed_conv = CV.MPH_TO_MS if cp.vl["CLU11"]["CF_Clu_SPEED_UNIT"] else CV.KPH_TO_MS
         ret.cruiseState.speed = set_speed * speed_conv
-      else:
+      elif not self.cruise_acc_active_atom:
         ret.cruiseState.speed = 0
 
     # TODO: Find brake pressure
