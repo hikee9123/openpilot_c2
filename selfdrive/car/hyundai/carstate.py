@@ -110,6 +110,9 @@ class CarState(CarStateBase):
 
   #@staticmethod
   def cruise_speed_button( self ):
+    if self.cruise_set_speed_kph < 1:
+      self.cruise_set_speed_kph = self.VSetDis
+
     set_speed_kph = self.cruise_set_speed_kph
     if not self.cruise_available:
       if self.prev_clu_CruiseSwState != self.cruise_buttons:
