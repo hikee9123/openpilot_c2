@@ -66,7 +66,9 @@ class NaviControl():
       if CS.out.cruiseState.standstill or CS.clu_Vanz < 30:
         self.auto_brakePress_speed_set = False
       elif CS.cruise_set_mode == 5:
-        if CS.out.gasPressed:
+        if not CS.cruise_acc_active_atom:
+          self.wait_timer1 = 50
+        elif CS.out.gasPressed:
           self.wait_timer2 = 0          
           if self.wait_timer1 > 0:
             self.wait_timer1 -= 1

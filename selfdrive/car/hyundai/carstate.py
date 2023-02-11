@@ -134,7 +134,9 @@ class CarState(CarStateBase):
 
     if not self.prev_acc_set_btn:
       self.prev_acc_set_btn = self.acc_active
-      if self.cruise_buttons == Buttons.RES_ACCEL:   # up 
+      if self.cruise_acc_active_atom:
+        return self.cruise_set_speed_kph
+      elif self.cruise_buttons == Buttons.RES_ACCEL:   # up 
         self.cruise_set_speed_kph = self.VSetDis
       else:
         self.cruise_set_speed_kph = self.clu_Vanz
@@ -143,35 +145,11 @@ class CarState(CarStateBase):
     elif self.prev_acc_set_btn != self.acc_active:
       self.prev_acc_set_btn = self.acc_active
 
-    if self.cruise_buttons:
-      self.cruise_buttons_time += 1
-    else:
-      self.cruise_buttons_time = 0
-  
-     
-    if self.cruise_buttons_time >= 60:
-      self.cruise_set_speed_kph = self.VSetDis
 
     if self.prev_clu_CruiseSwState == self.cruise_buttons:
       return set_speed_kph
     self.prev_clu_CruiseSwState = self.cruise_buttons
-
-    if self.cruise_buttons == Buttons.RES_ACCEL:   # up 
-      set_speed_kph +=  1
-    elif self.cruise_buttons == Buttons.SET_DECEL:  # dn
-      if self.gasPressed:
-        set_speed_kph = self.clu_Vanz + 1
-      else:
-        set_speed_kph -=  1
-
-    limit_kph = 30
-    delta = abs(set_speed_kph - self.VSetDis)
-    if delta <= 5:
-      set_speed_kph = self.VSetDis
-
-    if set_speed_kph < limit_kph:
-      set_speed_kph = limit_kph
-
+    set_speed_kph = self.VSetDis
     self.cruise_set_speed_kph = set_speed_kph
     return  set_speed_kph
 
