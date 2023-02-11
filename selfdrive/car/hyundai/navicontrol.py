@@ -71,17 +71,16 @@ class NaviControl():
           if self.wait_timer1 > 0:
             self.wait_timer1 -= 1
           else:
-            self.wait_timer1 = 200
+            self.wait_timer1 = 500
             self.auto_brakePress_speed_set = True
           return 1
-        elif CS.out.brakePressed:
-          self.wait_timer2 = 500
-          self.auto_brakePress_speed_set = True
+        else:
+          self.wait_timer1 = 500    
 
     elif self.wait_timer2: 
       self.wait_timer2 -= 1
+      self.wait_timer1 = 500
     else:
-      self.wait_timer1 = 200
       return 1
 
     return 0
@@ -111,7 +110,6 @@ class NaviControl():
         self.seq_command = 5
         self.auto_brakePress_speed_set = False
       elif self.auto_brakePress_speed_set:
-        self.auto_brakePress_speed_set = False
         self.seq_command = 2  # set
       elif delta_speed >= 1:
         self.seq_command = 1
@@ -143,6 +141,7 @@ class NaviControl():
   def case_3(self, CS):  # None
       self.btn_cnt += 1
       if self.btn_cnt > 6: 
+        self.auto_brakePress_speed_set = False
         self.seq_command = 0
       return None
 
@@ -274,8 +273,6 @@ class NaviControl():
 
 
   def auto_speed_control( self, c, CS, ctrl_speed ):
-    #cruise_set_speed = 0
-
     if CS.cruise_set_mode == 5:  # comma long control speed.
       vFuture = c.hudControl.vFuture * CV.MS_TO_KPH
       ctrl_speed = min( vFuture, ctrl_speed )
@@ -304,6 +301,8 @@ class NaviControl():
 
 
       self.set_speed_kph = self.ctrl_speed
+      btn_signal = self.ascc_button_control( CS, self.ctrl_speed )
+    elif self.auto_brakePress_speed_set:
       btn_signal = self.ascc_button_control( CS, self.ctrl_speed )
 
     return btn_signal

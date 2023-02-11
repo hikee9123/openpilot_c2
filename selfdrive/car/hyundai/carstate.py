@@ -250,8 +250,11 @@ class CarState(CarStateBase):
       ret.cruiseState.enabled = cp.vl["TCS13"]["ACC_REQ"] == 1
       ret.cruiseState.standstill = False
     else:
-      self.VSetDis = cp_cruise.vl["SCC11"]["VSetDis"]   # kph   크루즈 설정 속도.      
-      self.acc_active = (cp_cruise.vl["SCC12"]['ACCMode'] != 0)      
+      self.VSetDis = cp_cruise.vl["SCC11"]["VSetDis"]   # kph   크루즈 설정 속도.  
+      if self.cruise_available:    
+        self.acc_active = (cp_cruise.vl["SCC12"]['ACCMode'] != 0)
+      else:
+        self.acc_active = False
       ret.cruiseState.accActive = self.acc_active
       ret.cruiseState.gapSet = cp.vl["SCC11"]['TauGapSet']
       ret.cruiseState.cruiseSwState = self.cruise_buttons
