@@ -63,7 +63,7 @@ class NaviControl():
     if not CS.acc_active or CS.cruise_buttons != Buttons.NONE or CS.out.brakePressed  or CS.out.gasPressed: 
       self.wait_timer2 = 100 
 
-      if CS.out.cruiseState.standstill:
+      if CS.out.cruiseState.standstill or CS.clu_Vanz < 30:
         self.auto_brakePress_speed_set = False
       elif CS.cruise_set_mode == 5:
         if CS.out.gasPressed:
@@ -71,17 +71,17 @@ class NaviControl():
           if self.wait_timer1 > 0:
             self.wait_timer1 -= 1
           else:
-            self.wait_timer1 = 500
-            if self.cruiseState_speed  < CS.clu_Vanz:
+            self.wait_timer1 = 100
+            if self.cruiseState_speed  > CS.clu_Vanz:
               self.auto_brakePress_speed_set = True
           return self.auto_brakePress_speed_set
         else:
-          self.wait_timer1 = 500    
+          self.wait_timer1 = 200    
 
     elif self.wait_timer2: 
       self.wait_timer2 -= 1
-      self.wait_timer1 = 500
     else:
+      self.wait_timer1 = 300
       return 1
 
     return 0
@@ -296,11 +296,12 @@ class NaviControl():
     elif CS.acc_active:
       self.cruiseState_speed = CS.out.cruiseState.speed * CV.MS_TO_KPH      
       kph_set_vEgo = self.get_navi_speed(  self.sm , CS, self.cruiseState_speed, frame )
-      self.ctrl_speed = min( self.cruiseState_speed, kph_set_vEgo)
+ 
 
       if CS.cruise_set_mode:
-        self.ctrl_speed = self.auto_speed_control( c, CS, self.ctrl_speed )
+        kph_set_vEgo= self.auto_speed_control( c, CS, kph_set_vEgo )
 
+      self.ctrl_speed = min( self.cruiseState_speed, kph_set_vEgo)
 
       self.set_speed_kph = self.ctrl_speed
       btn_signal = self.ascc_button_control( CS, self.ctrl_speed )

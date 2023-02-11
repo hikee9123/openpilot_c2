@@ -173,10 +173,13 @@ class CarController():
 
 
   def update_ASCC(self, can_sends,  c, CS):
+    cruise_accActive = CS.out.cruiseState.accActive
+    if CS.cruise_set_mode == 5:
+      cruise_accActive = CS.out.cruiseState.available
     pcm_cancel_cmd = c.cruiseControl.cancel
     if pcm_cancel_cmd:
       can_sends.append(create_clu11(self.packer, self.frame, CS.clu11, Buttons.CANCEL))
-    elif CS.out.cruiseState.accActive:
+    elif cruise_accActive:
       if CS.out.cruiseState.standstill and not self.CP.opkrAutoResume:
         btn_signal = None
         self.stop_cnt = 100
