@@ -177,7 +177,7 @@ class NaviControl():
 
   def case_7(self, CS):  # acc (set)
       self.btn_cnt += 1
-      if self.acc_active:
+      if CS.acc_active:
         self.btn_cnt = 0
         self.seq_command = 3            
       elif self.btn_cnt > 10:
