@@ -188,6 +188,15 @@ struct ModelOutputPose {
 };
 static_assert(sizeof(ModelOutputPose) == sizeof(ModelOutputXYZ)*4);
 
+struct ModelOutputTemporalPose {
+  ModelOutputXYZ velocity_mean;
+  ModelOutputXYZ rotation_mean;
+  ModelOutputXYZ velocity_std;
+  ModelOutputXYZ rotation_std;
+};
+static_assert(sizeof(ModelOutputTemporalPose) == sizeof(ModelOutputXYZ)*4);
+
+
 struct ModelOutputDisengageProb {
   float gas_disengage;
   float brake_disengage;
@@ -241,6 +250,7 @@ struct ModelOutput {
   const ModelOutputStopLines stop_lines;
   const ModelOutputMeta meta;
   const ModelOutputPose pose;
+  const ModelOutputTemporalPose temporal_pose;   
 };
 
 constexpr int OUTPUT_SIZE = sizeof(ModelOutput) / sizeof(float);
