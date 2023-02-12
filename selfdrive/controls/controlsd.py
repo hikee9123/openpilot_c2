@@ -883,7 +883,7 @@ class Controls:
     controlsState.canErrorCounter = self.can_rcv_timeout_counter
     controlsState.output = float(lac_log.output)
     controlsState.steeringAngleDesiredDegDEPRECATED = angle_steers_des
-    controlsState.experimentalMode = False  #self.CP.atompilotLongitudinalControl    
+    controlsState.experimentalMode = True  #self.CP.atompilotLongitudinalControl    
     controlsState.alertTextMsg1 = str(log_alertTextMsg1)
     controlsState.alertTextMsg2 = str(log_alertTextMsg2)
     controlsState.alertTextMsg3 = str(log_alertTextMsg3)
