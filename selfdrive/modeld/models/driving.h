@@ -250,7 +250,7 @@ struct ModelOutput {
   const ModelOutputStopLines stop_lines;
   const ModelOutputMeta meta;
   const ModelOutputPose pose;
-  const ModelOutputTemporalPose temporal_pose;   
+  //const ModelOutputTemporalPose temporal_pose;   
 };
 
 constexpr int OUTPUT_SIZE = sizeof(ModelOutput) / sizeof(float);
