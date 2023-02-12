@@ -133,6 +133,15 @@ typedef struct UIScene {
   cereal::LateralPlan::Reader lateralPlan;
   cereal::CarParams::Reader  car_params;
   cereal::UpdateEventData::Reader  update_data;
+
+  struct _stopLine
+  {
+    int    used;
+    float  Prob;
+    float  x;
+    float  y;
+    float  z;
+  } stop_line;
   
 
   int  IsOpenpilotViewEnabled;

@@ -963,6 +963,15 @@ void OnPaint::ui_draw_debug1( QPainter &p )
   p.drawText( QRect(bb_x, bb_y, bb_w, 42), text2, textOpt );
   p.drawText( QRect(bb_x, bb_y+45, bb_w, 42), text3, textOpt );
 
+
+
+  // stop line status display
+  QString text4;
+  if ( scene->stopLine.used ) {
+    text3.sprintf("Stop line:%.1f   X:%.1f Y:%.1f Z:%.1f", scene->stopLine.Prob, scene->stopLine.x, scene->stopLine.y, scene->stopLine.z );
+    p.drawText( QRect(bb_x, 890, bb_w, 42), text3, textOpt );
+  }  
+
  // text3.sprintf("BF:%.1f   RL:%.1f°", scene->scr.accel_prob[0], scene->scr.accel_prob[1] );
  // p.drawText( QRect(bb_x, 900, bb_w, 42), text3, textOpt );
 }

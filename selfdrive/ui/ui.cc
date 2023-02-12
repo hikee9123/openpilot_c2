@@ -158,6 +158,19 @@ static void update_model(UIState *s, const cereal::ModelDataV2::Reader &model) {
   }
   max_idx = get_path_length_idx(model_position, max_distance);
   update_line_data(s, model_position, scene.end_to_end ? 0.9 : 0.5, 1.22, &scene.track_vertices, max_idx, false);
+
+
+  // update stop lines
+  scene.stopLine.used = true;
+  if ( scene.stopLine.used ) {
+    const auto stop_line = model.getStopLine();
+    scene.stopLine.Prob = stop_line.getProb();
+    if ( scene.stopLine.Prob > .5) {
+      scene.stopLine.x = stop_line.getX();
+      scene.stopLine.y = stop_line.getY();
+      scene.stopLine.z = stop_line.getZ();
+    }
+  }  
 }
 
 static void update_sockets(UIState *s) {
