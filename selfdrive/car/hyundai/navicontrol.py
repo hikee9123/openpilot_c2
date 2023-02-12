@@ -260,8 +260,6 @@ class NaviControl():
     
     if not mapValid or trafficType == 0:  # ACC
       if cruise_set_speed_kph >  self.VSetDis:
-        #if frame % 10 == 0:
-        #  cruise_set_speed_kph = self.VSetDis + 1
         if v_ego_kph < (self.VSetDis-5):
           self.frame_camera = frame
           self.frame_VSetDis = self.VSetDis

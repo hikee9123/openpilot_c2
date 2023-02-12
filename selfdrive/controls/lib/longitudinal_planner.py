@@ -158,6 +158,7 @@ class LongitudinalPlanner:
     #longitudinalPlan.crashDistance = self.mpc.crash_distance
     #longitudinalPlan.leadFcw2 = self.mpc.lead_fcw2
     #longitudinalPlan.leadFcw1 = self.mpc.lead_fcw1 
+    print( 'long speed ={}   cd={}  fcw2={}  fcw1={}'.format( longitudinalPlan.speeds, self.mpc.crash_distance, self.mpc.lead_fcw2, self.mpc.lead_fcw1 )  )
 
     
     
