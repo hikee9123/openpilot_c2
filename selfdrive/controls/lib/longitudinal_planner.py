@@ -135,7 +135,7 @@ class LongitudinalPlanner:
     self.a_desired = float(interp(DT_MDL, T_IDXS[:CONTROL_N], self.a_desired_trajectory))
     self.v_desired_filter.x = self.v_desired_filter.x + DT_MDL * (self.a_desired + a_prev) / 2.0
 
-    print( 'filter ={}\n  ad={}\n  al={}\n'.format( self.v_desired_filter.x, self.a_desired, accel_limits_turns )  )
+    print( 'source={} filter ={}\n  ad={}\n  al={}\n'.format(self.mpc.source, self.v_desired_filter.x, self.a_desired, accel_limits_turns )  )
 
   def publish(self, sm, pm):
     plan_send = messaging.new_message('longitudinalPlan')
@@ -160,7 +160,7 @@ class LongitudinalPlanner:
     #longitudinalPlan.crashDistance = self.mpc.crash_distance
     #longitudinalPlan.leadFcw2 = self.mpc.lead_fcw2
     #longitudinalPlan.leadFcw1 = self.mpc.lead_fcw1 
-    print( 'long speed ={}    '.format( longitudinalPlan )  )
+    #print( 'long speed ={}    '.format( longitudinalPlan )  )
 
     
     
