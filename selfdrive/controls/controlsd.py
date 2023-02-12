@@ -767,7 +767,7 @@ class Controls:
     if len(angular_rate_value) > 2:
       CC.angularVelocity = angular_rate_value
 
-    CC.cruiseControl.initialized = self.initialized
+    CC.cruiseControl.initialized = self.initialized and  self.startup_event == None
     CC.cruiseControl.override = self.enabled and not CC.longActive and self.CP.atompilotLongitudinalControl
     CC.cruiseControl.cancel = CS.cruiseState.enabled and (not self.enabled or not self.CP.pcmCruise)
     if self.joystick_mode and self.sm.rcv_frame['testJoystick'] > 0 and self.sm['testJoystick'].buttons[0]:
