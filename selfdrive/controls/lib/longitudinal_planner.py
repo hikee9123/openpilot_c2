@@ -140,7 +140,8 @@ class LongitudinalPlanner:
     self.disp_cnt += 1
     if self.disp_cnt > 50:
       self.disp_cnt = 0
-      print( 'source={} filter ={}\n  ad={}\n  al={}\n'.format(self.mpc.source, self.v_desired_filter.x, self.a_desired, accel_limits_turns )  )
+      #print( 'source={} filter ={}\n  ad={}\n  al={}\n'.format(self.mpc.source, self.v_desired_filter.x, self.a_desired, accel_limits_turns )  )
+      print( 'modelV2={}'.format( sm['modelV2'] )  )
 
   def publish(self, sm, pm):
     plan_send = messaging.new_message('longitudinalPlan')
