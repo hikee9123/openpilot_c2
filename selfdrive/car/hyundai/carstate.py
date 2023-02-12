@@ -59,6 +59,8 @@ class CarState(CarStateBase):
     self.cruise_available_old = 0
     self.cruise_acc_active_atom = False
 
+    self.cruise_initilaze = 5000
+
 
   def engage_control( self, ret, c ):
     left_lane = c.hudControl.leftLaneVisible 
@@ -222,6 +224,7 @@ class CarState(CarStateBase):
     # cruise state
     if not c.cruiseControl.initialized:
       ret.cruiseState.available = False
+      self.cruise_initilaze = 200
     elif self.CP.openpilotLongitudinalControl:
       # These are not used for engage/disengage since openpilot keeps track of state using the buttons
       ret.cruiseState.available = cp.vl["TCS13"]["ACCEnable"] == 0
@@ -246,7 +249,11 @@ class CarState(CarStateBase):
       else:
         self.cruise_acc_active_atom = self.acc_active
 
-      self.cruise_available = cp_cruise.vl["SCC11"]["MainMode_ACC"] != 0
+      if self.cruise_initilaze > 0:
+        self.cruise_initilaze -= 1
+        self.cruise_available = False
+      else:
+        self.cruise_available = cp_cruise.vl["SCC11"]["MainMode_ACC"] != 0
       self.acc_mode = cp_cruise.vl["SCC12"]["ACCMode"] != 0
       ret.cruiseState.available = self.cruise_available
       ret.cruiseState.standstill = cp_cruise.vl["SCC11"]["SCCInfoDisplay"] == 4.
