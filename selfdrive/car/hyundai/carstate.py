@@ -220,7 +220,9 @@ class CarState(CarStateBase):
     ret.vEgo = self.clu_Vanz * CV.KPH_TO_MS
 
     # cruise state
-    if self.CP.openpilotLongitudinalControl:
+    if not c.cruiseControl.initialized:
+      ret.cruiseState.available = False
+    elif self.CP.openpilotLongitudinalControl:
       # These are not used for engage/disengage since openpilot keeps track of state using the buttons
       ret.cruiseState.available = cp.vl["TCS13"]["ACCEnable"] == 0
       ret.cruiseState.enabled = cp.vl["TCS13"]["ACC_REQ"] == 1
