@@ -141,7 +141,7 @@ typedef struct UIScene {
     float  x;
     float  y;
     float  z;
-  } stop_line;
+  } stopLine;
   
 
   int  IsOpenpilotViewEnabled;
