@@ -257,7 +257,7 @@ class CarState(CarStateBase):
         speed_conv = CV.MPH_TO_MS if cp.vl["CLU11"]["CF_Clu_SPEED_UNIT"] else CV.KPH_TO_MS
         ret.cruiseState.speed = set_speed * speed_conv
       elif not self.cruise_acc_active_atom:
-        ret.cruiseState.speed = 0
+        ret.cruiseState.speed = 1
 
     # TODO: Find brake pressure
     ret.brake = 0

@@ -304,7 +304,7 @@ class NaviControl():
 
 
   def update(self, c, CS, frame ):  
-    self.log_msg = ' {} {} {}={}  {}'.format( CS.cruise_acc_active_atom, self.wait_timer1, CS.cruise_set_speed_kph, CS.out.cruiseState.speed, frame % 1000   )
+    self.log_msg = ' {} {} {}={:.2f}  {}'.format( CS.cruise_acc_active_atom, self.wait_timer1, CS.cruise_set_speed_kph, CS.out.cruiseState.speed, frame % 1000   )
     self.sm.update(0)
     # send scc to car if longcontrol enabled and SCC not on bus 0 or ont live
     btn_signal = None
