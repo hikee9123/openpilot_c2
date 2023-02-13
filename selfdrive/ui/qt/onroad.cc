@@ -544,7 +544,7 @@ void NvgWindow::drawLaneLines(QPainter &painter, const UIState *s) {
   painter.save();
 
   const UIScene &scene = s->scene;
-
+  SubMaster &sm = *(s->sm);
 
   // paint blindspot line
   painter.setBrush( QColor::fromRgbF(1.0, 0.1, 0.1, 0.2) );
