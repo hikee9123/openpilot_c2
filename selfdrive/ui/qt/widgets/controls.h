@@ -7,6 +7,7 @@
 #include <QPushButton>
 
 #include "selfdrive/common/params.h"
+#include "selfdrive/ui/qt/widgets/input.h"
 #include "selfdrive/ui/qt/widgets/toggle.h"
 
 QFrame *horizontal_line(QWidget *parent = nullptr);
@@ -24,7 +25,7 @@ signals:
 protected:
   void paintEvent(QPaintEvent *event) override;
   void resizeEvent(QResizeEvent* event) override;
-  void mouseReleaseEvent(QMouseEvent *event) override { emit clicked(); }
+  void mouseReleaseEvent(QMouse_labelEvent *event) override { emit clicked(); }
   QString lastText_, elidedText_;
 };
 
@@ -51,6 +52,9 @@ public:
   const QString getDescription() {
     return description->text();
   }
+
+  QLabel *icon_label;
+  QPixmap icon_pixmap;
 
 public slots:
   void showDescription() {
