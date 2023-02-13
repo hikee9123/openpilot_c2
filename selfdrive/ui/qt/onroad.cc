@@ -216,6 +216,9 @@ void NvgWindow::updateState(const UIState &s) {
   setProperty("status", s.status);
 
 
+  auto cruiseState = scene.car_state.getCruiseState();
+  accActive = cruiseState.accActive;
+
   m_gasVal = s.scene.car_state.getGas();
   bool  brakePress = s.scene.car_state.getBrakePressed();
   bool  brakeLights = s.scene.car_state.getBrakeLightsDEPRECATED();
@@ -301,7 +304,8 @@ void NvgWindow::drawHud(QPainter &p) {
 
   // Draw set speed
   if (is_cruise_set) {
-    if (speedLimit > 0 && status != STATUS_DISENGAGED && status != STATUS_OVERRIDE) {
+    if( accActive == false ) p.setPen( QColor(255, 255, 255, 200) );
+    else if (speedLimit > 0 && status != STATUS_DISENGAGED && status != STATUS_OVERRIDE) {
       p.setPen(interpColor(
         setSpeed,
         {speedLimit + 5, speedLimit + 15, speedLimit + 25},
@@ -317,6 +321,7 @@ void NvgWindow::drawHud(QPainter &p) {
   QRect speed_rect = getTextRect(p, Qt::AlignCenter, setSpeedStr);
   speed_rect.moveCenter({set_speed_rect.center().x(), 0});
   speed_rect.moveTop(set_speed_rect.top() + 77);
+
   p.drawText(speed_rect, Qt::AlignCenter, setSpeedStr);
 
   // EU (Vienna style) sign
