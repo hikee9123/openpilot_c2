@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 import math
 import numpy as np
-from common.numpy_fast import interp, clip
+from common.numpy_fast import clip, interp
 
 import cereal.messaging as messaging
 from common.conversions import Conversions as CV
@@ -15,6 +15,7 @@ from selfdrive.controls.lib.drive_helpers import V_CRUISE_MAX, CONTROL_N
 from system.swaglog import cloudlog
 
 LON_MPC_STEP = 0.2  # first step is 0.2s
+AWARENESS_DECEL = -0.2  # car smoothly decel at .2m/s^2 when user is distracted
 A_CRUISE_MIN = -1.2
 A_CRUISE_MAX_VALS = [1.6, 1.2, 0.8, 0.6]
 A_CRUISE_MAX_BP = [0., 10.0, 25., 40.]
@@ -58,10 +59,8 @@ class LongitudinalPlanner:
     self.j_desired_trajectory = np.zeros(CONTROL_N)
     self.solverExecutionTime = 0.0
 
-    self.disp_cnt = 0
-
   @staticmethod
-  def parse_model(model_msg, model_error):
+  def parse_model(model_msg, model_error, v_ego):
     if (len(model_msg.position.x) == 33 and
        len(model_msg.velocity.x) == 33 and
        len(model_msg.acceleration.x) == 33):
@@ -74,6 +73,10 @@ class LongitudinalPlanner:
       v = np.zeros(len(T_IDXS_MPC))
       a = np.zeros(len(T_IDXS_MPC))
       j = np.zeros(len(T_IDXS_MPC))
+    max_lat_accel = interp(v_ego, [5, 10, 20], [1.5, 2.0, 3.0])
+    curvatures = np.interp(T_IDXS_MPC, T_IDXS, model_msg.orientationRate.z) / np.clip(v, 0.3, 100.0)
+    max_v = np.sqrt(max_lat_accel / (np.abs(curvatures) + 1e-3)) - 2.0
+    v = np.minimum(max_v, v)
     return x, v, a, j
 
   def update(self, sm):
@@ -112,7 +115,9 @@ class LongitudinalPlanner:
       self.v_model_error = sm['modelV2'].temporalPose.trans[0] - v_ego
 
     if force_slow_decel:
-      v_cruise = 0.0
+      # if required so, force a smooth deceleration
+      accel_limits_turns[1] = min(accel_limits_turns[1], AWARENESS_DECEL)
+      accel_limits_turns[0] = min(accel_limits_turns[0], accel_limits_turns[1])
     # clip limits, cannot init MPC outside of bounds
     accel_limits_turns[0] = min(accel_limits_turns[0], self.a_desired + 0.05)
     accel_limits_turns[1] = max(accel_limits_turns[1], self.a_desired - 0.05)
@@ -120,8 +125,8 @@ class LongitudinalPlanner:
     self.mpc.set_weights(prev_accel_constraint)
     self.mpc.set_accel_limits(accel_limits_turns[0], accel_limits_turns[1])
     self.mpc.set_cur_state(self.v_desired_filter.x, self.a_desired)
-    x, v, a, j = self.parse_model(sm['modelV2'], self.v_model_error)
-    self.mpc.update(sm['radarState'], v_cruise, x, v, a, j)
+    x, v, a, j = self.parse_model(sm['modelV2'], self.v_model_error, v_ego)
+    self.mpc.update(sm['carState'], sm['radarState'], v_cruise, x, v, a, j)
 
     self.v_desired_trajectory = np.interp(T_IDXS[:CONTROL_N], T_IDXS_MPC, self.mpc.v_solution)
     self.a_desired_trajectory = np.interp(T_IDXS[:CONTROL_N], T_IDXS_MPC, self.mpc.a_solution)
@@ -136,12 +141,6 @@ class LongitudinalPlanner:
     a_prev = self.a_desired
     self.a_desired = float(interp(DT_MDL, T_IDXS[:CONTROL_N], self.a_desired_trajectory))
     self.v_desired_filter.x = self.v_desired_filter.x + DT_MDL * (self.a_desired + a_prev) / 2.0
-
-    self.disp_cnt += 1
-    if self.disp_cnt > 50:
-      self.disp_cnt = 0
-      #print( 'source={} filter ={}\n  ad={}\n  al={}\n'.format(self.mpc.source, self.v_desired_filter.x, self.a_desired, accel_limits_turns )  )
-      #print( 'modelV2={}'.format( sm['modelV2'] )  )
 
   def publish(self, sm, pm):
     plan_send = messaging.new_message('longitudinalPlan')
