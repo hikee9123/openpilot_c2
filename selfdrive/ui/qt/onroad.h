@@ -61,6 +61,7 @@ private:
   bool engageable = false;
   bool dmActive = false;
   bool hideDM = false;
+  bool accActive = false;
 
   int status = STATUS_DISENGAGED;
 
