@@ -48,6 +48,10 @@ public:
     value->setText(val);
   }
 
+  const QString getDescription() {
+    return description->text();
+  }
+
 public slots:
   void showDescription() {
     description->setVisible(true);
