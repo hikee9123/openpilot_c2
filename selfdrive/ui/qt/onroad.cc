@@ -217,7 +217,7 @@ void NvgWindow::updateState(const UIState &s) {
 
 
   auto cruiseState = s.scene.car_state.getCruiseState();
-  accActive = cruiseState.accActive;
+  accActive = cruiseState.getAccActive();
 
   m_gasVal = s.scene.car_state.getGas();
   bool  brakePress = s.scene.car_state.getBrakePressed();
