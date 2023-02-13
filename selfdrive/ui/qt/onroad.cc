@@ -182,9 +182,63 @@ void OnroadAlerts::paintEvent(QPaintEvent *event) {
   }
 }
 
+
+ExperimentalButton::ExperimentalButton(QWidget *parent) : QPushButton(parent) {
+  setVisible(false);
+  setFixedSize(btn_size, btn_size);
+  setCheckable(true);
+
+  params = Params();
+  engage_img = loadPixmap("../assets/img_chffr_wheel.png", {img_size, img_size});
+  experimental_img = loadPixmap("../assets/img_experimental.svg", {img_size, img_size});
+
+  QObject::connect(this, &QPushButton::toggled, [=](bool checked) {
+    params.putBool("ExperimentalMode", checked);
+  });
+}
+
+void ExperimentalButton::updateState(const UIState &s) {
+  const SubMaster &sm = *(s.sm);
+
+  // button is "visible" if engageable or enabled
+  const auto cs = sm["controlsState"].getControlsState();
+  setVisible(cs.getEngageable() || cs.getEnabled());
+
+  // button is "checked" if experimental mode is enabled
+  setChecked(sm["controlsState"].getControlsState().getExperimentalMode());
+
+  // disable button when experimental mode is not available, or has not been confirmed for the first time
+  const auto cp = sm["carParams"].getCarParams();
+  const bool experimental_mode_available = cp.getExperimentalLongitudinalAvailable() ? params.getBool("ExperimentalLongitudinalEnabled") : cp.getOpenpilotLongitudinalControl();
+  setEnabled(params.getBool("ExperimentalModeConfirmed") && experimental_mode_available);
+}
+
+void ExperimentalButton::paintEvent(QPaintEvent *event) {
+  QPainter p(this);
+  p.setRenderHint(QPainter::Antialiasing);
+
+  QPoint center(btn_size / 2, btn_size / 2);
+  QPixmap img = isChecked() ? experimental_img : engage_img;
+
+  p.setOpacity(1.0);
+  p.setPen(Qt::NoPen);
+  p.setBrush(QColor(0, 0, 0, 166));
+  p.drawEllipse(center, btn_size / 2, btn_size / 2);
+  p.setOpacity(isDown() ? 0.8 : 1.0);
+  p.drawPixmap((btn_size - img_size) / 2, (btn_size - img_size) / 2, img);
+}
+
+
 // NvgWindow
 
 NvgWindow::NvgWindow(VisionStreamType type, QWidget* parent) : fps_filter(UI_FREQ, 3, 1. / UI_FREQ), CameraViewWidget("camerad", type, true, parent) {
+
+  QVBoxLayout *main_layout  = new QVBoxLayout(this);
+  main_layout->setMargin(bdr_s);
+  main_layout->setSpacing(0);
+  experimental_btn = new ExperimentalButton(this);
+  main_layout->addWidget(experimental_btn, 0, Qt::AlignTop | Qt::AlignRight);
+
   engage_img = loadPixmap("../assets/img_chffr_wheel.png", {img_size, img_size});
   dm_img = loadPixmap("../assets/img_driver_face.png", {img_size, img_size});
 }
@@ -215,6 +269,8 @@ void NvgWindow::updateState(const UIState &s) {
   setProperty("hideDM", cs.getAlertSize() != cereal::ControlsState::AlertSize::NONE  );
   setProperty("status", s.status);
 
+  // update engageability/experimental mode button
+  experimental_btn->updateState(s);
 
   auto cruiseState = s.scene.car_state.getCruiseState();
   accActive = cruiseState.getAccActive();

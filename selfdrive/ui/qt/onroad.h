@@ -25,6 +25,22 @@ private:
   Alert alert = {};
 };
 
+
+class ExperimentalButton : public QPushButton {
+  Q_OBJECT
+
+public:
+  explicit ExperimentalButton(QWidget *parent = 0);
+  void updateState(const UIState &s);
+
+private:
+  void paintEvent(QPaintEvent *event) override;
+
+  Params params;
+  QPixmap engage_img;
+  QPixmap experimental_img;
+};
+
 // container window for the NVG UI
 class NvgWindow : public CameraViewWidget {
   Q_OBJECT
@@ -47,7 +63,7 @@ private:
   void drawText(QPainter &p, int x, int y, const QString &text, int alpha = 255);
   void drawCurrentSpeed(QPainter &p, int x, int y);
 
-
+  ExperimentalButton *experimental_btn;
   QPixmap engage_img;
   QPixmap dm_img;
   const int radius = 192;
