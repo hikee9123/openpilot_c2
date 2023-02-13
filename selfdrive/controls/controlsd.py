@@ -754,7 +754,7 @@ class Controls:
     """Send actuators and hud commands to the car, send controlsstate and MPC logging"""
 
     global trace1
-    log_alertTextMsg1 = trace1.global_alertTextMsg1v_target_now
+    log_alertTextMsg1 = trace1.global_alertTextMsg1
     log_alertTextMsg2 = trace1.global_alertTextMsg2
     log_alertTextMsg3 = trace1.global_alertTextMsg3
 
