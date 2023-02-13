@@ -9,6 +9,10 @@
 
 #include "selfdrive/ui/qt/atom/paint.h"
 #include "selfdrive/ui/qt/atom/dashcam.h"
+
+const int btn_size = 192;
+const int img_size = (btn_size / 4) * 3;
+
 // ***** onroad widgets *****
 class OnroadAlerts : public QWidget {
   Q_OBJECT
