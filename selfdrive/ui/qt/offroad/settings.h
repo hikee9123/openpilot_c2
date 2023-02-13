@@ -17,6 +17,7 @@ class SettingsWindow : public QFrame {
 
 public:
   explicit SettingsWindow(QWidget *parent = 0);
+  void setCurrentPanel(int index, const QString &param = "");  
 
 protected:
   void hideEvent(QHideEvent *event) override;
@@ -27,6 +28,7 @@ signals:
   void reviewTrainingGuide();
   void showDriverView();
   void offroadTransition(bool offroad);
+  void expandToggleDescription(const QString &param);
 
 private:
   QPushButton *sidebar_alert_widget;
@@ -57,6 +59,9 @@ class TogglesPanel : public ListWidget {
 public:
   explicit TogglesPanel(SettingsWindow *parent);
   void showEvent(QShowEvent *event) override;
+
+public slots:
+  void expandToggleDescription(const QString &param);
 
 private:
   Params params;
