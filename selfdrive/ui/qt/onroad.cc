@@ -552,14 +552,12 @@ void NvgWindow::drawLaneLines(QPainter &painter, const UIState *s) {
 
   if( scene.scr.leftblindspot  )
   {
-       ui_draw_line(  painter, scene.lane_blindspot_vertices[0] );
+      ui_draw_line(  painter, scene.lane_blindspot_vertices[0] );
   }
 
   if( scene.scr.rightblindspot  )
   {
-   //  if( right_cnt > 1 )
-        ui_draw_line( painter, scene.lane_blindspot_vertices[1] );
-        //painter.drawPolygon(scene.lane_blindspot_vertices[1].v, right_cnt);
+      ui_draw_line( painter, scene.lane_blindspot_vertices[1] );
   }
 
 
@@ -573,9 +571,7 @@ void NvgWindow::drawLaneLines(QPainter &painter, const UIState *s) {
   // road edges
   for (int i = 0; i < std::size(scene.road_edge_vertices); ++i) {
     painter.setBrush(QColor::fromRgbF(1.0, 0, 0, std::clamp<float>(1.0 - scene.road_edge_stds[i], 0.0, 1.0)));
-
     ui_draw_line( painter, scene.road_edge_vertices[i] );
-    //painter.drawPolygon(scene.road_edge_vertices[i].v, scene.road_edge_vertices[i].cnt);
   }
 
 
