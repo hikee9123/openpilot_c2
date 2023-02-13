@@ -231,7 +231,7 @@ class Controls:
 
     self.camera_offset = CAMERA_OFFSET
     self.modelSpeed = 0
-    self.v_target_now = 0
+
 
 
 
@@ -678,7 +678,7 @@ class Controls:
       # accel PID loop
       pid_accel_limits = self.CI.get_pid_accel_limits(self.CP, CS.vEgo, self.v_cruise_kph * CV.KPH_TO_MS)
       t_since_plan = (self.sm.frame - self.sm.rcv_frame['longitudinalPlan']) * DT_CTRL
-      actuators.accel, self.v_target_now = self.LoC.update(CC.longActive, CS, long_plan, pid_accel_limits, t_since_plan)
+      actuators.accel = self.LoC.update(CC.longActive, CS, long_plan, pid_accel_limits, t_since_plan)
 
       # Steering PID loop and lateral MPC
       self.desired_curvature, self.desired_curvature_rate = get_lag_adjusted_curvature(self.CP, CS.vEgo,
@@ -754,7 +754,7 @@ class Controls:
     """Send actuators and hud commands to the car, send controlsstate and MPC logging"""
 
     global trace1
-    log_alertTextMsg1 = trace1.global_alertTextMsg1
+    log_alertTextMsg1 = trace1.global_alertTextMsg1v_target_now
     log_alertTextMsg2 = trace1.global_alertTextMsg2
     log_alertTextMsg3 = trace1.global_alertTextMsg3
 
@@ -776,6 +776,7 @@ class Controls:
     speeds = self.sm['longitudinalPlan'].speeds
     if len(speeds):
       CC.cruiseControl.resume = self.enabled and CS.cruiseState.standstill and speeds[-1] > 0.1
+      CC.hudControl.vFuture =  speeds[-1]  #self.v_target_now  # v_future
 
     hudControl = CC.hudControl
     hudControl.setSpeed = float(self.v_cruise_kph * CV.KPH_TO_MS)
@@ -790,12 +791,6 @@ class Controls:
 
     # atom
     self.camera_offset = self.CP.laneParam.cameraOffsetAdj
-    #speeds = self.sm['longitudinalPlan'].speeds
-    #if len(speeds) > 1:
-    #  v_future = speeds[-1]
-    #else:
-    #  v_future = 0
-    CC.hudControl.vFuture =  self.v_target_now  # v_future
 
     recent_blinker = (self.sm.frame - self.last_blinker_frame) * DT_CTRL < 5.0  # 5s blinker cooldown
     ldw_allowed = self.is_ldw_enabled and CS.vEgo > LDW_MIN_SPEED and not recent_blinker \
