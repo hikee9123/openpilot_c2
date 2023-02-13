@@ -216,7 +216,7 @@ void NvgWindow::updateState(const UIState &s) {
   setProperty("status", s.status);
 
 
-  auto cruiseState = scene.car_state.getCruiseState();
+  auto cruiseState = s.scene.car_state.getCruiseState();
   accActive = cruiseState.accActive;
 
   m_gasVal = s.scene.car_state.getGas();
