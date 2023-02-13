@@ -196,6 +196,7 @@ class Controls:
     self.steer_limited = False
     self.desired_curvature = 0.0
     self.desired_curvature_rate = 0.0
+    self.experimental_mode = False 
 
     # TODO: no longer necessary, aside from process replay
     self.sm['liveParameters'].valid = True
@@ -878,7 +879,7 @@ class Controls:
     controlsState.canErrorCounter = self.can_rcv_timeout_counter
     controlsState.output = float(lac_log.output)
     controlsState.steeringAngleDesiredDegDEPRECATED = angle_steers_des
-    controlsState.experimentalMode = False  #self.CP.atompilotLongitudinalControl    
+    controlsState.experimentalMode = self.experimental_mode  #self.CP.atompilotLongitudinalControl    
     controlsState.alertTextMsg1 = str(log_alertTextMsg1)
     controlsState.alertTextMsg2 = str(log_alertTextMsg2)
     controlsState.alertTextMsg3 = str(log_alertTextMsg3)
@@ -951,6 +952,8 @@ class Controls:
   def step(self):
     start_time = sec_since_boot()
     self.prof.checkpoint("Ratekeeper", ignore=True)
+
+    self.experimental_mode = self.params.get_bool("ExperimentalMode") and self.CP.atompilotLongitudinalControl
 
     # Sample data from sockets and get a carState
     CS = self.data_sample()
