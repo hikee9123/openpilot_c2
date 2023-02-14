@@ -360,7 +360,7 @@ void NvgWindow::drawHud(QPainter &p) {
 
   // Draw set speed
   if (is_cruise_set) {
-    if( accActive == false ) p.setPen( QColor(200, 200, 200, 200) );
+    if( accActive == false ) p.setPen( QColor(200, 200, 200, 100) );
     else if (speedLimit > 0 && status != STATUS_DISENGAGED && status != STATUS_OVERRIDE) {
       p.setPen(interpColor(
         setSpeed,
