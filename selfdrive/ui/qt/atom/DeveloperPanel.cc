@@ -186,7 +186,7 @@ void DeveloperPanel::showEvent(QShowEvent *event)
 //
 //  Git
 
-GitHash::GitHash() : AbstractControl("Check for Update","message") 
+GitHash::GitHash() : AbstractControl("Check for Update") 
 {
   params = Params();
 
