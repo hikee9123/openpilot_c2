@@ -688,7 +688,7 @@ void NvgWindow::paintGL() {
   }
 
   // DMoji
-    if (!hideDM && (sm.rcv_frame("driverState") > s->scene.started_frame)) {
+    if ( !hideDM ) { //&& (sm.rcv_frame("driverState") > s->scene.started_frame)) {
     //update_dmonitoring(s, sm["driverState"].getDriverState(), dm_fade_state );
     //drawDriverState(painter, s);
    }
