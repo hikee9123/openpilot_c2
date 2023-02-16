@@ -489,11 +489,12 @@ void NvgWindow::drawText(QPainter &p, int x, int y, const QString &text, int alp
 }
 
 void NvgWindow::drawIcon(QPainter &p, int x, int y, QPixmap &img, QBrush bg, float opacity) {
+  p.setOpacity(1.0);  // bg dictates opacity of ellipse  
   p.setPen(Qt::NoPen);
   p.setBrush(bg);
   p.drawEllipse(x - radius / 2, y - radius / 2, radius, radius);
   p.setOpacity(opacity);
-  p.drawPixmap(x - img_size / 2, y - img_size / 2, img);
+  p.drawPixmap(x - img.size().width() / 2, y - img.size().height() / 2, img);
 }
 
 
@@ -712,6 +713,8 @@ void NvgWindow::drawDriverState(QPainter &painter, const UIState *s) {
   int x = (btn_size - 24) / 2 + (bdr_s * 2);
   int y = rect().bottom() - footer_h / 2;
   float opacity = dmActive ? 0.65 : 0.2;
+
+
   drawIcon(painter, x, y, dm_img, blackColor(0), opacity);
 
   // circle background
