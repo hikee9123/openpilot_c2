@@ -628,7 +628,7 @@ void NvgWindow::drawLaneLines(QPainter &painter, const UIState *s) {
 
 void NvgWindow::drawLead(QPainter &painter, const cereal::ModelDataV2::LeadDataV3::Reader &lead_data, const QPointF &vd) {
   painter.save();
-  SubMaster &sm = *(s->sm);
+
   const float speedBuff = 10.;
   const float leadBuff = 40.;
   const float d_rel = lead_data.getX()[0];
@@ -664,6 +664,7 @@ void NvgWindow::drawLead(QPainter &painter, const cereal::ModelDataV2::LeadDataV
 
 void NvgWindow::paintGL() {
   UIState *s = uiState();
+  SubMaster &sm = *(s->sm);  
   const cereal::ModelDataV2::Reader &model = sm["modelV2"].getModelV2();
   CameraViewWidget::paintGL();
 
