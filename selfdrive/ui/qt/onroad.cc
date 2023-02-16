@@ -287,8 +287,9 @@ void NvgWindow::updateState(const UIState &s) {
   if (sm.frame % (UI_FREQ / 2) == 0) {
     setProperty("engageable", cs.getEngageable() || cs.getEnabled());
     setProperty("dmActive", sm["driverMonitoringState"].getDriverMonitoringState().getIsActiveMode());
-  }
 
+  // DM icon transition
+  dm_fade_state = fmax(0.0, fmin(1.0, dm_fade_state+0.2*(0.5-(float)(dmActive))));  }
 }
 
 
@@ -434,11 +435,14 @@ void NvgWindow::drawHud(QPainter &p) {
              engage_img, bg_colors[status], 1.0);
   }
 
+/*
   // dm icon
   if (!hideDM) {
     drawIcon(p, radius / 2 + (bdr_s), rect().bottom() - footer_h / 2,
              dm_img, QColor(0, 0, 0, 70), dmActive ? 1.0 : 0.2);
   }
+*/
+  
   p.restore();
 }
 
@@ -681,6 +685,12 @@ void NvgWindow::paintGL() {
     }
   }
 
+  // DMoji
+    if (!hideDM && (sm.rcv_frame("driverState") > s->scene.started_frame)) {
+    update_dmonitoring(s, sm["driverState"].getDriverState(), dm_fade_state );
+    drawDriverState(painter, s);
+  }
+
   drawHud(painter);
 
   double cur_draw_t = millis_since_boot();
@@ -690,6 +700,50 @@ void NvgWindow::paintGL() {
     LOGW("slow frame rate: %.2f fps", fps);
   }
   prev_draw_t = cur_draw_t;
+}
+
+
+void NvgWindow::drawDriverState(QPainter &painter, const UIState *s) {
+  const UIScene &scene = s->scene;
+
+  painter.save();
+
+  // base icon
+  int x = (btn_size - 24) / 2 + (bdr_s * 2);
+  int y = rect().bottom() - footer_h / 2;
+  float opacity = dmActive ? 0.65 : 0.2;
+  drawIcon(painter, x, y, dm_img, blackColor(0), opacity);
+
+  // circle background
+  painter.setOpacity(1.0);
+  painter.setPen(Qt::NoPen);
+  painter.setBrush(blackColor(70));
+  painter.drawEllipse(x - btn_size / 2, y - btn_size / 2, btn_size, btn_size);
+
+  // face
+  QPointF face_kpts_draw[std::size(default_face_kpts_3d)];
+  float kp;
+  for (int i = 0; i < std::size(default_face_kpts_3d); ++i) {
+    kp = (scene.face_kpts_draw[i].v[2] - 8) / 120 + 1.0;
+    face_kpts_draw[i] = QPointF(scene.face_kpts_draw[i].v[0] * kp + x, scene.face_kpts_draw[i].v[1] * kp + y);
+  }
+
+  painter.setPen(QPen(QColor::fromRgbF(1.0, 1.0, 1.0, opacity), 5.2, Qt::SolidLine, Qt::RoundCap));
+  painter.drawPolyline(face_kpts_draw, std::size(default_face_kpts_3d));
+
+  // tracking arcs
+  const int arc_l = 133;
+  const float arc_t_default = 6.7;
+  const float arc_t_extend = 12.0;
+  QColor arc_color = QColor::fromRgbF(0.09, 0.945, 0.26, 0.4*(1.0-dm_fade_state)*(s->engaged()));
+  float delta_x = -scene.driver_pose_sins[1] * arc_l / 2;
+  float delta_y = -scene.driver_pose_sins[0] * arc_l / 2;
+  painter.setPen(QPen(arc_color, arc_t_default+arc_t_extend*fmin(1.0, scene.driver_pose_diff[1] * 5.0), Qt::SolidLine, Qt::RoundCap));
+  painter.drawArc(QRectF(std::fmin(x + delta_x, x), y - arc_l / 2, fabs(delta_x), arc_l), (scene.driver_pose_sins[1]>0 ? 90 : -90) * 16, 180 * 16);
+  painter.setPen(QPen(arc_color, arc_t_default+arc_t_extend*fmin(1.0, scene.driver_pose_diff[0] * 5.0), Qt::SolidLine, Qt::RoundCap));
+  painter.drawArc(QRectF(x - arc_l / 2, std::fmin(y + delta_y, y), arc_l, fabs(delta_y)), (scene.driver_pose_sins[0]>0 ? 0 : 180) * 16, 180 * 16);
+
+  painter.restore();
 }
 
 void NvgWindow::showEvent(QShowEvent *event) {

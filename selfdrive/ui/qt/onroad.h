@@ -82,6 +82,7 @@ private:
   bool dmActive = false;
   bool hideDM = false;
   bool accActive = false;
+   float dm_fade_state = 1.0; 
 
   int status = STATUS_DISENGAGED;
 
@@ -94,7 +95,8 @@ private:
 
 private:
   void ui_draw_line(QPainter &painter, const line_vertices_data &vd);
-
+  void drawDriverState(QPainter &painter, const UIState *s);
+  
 protected:
   void paintGL() override;
   void initializeGL() override;
