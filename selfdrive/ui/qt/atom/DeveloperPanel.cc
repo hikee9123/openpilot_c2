@@ -218,17 +218,15 @@ GitHash::GitHash() : AbstractControl("Check for Update","message")
   hlayout->addWidget(updateBtn);
   //hlayout->addWidget(update_notif, 0, Qt::AlignHCenter | Qt::AlignRight);
 
-  //if( description == nullptr )
-  //  description = new QLabel(str_desc);
-  //else
-  //  description-> setText( str_desc );
-
-    
-    //description->setContentsMargins(40, 20, 40, 20);
-    //description->setStyleSheet("font-size: 40px; color: grey");
-    //description->setWordWrap(true);
-    //description->setVisible(false);
-    //main_layout->addWidget(description);
+  if( description == nullptr )
+  {
+    description = new QLabel(str_desc);
+    description->setContentsMargins(40, 20, 40, 20);
+    description->setStyleSheet("font-size: 40px; color: grey");
+    description->setWordWrap(true);
+    description->setVisible(false);
+    main_layout->addWidget(description);
+  }
 
 
 

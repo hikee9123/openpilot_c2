@@ -51,24 +51,24 @@ AbstractControl::AbstractControl(const QString &title, const QString &desc, cons
   main_layout->addLayout(hlayout);
 
   // description
-  //if (!desc.isEmpty()) {
-  description = new QLabel(desc);
-  description->setContentsMargins(40, 20, 40, 20);
-  description->setStyleSheet("font-size: 40px; color: grey");
-  description->setWordWrap(true);
-  description->setVisible(false);
-  main_layout->addWidget(description);
+  if (!desc.isEmpty()) {
+    description = new QLabel(desc);
+    description->setContentsMargins(40, 20, 40, 20);
+    description->setStyleSheet("font-size: 40px; color: grey");
+    description->setWordWrap(true);
+    description->setVisible(false);
+    main_layout->addWidget(description);
 
-  connect(title_label, &QPushButton::clicked, [=]() {
-    if (!description->isVisible()) {
-      emit showDescriptionEvent();
-    }
+    connect(title_label, &QPushButton::clicked, [=]() {
+      if (!description->isVisible()) {
+        emit showDescriptionEvent();
+      }
 
-    if (!description->text().isEmpty()) {
-      description->setVisible(!description->isVisible());
-    }
-  });
-  //}
+      if (!description->text().isEmpty()) {
+        description->setVisible(!description->isVisible());
+      }
+    });
+  }
   main_layout->addStretch();
 }
 
