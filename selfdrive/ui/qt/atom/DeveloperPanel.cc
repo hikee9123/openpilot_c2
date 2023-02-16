@@ -219,13 +219,9 @@ GitHash::GitHash() : AbstractControl("Check for Update","message")
   //hlayout->addWidget(update_notif, 0, Qt::AlignHCenter | Qt::AlignRight);
 
   //if( description == nullptr )
- // {
   //  description = new QLabel(str_desc);
-  //}
   //else
- // {
   //  description-> setText( str_desc );
-  //}
 
     
     //description->setContentsMargins(40, 20, 40, 20);
