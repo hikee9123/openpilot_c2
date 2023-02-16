@@ -186,7 +186,7 @@ void DeveloperPanel::showEvent(QShowEvent *event)
 //
 //  Git
 
-GitHash::GitHash() : AbstractControl("Check for Update") 
+GitHash::GitHash() : AbstractControl("Check for Update","message") 
 {
   params = Params();
 
@@ -218,14 +218,14 @@ GitHash::GitHash() : AbstractControl("Check for Update")
   hlayout->addWidget(updateBtn);
   //hlayout->addWidget(update_notif, 0, Qt::AlignHCenter | Qt::AlignRight);
 
-  if( description == nullptr )
-  {
-    description = new QLabel(str_desc);
-  }
-  else
-  {
-    description-> setText( str_desc );
-  }
+  //if( description == nullptr )
+ // {
+  //  description = new QLabel(str_desc);
+  //}
+  //else
+ // {
+  //  description-> setText( str_desc );
+  //}
 
     
     //description->setContentsMargins(40, 20, 40, 20);
