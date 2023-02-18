@@ -967,7 +967,7 @@ void OnPaint::ui_draw_debug1( QPainter &p )
 
   // stop line status display
   QString text4;
-  if ( scene->stopLine.used ) {
+  if ( scene->stopLine.used && scene->stopLine.x > 1.0 ) {
     text3.sprintf("Stop line:%.1f   X:%.1f Y:%.1f Z:%.1f", scene->stopLine.Prob, scene->stopLine.x, scene->stopLine.y, scene->stopLine.z );
     p.drawText( QRect(bb_x, 700, bb_w, 42), text3, textOpt );
   }  
