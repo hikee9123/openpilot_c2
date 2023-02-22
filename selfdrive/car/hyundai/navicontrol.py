@@ -28,10 +28,6 @@ class NaviControl():
     self.set_speed_kph = 0
  
 
-
-
-
-
     self.frame_camera = 0
     self.VSetDis = 30
     self.frame_VSetDis = 30
@@ -55,6 +51,7 @@ class NaviControl():
     self.auto_resume_time = 0
 
     self.auto_brakePress_speed_set = False  #  gasPressed에 따른 속도 Setting
+    self.auto_cruise_speed = 60
     self.cruiseState_speed = 30
     self.log_msg = 'None'
 
@@ -63,7 +60,7 @@ class NaviControl():
     if not CS.acc_active or CS.cruise_buttons != Buttons.NONE or CS.out.brakePressed  or CS.out.gasPressed: 
       self.wait_timer2 = 100 
 
-      if CS.out.cruiseState.standstill or CS.clu_Vanz < 35:
+      if CS.out.cruiseState.standstill or CS.clu_Vanz < self.auto_cruise_speed:
         self.auto_brakePress_speed_set = False
       elif CS.cruise_set_mode == 5:
         if not CS.cruise_acc_active_atom:
