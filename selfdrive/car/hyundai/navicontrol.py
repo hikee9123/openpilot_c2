@@ -51,7 +51,7 @@ class NaviControl():
     self.auto_resume_time = 0
 
     self.auto_brakePress_speed_set = False  #  gasPressed에 따른 속도 Setting
-    self.auto_cruise_speed = 60
+    self.auto_cruise_speed = 50
     self.cruiseState_speed = 30
     self.log_msg = 'None'
 
