@@ -1,4 +1,5 @@
 Version 0.8.18 (2023-XX-XX)
+========================
 * UI updates
   * Driver monitoring icon shows driver's head pose
 
