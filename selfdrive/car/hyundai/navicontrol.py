@@ -62,6 +62,7 @@ class NaviControl():
 
       if CS.out.cruiseState.standstill or CS.clu_Vanz < self.auto_cruise_speed:
         self.auto_brakePress_speed_set = False
+        self.wait_timer1 = 10
       elif CS.cruise_set_mode == 5:
         if not CS.cruise_acc_active_atom:
           self.wait_timer1 = 60
@@ -70,7 +71,6 @@ class NaviControl():
           CS.set_cruise_speed( CS.clu_Vanz )
           if self.wait_timer1 > 0:
             self.wait_timer1 -= 1
-          #elif self.cruiseState_speed  > CS.clu_Vanz:
           else:
             self.wait_timer1 = 200              
             self.auto_brakePress_speed_set = True
@@ -78,7 +78,7 @@ class NaviControl():
         elif not CS.acc_active:
           self.wait_timer1 = 50
         else:
-          self.wait_timer1 = 300
+          self.wait_timer1 = 10
 
     elif self.wait_timer2: 
       self.wait_timer2 -= 1
