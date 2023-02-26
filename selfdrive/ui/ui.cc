@@ -165,10 +165,14 @@ static void update_model(UIState *s, const cereal::ModelDataV2::Reader &model) {
   if ( scene.stopLine.used ) {
     const auto stop_line = model.getStopLine();
     scene.stopLine.Prob = stop_line.getProb();
-    if ( scene.stopLine.Prob > .5) {
+    if ( scene.stopLine.Prob > .1) {
       scene.stopLine.x = stop_line.getX();
       scene.stopLine.y = stop_line.getY();
       scene.stopLine.z = stop_line.getZ();
+    }
+    else
+    {
+      scene.stopLine.x = 0;
     }
   }  
 }
