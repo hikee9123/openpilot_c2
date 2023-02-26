@@ -967,11 +967,12 @@ void OnPaint::ui_draw_debug1( QPainter &p )
 
   // stop line status display
   QString text4;
-  if ( scene.stopLine.Prob < .1) 
-  {
+ // if ( scene.stopLine.Prob < .1) 
+ // {
 
-  }
-  else if ( scene->stopLine.used && scene->stopLine.x > 1.0 ) 
+//  }
+ // else 
+  if ( scene->stopLine.used && scene->stopLine.x > 1.0 ) 
   {
     text3.sprintf("Stop line:%.1f   X:%.1f", scene->stopLine.Prob, scene->stopLine.x );
     configFont( p, "Open Sans",  80, "Regular");
