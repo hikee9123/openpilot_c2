@@ -728,6 +728,18 @@ struct ControlsState @0x97ff69c53601abf1 {
   steeringAngleDesiredDegDEPRECATED @29 :Float32;
 }
 
+# All SI units and in device frame
+struct XYZTData @0xc3cbae1fd505ae80 {
+  x @0 :List(Float32);
+  y @1 :List(Float32);
+  z @2 :List(Float32);
+  t @3 :List(Float32);
+  xStd @4 :List(Float32);
+  yStd @5 :List(Float32);
+  zStd @6 :List(Float32);
+}
+
+
 struct ModelDataV2 {
   frameId @0 :UInt32;
   frameIdExtra @20 :UInt32;
@@ -764,16 +776,7 @@ struct ModelDataV2 {
   # Model perceived motion
   temporalPose @22 :Pose;  
 
-  # All SI units and in device frame
-  struct XYZTData {
-    x @0 :List(Float32);
-    y @1 :List(Float32);
-    z @2 :List(Float32);
-    t @3 :List(Float32);
-    xStd @4 :List(Float32);
-    yStd @5 :List(Float32);
-    zStd @6 :List(Float32);
-  }
+
 
   struct LeadDataV2 {
     prob @0 :Float32; # probability that car is your lead at time t
@@ -955,6 +958,7 @@ struct LongitudinalPlan @0xe00b5b3eba12876c {
     y @1 :List(Float32);
   }
 }
+
 struct UiPlan {
   position @0 :XYZTData;
   accel @1 :List(Float32);
