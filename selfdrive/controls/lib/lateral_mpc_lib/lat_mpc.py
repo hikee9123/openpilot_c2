@@ -168,7 +168,7 @@ class LateralMpc():
     self.solver.constraints_set(0, "lbx", x0_cp)
     self.solver.constraints_set(0, "ubx", x0_cp)
     self.yref[:,0] = y_pts
-    v_ego = p_cp[0]
+    v_ego = p_cp[0, 0]
     # rotation_radius = p_cp[1]
     self.yref[:,1] = heading_pts * (v_ego + SPEED_OFFSET)
     self.yref[:,2] = yaw_rate_pts * (v_ego + SPEED_OFFSET)
