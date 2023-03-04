@@ -196,7 +196,7 @@ class Controls:
     self.steer_limited = False
     self.desired_curvature = 0.0
     self.desired_curvature_rate = 0.0
-    self.experimental_mode = False 
+    self.experimental_mode = self.params.get_bool("ExperimentalMode") and self.CP.atompilotLongitudinalControl
 
     # TODO: no longer necessary, aside from process replay
     self.sm['liveParameters'].valid = True
@@ -647,9 +647,12 @@ class Controls:
     # Update Torque Params
     if self.CP.lateralTuning.which() == 'torque':
       torque_params = self.sm['liveTorqueParameters']
-      if self.sm.all_checks(['liveTorqueParameters']) and torque_params.useParams:
+      if torque_params.useParams and self.sm.all_checks(['liveTorqueParameters']):
         self.LaC.update_live_torque_params(torque_params.latAccelFactorFiltered, torque_params.latAccelOffsetFiltered, torque_params.frictionCoefficientFiltered)
         str_log1 = 'BP={:.0f} LV={:.0f} LAF={:.2f} FC={:.3f} LAO={:.3f} LAG={}'.format( torque_params.totalBucketPoints, torque_params.liveValid, torque_params.latAccelFactorFiltered, torque_params.frictionCoefficientFiltered, torque_params.latAccelOffsetFiltered, self.rk._debug_dt )
+      else:
+        torque = self.CP.lateralTuning.torque
+        str_log1 = 'LAF={:.2f} FC={:.3f} SR={:.1f}'.format( torque.latAccelFactor, torque.friction, self.CP.steerRatio )
 
     trace1.printf1( '{}'.format( str_log1 ) )
     lat_plan = self.sm['lateralPlan']
@@ -953,8 +956,7 @@ class Controls:
     start_time = sec_since_boot()
     self.prof.checkpoint("Ratekeeper", ignore=True)
 
-    self.experimental_mode = self.params.get_bool("ExperimentalMode") and self.CP.atompilotLongitudinalControl
-
+  
     # Sample data from sockets and get a carState
     CS = self.data_sample()
     cloudlog.timestamp("Data sampled")

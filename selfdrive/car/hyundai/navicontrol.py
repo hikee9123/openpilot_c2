@@ -48,7 +48,7 @@ class NaviControl():
     self._current_lat_acc = 0
     self._max_pred_lat_acc = 0
 
-    self.auto_resume_time = 0
+ 
 
     self.auto_brakePress_speed_set = False  #  gasPressed에 따른 속도 Setting
     self.auto_cruise_speed = 50
@@ -213,29 +213,15 @@ class NaviControl():
         dRel2 = leads_v3[1].x[0]
       else:
         dRel2 = 0
-
       return dRel1, dRel2
 
 
-  def get_auto_resume(self, CS):
-    v_ego_kph = CS.out.vEgo * CV.MS_TO_KPH 
+  def get_model_pos(self):
     model_v2 = self.sm['modelV2']
     lanePos = model_v2.position
     distance = 0
     if len(lanePos.x) > 0:
       distance = lanePos.x[-1]
-
-    if distance < 2:
-      self.auto_resume_time = 10
-    elif  self.auto_resume_time > 0:
-      self.auto_resume_time -= 1
-
-
-    if self.auto_resume_time <= 1 and v_ego_kph < 0.1:
-      dRel1 = CS.lead_distance
-      if dRel1 > 6 or dRel1 == 0:
-        self.event_navi_alert = EventName.manualRestart
-
 
     return  distance
 
@@ -302,7 +288,7 @@ class NaviControl():
 
 
   def update(self, c, CS, frame ):  
-    self.log_msg = ' {} {} {}={:.2f}  {}'.format( CS.cruise_acc_active_atom, self.wait_timer1, CS.cruise_set_speed_kph, CS.out.cruiseState.speed, frame % 1000   )
+    self.log_msg = ' {} {}={:.2f}  {}'.format(  self.wait_timer1, CS.cruise_set_speed_kph, CS.out.cruiseState.speed, frame % 1000   )
     self.sm.update(0)
     # send scc to car if longcontrol enabled and SCC not on bus 0 or ont live
     btn_signal = None

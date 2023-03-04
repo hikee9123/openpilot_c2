@@ -131,10 +131,6 @@ class CarController():
     actuators = c.actuators
     vFuture = c.hudControl.vFuture * 3.6
 
-    
-    str_log1 = 'TG={:.1f}  DIST={:.2f} {:.0f} NC={}'.format(  apply_steer, CS.lead_distance, CS.out.vEgoCluster * 3.6, self.NC.log_msg )
-    trace1.printf2( '{}'.format( str_log1 ) )
-
     if actuators.longControlState == LongCtrlState.off:
       scc_log2 = 'off'
     elif actuators.longControlState == LongCtrlState.pid:
@@ -144,8 +140,12 @@ class CarController():
     elif actuators.longControlState == LongCtrlState.starting:
       scc_log2 = 'start'
 
+    model_pos = self.NC.get_model_pos()
+    str_log1 = 'TG={:.1f}  DIST={:.2f}  MP={:.3f} NC={} {}'.format(  apply_steer, CS.lead_distance,  model_pos, self.NC.log_msg, scc_log2 )
+    trace1.printf2( '{}'.format( str_log1 ) )
 
-    str_log1 = 'MODE={:.0f} vF={:.1f}  aRV={:.2f} , {:.2f}, {}'.format( CS.cruise_set_mode, vFuture, CS.aReqValue, self.accel , scc_log2 )
+
+    str_log1 = 'MODE={:.0f} vF={:.1f}  aRV={:.2f} '.format( CS.cruise_set_mode, vFuture, CS.aReqValue)
     trace1.printf3( '{}'.format( str_log1 ) )
   
 
