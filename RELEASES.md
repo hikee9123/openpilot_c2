@@ -2,6 +2,7 @@ Version 0.8.18 (2023-XX-XX)
 ========================
 * UI updates
   * Driver monitoring icon shows driver's head pose
+  * Draw MPC path instead of model predicted path, this is a more accurate representation of what the car will do.  
 
 Version 0.8.17 (2023-01-12)
 ========================
