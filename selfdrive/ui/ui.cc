@@ -119,8 +119,10 @@ static void update_blindspot_data(const UIState *s, int lr, const cereal::ModelD
 
 }
 
-
-static void update_model(UIState *s, const cereal::ModelDataV2::Reader &model) {
+/*
+static void update_model(UIState *s, 
+                         const cereal::ModelDataV2::Reader &model
+                         const cereal::UiPlan::Reader &plan) {
   UIScene &scene = s->scene;
   auto model_position = model.getPosition();
   float max_distance = std::clamp(model_position.getX()[TRAJECTORY_SIZE - 1],
@@ -159,6 +161,68 @@ static void update_model(UIState *s, const cereal::ModelDataV2::Reader &model) {
   max_idx = get_path_length_idx(model_position, max_distance);
   update_line_data(s, model_position, scene.end_to_end ? 0.9 : 0.5, 1.22, &scene.track_vertices, max_idx, false);
 
+
+  // update stop lines
+  scene.stopLine.used = true;
+  if ( scene.stopLine.used ) {
+    const auto stop_line = model.getStopLine();
+    scene.stopLine.Prob = stop_line.getProb();
+    if ( scene.stopLine.Prob > .1) {
+      scene.stopLine.x = stop_line.getX();
+      scene.stopLine.y = stop_line.getY();
+      scene.stopLine.z = stop_line.getZ();
+    }
+    else
+    {
+      scene.stopLine.x = 0;
+    }
+  }  
+}
+*/
+
+void update_model(UIState *s, 
+                  const cereal::ModelDataV2::Reader &model,
+                  const cereal::UiPlan::Reader &plan) {
+  UIScene &scene = s->scene;
+  auto plan_position = plan.getPosition();
+  if (plan_position.getX().size() < TRAJECTORY_SIZE){
+    plan_position = model.getPosition();
+  }
+  float max_distance = std::clamp(plan_position.getX()[TRAJECTORY_SIZE - 1],
+                                  MIN_DRAW_DISTANCE, MAX_DRAW_DISTANCE);
+
+  // update lane lines
+  const auto lane_lines = model.getLaneLines();
+  const auto lane_line_probs = model.getLaneLineProbs();
+  int max_idx = get_path_length_idx(lane_lines[0], max_distance);
+  for (int i = 0; i < std::size(scene.lane_line_vertices); i++) {
+    scene.lane_line_probs[i] = lane_line_probs[i];
+    update_line_data(s, lane_lines[i], 0.025 * scene.lane_line_probs[i], 0, &scene.lane_line_vertices[i], max_idx);
+  }
+
+  // update road edges
+  const auto road_edges = model.getRoadEdges();
+  const auto road_edge_stds = model.getRoadEdgeStds();
+  for (int i = 0; i < std::size(scene.road_edge_vertices); i++) {
+    scene.road_edge_stds[i] = road_edge_stds[i];
+    update_line_data(s, road_edges[i], 0.025, 0, &scene.road_edge_vertices[i], max_idx);
+  }
+
+  // update path
+  auto lead_one = (*s->sm)["radarState"].getRadarState().getLeadOne();
+  if (lead_one.getStatus()) {
+    const float lead_d = lead_one.getDRel() * 2.;
+    max_distance = std::clamp((float)(lead_d - fmin(lead_d * 0.35, 10.)), 0.0f, max_distance);
+  }
+  max_idx = get_path_length_idx(plan_position, max_distance);
+  update_line_data(s, plan_position, 0.9, 1.22, &scene.track_vertices, max_idx, false);
+
+
+  // lane barriers for blind spot
+  int max_distance_barrier =  40;
+  int max_idx_barrier = std::min(max_idx, get_path_length_idx(lane_lines[0], max_distance_barrier));
+  update_blindspot_data(s, 0, lane_lines[1], 2.5, &scene.lane_blindspot_vertices[0], max_idx_barrier);
+  update_blindspot_data(s, 1, lane_lines[2], 2.5, &scene.lane_blindspot_vertices[1], max_idx_barrier);
 
   // update stop lines
   scene.stopLine.used = true;
@@ -237,7 +301,7 @@ static void update_state(UIState *s) {
   }
   if (s->worldObjectsVisible()) {
     if (sm.updated("modelV2")) {
-      update_model(s, sm["modelV2"].getModelV2());
+      update_model(s, sm["modelV2"].getModelV2(), sm["uiPlan"].getUiPlan());
     }
     if (sm.updated("radarState") && sm.rcv_frame("modelV2") > s->scene.started_frame) {
       update_leads(s, sm["radarState"].getRadarState(), sm["modelV2"].getModelV2().getPosition());
@@ -436,6 +500,7 @@ UIState::UIState(QObject *parent) : QObject(parent) {
     "pandaStates", "carParams", "driverMonitoringState", "sensorEvents", "carState", "liveLocationKalman",
     "wideRoadCameraState",
     "liveNaviData", "gpsLocationExternal", "lateralPlan", "liveParameters","updateEvents","longitudinalPlan",
+    "uiPlan",
   });
 
   Params params;

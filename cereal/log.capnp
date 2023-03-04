@@ -955,6 +955,10 @@ struct LongitudinalPlan @0xe00b5b3eba12876c {
     y @1 :List(Float32);
   }
 }
+struct UiPlan {
+  position @0 :XYZTData;
+  accel @1 :List(Float32);
+}
 
 struct LateralPlan @0xe1e9318e2ae8b51e {
   modelMonoTime @31 :UInt64;
@@ -1897,6 +1901,7 @@ struct Event {
     carControl @23 :Car.CarControl;
     longitudinalPlan @24 :LongitudinalPlan;
     lateralPlan @64 :LateralPlan;
+    uiPlan @93 :UiPlan;    
     ubloxGnss @34 :UbloxGnss;
     ubloxRaw @39 :Data;
     qcomGnss @31 :QcomGnss;

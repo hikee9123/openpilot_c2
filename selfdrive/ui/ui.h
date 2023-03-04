@@ -277,4 +277,7 @@ public slots:
 };
 
 void ui_update_params(UIState *s);
+void update_model(UIState *s,
+                  const cereal::ModelDataV2::Reader &model,
+                  const cereal::UiPlan::Reader &plan);
 void update_dmonitoring(UIState *s, const cereal::DriverState::Reader &driverstate, float dm_fade_state );
