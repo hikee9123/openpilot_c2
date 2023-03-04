@@ -1,10 +1,10 @@
-#!/usr/bin/env python3
+﻿#!/usr/bin/env python3
 import os
 import numpy as np
 
 from casadi import SX, vertcat, sin, cos
-
 from common.realtime import sec_since_boot
+# WARNING: imports outside of constants will not trigger a rebuild
 from selfdrive.modeld.constants import T_IDXS
 
 if __name__ == '__main__':  # generating code
@@ -17,12 +17,12 @@ EXPORT_DIR = os.path.join(LAT_MPC_DIR, "c_generated_code")
 JSON_FILE = os.path.join(LAT_MPC_DIR, "acados_ocp_lat.json")
 X_DIM = 4
 P_DIM = 2
-N = 16
 COST_E_DIM = 3
 COST_DIM = COST_E_DIM + 2
 SPEED_OFFSET = 10.0
 MODEL_NAME = 'lat'
 ACADOS_SOLVER_TYPE = 'SQP_RTI'
+N = 32
 
 def gen_lat_model():
   model = AcadosModel()
