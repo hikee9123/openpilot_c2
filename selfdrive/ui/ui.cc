@@ -185,20 +185,17 @@ void update_model(UIState *s,
                   const cereal::UiPlan::Reader &plan) {
   UIScene &scene = s->scene;
   auto model_position = model.getPosition();
-  float max_distance1 = std::clamp(model_position.getX()[TRAJECTORY_SIZE - 1],
+  float max_distance = std::clamp(model_position.getX()[TRAJECTORY_SIZE - 1],
                                   MIN_DRAW_DISTANCE, MAX_DRAW_DISTANCE);
 
   auto plan_position = plan.getPosition();
-  if (plan_position.getX().size() < TRAJECTORY_SIZE){
-    plan_position = model.getPosition();
-  }
-  float max_distance2 = std::clamp(plan_position.getX()[TRAJECTORY_SIZE - 1],
-                                  MIN_DRAW_DISTANCE, MAX_DRAW_DISTANCE);
-
-  float max_distance = max_distance1;
   if( scene.end_to_end )
   {
-     max_distance = max_distance2;
+    if (plan_position.getX().size() < TRAJECTORY_SIZE){
+      plan_position = model.getPosition();
+    }
+    max_distance = std::clamp(plan_position.getX()[TRAJECTORY_SIZE - 1],
+                                    MIN_DRAW_DISTANCE, MAX_DRAW_DISTANCE);
   }
 
   // update lane lines
