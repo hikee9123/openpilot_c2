@@ -219,7 +219,7 @@ class NaviControl():
   def get_model_pos(self):
     model_v2 = self.sm['modelV2']
     lanePos = model_v2.position
-    distance = None
+    distance = 0
     if len(lanePos.x) > 0:
       distance = lanePos.x[-1]
 
