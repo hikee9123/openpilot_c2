@@ -616,14 +616,32 @@ void NvgWindow::drawLaneLines(QPainter &painter, const UIState *s) {
   } else {
     bg.setColorAt(0, whiteColor());
     bg.setColorAt(1, whiteColor(0));
-    //bg.setColorAt(0.0, QColor::fromHslF(148 / 360., 0.94, 0.51, 0.4));
-    //bg.setColorAt(0.5, QColor::fromHslF(112 / 360., 1.0, 0.68, 0.35));
-    //bg.setColorAt(1.0, QColor::fromHslF(112 / 360., 1.0, 0.68, 0.0));
   }
   painter.setBrush(bg);
-  ui_draw_line( painter, scene.track_vertices );
-  //painter.drawPolygon(scene.track_vertices.v, scene.track_vertices.cnt);
 
+
+  if( scene.end_to_end )
+  {
+    ui_draw_line( painter, scene.track_vertices2 );
+
+    if( scene.stopLine.x > 0 )
+    {
+        int  alpha = (int)scene.stopLine.x;
+        bg.setColorAt(0, redColor());
+        bg.setColorAt(1, redColor(alpha));
+    }
+    else
+    {
+        bg.setColorAt(0, whiteColor());
+        bg.setColorAt(1, whiteColor(0));
+    }
+    painter.setBrush(bg);    
+    ui_draw_line( painter, scene.track_vertices );
+  }
+  else
+  {
+    ui_draw_line( painter, scene.track_vertices );
+  }
 
 
   painter.restore();

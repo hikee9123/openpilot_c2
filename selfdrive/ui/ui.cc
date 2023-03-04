@@ -216,14 +216,16 @@ void update_model(UIState *s,
 
   if( scene.end_to_end )
   {
+    max_idx = get_path_length_idx(model_position, max_distance);
+    update_line_data(s, model_position, 0.9, 1.22, &scene.track_vertices2, max_idx, false);
+
     auto plan_position = plan.getPosition();
     if (plan_position.getX().size() < TRAJECTORY_SIZE){
       plan_position = model.getPosition();
     } 
-    //plan_position.getX()[TRAJECTORY_SIZE - 1];
  
     max_idx = get_path_length_idx(plan_position, max_distance);
-    update_line_data(s, plan_position, 0.9, 1.22, &scene.track_vertices, max_idx, false);
+    update_line_data(s, plan_position, 0.5, 1.22, &scene.track_vertices, max_idx, false);
   }
   else
   {
