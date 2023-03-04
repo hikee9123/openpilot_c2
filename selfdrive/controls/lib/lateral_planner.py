@@ -34,6 +34,7 @@ class LateralPlanner:
     self.solution_invalid_cnt = 0
 
     self.path_xyz = np.zeros((TRAJECTORY_SIZE, 3))
+    self.velocity_xyz = np.zeros((TRAJECTORY_SIZE, 3))  
     self.plan_yaw = np.zeros((TRAJECTORY_SIZE,))
     self.plan_yaw_rate = np.zeros((TRAJECTORY_SIZE,))
     self.t_idxs = np.arange(TRAJECTORY_SIZE)
@@ -120,21 +121,21 @@ class LateralPlanner:
                              LATERAL_ACCEL_COST, LATERAL_JERK_COST,
                              STEERING_RATE_COST)
       y_pts = np.interp(self.v_ego * self.t_idxs[:LAT_MPC_N + 1], np.linalg.norm(d_path_xyz, axis=1), d_path_xyz[:, 1])
-      self.heading_pts = np.interp(self.v_ego * self.t_idxs[:LAT_MPC_N + 1], np.linalg.norm(self.path_xyz, axis=1), self.plan_yaw)
-      self.yaw_rate_pts = np.interp(self.v_ego * self.t_idxs[:LAT_MPC_N + 1], np.linalg.norm(self.path_xyz, axis=1), self.plan_yaw_rate)
+      heading_pts = np.interp(self.v_ego * self.t_idxs[:LAT_MPC_N + 1], np.linalg.norm(self.path_xyz, axis=1), self.plan_yaw)
+      yaw_rate_pts = np.interp(self.v_ego * self.t_idxs[:LAT_MPC_N + 1], np.linalg.norm(self.path_xyz, axis=1), self.plan_yaw_rate)
       self.y_pts = y_pts
     else:
       self.lat_mpc.set_weights(PATH_COST, LATERAL_MOTION_COST,
                              LATERAL_ACCEL_COST, LATERAL_JERK_COST,
                              STEERING_RATE_COST)
       y_pts = self.path_xyz[:LAT_MPC_N+1, 1]
-      self.heading_pts = self.plan_yaw[:LAT_MPC_N+1]
-      self.yaw_rate_pts = self.plan_yaw_rate[:LAT_MPC_N+1]
+      heading_pts = self.plan_yaw[:LAT_MPC_N+1]
+      yaw_rate_pts = self.plan_yaw_rate[:LAT_MPC_N+1]
       self.y_pts = y_pts
 
-    assert len(self.y_pts) == LAT_MPC_N + 1
-    assert len(self.heading_pts) == LAT_MPC_N + 1
-    assert len(self.yaw_rate_pts) == LAT_MPC_N + 1
+    assert len(y_pts) == LAT_MPC_N + 1
+    assert len(heading_pts) == LAT_MPC_N + 1
+    assert len(yaw_rate_pts) == LAT_MPC_N + 1
     #lateral_factor = max(0, self.factor1 - (self.factor2 * self.v_ego**2))
     lateral_factor = np.clip(self.factor1 - (self.factor2 * self.v_plan**2), 0.0, np.inf)
     #p = np.array([self.v_ego, lateral_factor])
@@ -142,8 +143,8 @@ class LateralPlanner:
     self.lat_mpc.run(self.x0,
                      p,
                      y_pts,
-                     self.heading_pts,
-                     self.yaw_rate_pts)
+                     heading_pts,
+                     yaw_rate_pts)
     # init state for next iteration
     # mpc.u_sol is the desired second derivative of psi given x0 curv state.
     # with x0[3] = measured_yaw_rate, this would be the actual desired yaw rate.
