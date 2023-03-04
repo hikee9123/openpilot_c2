@@ -23,8 +23,8 @@ STEERING_RATE_COST = 800.0
 
 
 class LateralPlanner:
-  def __init__(self, CP, use_lanelines=True, wide_camera=False):
-    self.use_lanelines = use_lanelines
+  def __init__(self, CP, end_to_end=True, wide_camera=False):
+
     self.LP = LanePlanner(wide_camera)
     self.DH = DesireHelper()
 
@@ -48,10 +48,11 @@ class LateralPlanner:
     # atom
     self.cruise_buttons = 0
     self.time_enable = 0
-    self.LP.end_to_end  = self.use_lanelines
+    self.end_to_end = end_to_end    
+    self.LP.end_to_end  = self.end_to_end
 
   def lanelines_check(self, sm):
-    lanelines = self.use_lanelines
+    end_to_end = self.end_to_end
     steeringAngleDeg = sm['carState'].steeringAngleDeg
     cruiseSwState = sm['carState'].cruiseState.cruiseSwState
     accActive = sm['carState'].cruiseState.accActive
@@ -63,20 +64,20 @@ class LateralPlanner:
       self.time_enable -= 1
 
     if self.cruise_buttons == cruiseSwState:  #   GAP_DIST = 3
-      return lanelines
+      return end_to_end
 
     if accActive or self.time_enable:
-      return lanelines
+      return end_to_end
 
     self.cruise_buttons = cruiseSwState
     if cruiseSwState == 3: #   GAP_DIST = 3
-      if self.use_lanelines:
-        self.use_lanelines = False
+      if self.end_to_end:
+        self.end_to_end = False
       else:
-        self.use_lanelines = True
+        self.end_to_end = True
 
-    lanelines = self.use_lanelines
-    return lanelines
+    end_to_end = self.end_to_end
+    return end_to_end
      
 
   def reset_mpc(self, x0=np.zeros(4)):
@@ -116,7 +117,7 @@ class LateralPlanner:
     # Calculate final driving path and set MPC costs
     #if self.use_lanelines:
     self.LP.end_to_end   = self.lanelines_check(sm)
-    if self.LP.end_to_end:
+    if not self.LP.end_to_end:
       d_path_xyz = self.LP.get_d_path(self.v_ego, self.t_idxs, self.path_xyz)
       self.lat_mpc.set_weights(PATH_COST, LATERAL_MOTION_COST,
                              LATERAL_ACCEL_COST, LATERAL_JERK_COST,
@@ -189,7 +190,7 @@ class LateralPlanner:
     lateralPlan.solverExecutionTime = self.lat_mpc.solve_time
 
     lateralPlan.desire = self.DH.desire
-    lateralPlan.useLaneLines = not self.LP.end_to_end
+    lateralPlan.useLaneLines = self.LP.end_to_end
     lateralPlan.laneChangeState = self.DH.lane_change_state
     lateralPlan.laneChangeDirection = self.DH.lane_change_direction
     lateralPlan.modelSpeed = float(self.LP.soft_model_speed)
