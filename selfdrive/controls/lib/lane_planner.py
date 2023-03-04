@@ -13,7 +13,6 @@ TRAJECTORY_SIZE = 33
 # model path is in the frame of the camera. Empirically 
 # the model knows the difference between TICI and EON
 # so a path offset is not needed
-PATH_OFFSET = 0.00
 if EON:
   CAMERA_OFFSET = 0
 elif TICI:
@@ -43,7 +42,7 @@ class LanePlanner:
     self.r_lane_change_prob = 0.
 
     self.camera_offset = -CAMERA_OFFSET if wide_camera else CAMERA_OFFSET
-    self.path_offset = -PATH_OFFSET if wide_camera else PATH_OFFSET
+    self.path_offset = 0
 
     # atom
     self.MAX_MODEL_SPEED = 200.    # 71 , 255.0
@@ -97,14 +96,10 @@ class LanePlanner:
     # laneParam.leftLaneOffset
     # laneParam.rightLaneOffset
     self.path_offset = laneParam.pathOffsetAdj
-
     camera_offset = laneParam.cameraOffsetAdj
-    if not self.end_to_end:
-      camera_offset = laneParam.leftLaneOffset
-
     if self.camera_offset != camera_offset:
       self.camera_offset = camera_offset
-      print('camera_offset = {}'.format( self.camera_offset ) )
+
 
   def parse_model(self, md, sm):
     self.car_params_update( sm )
@@ -128,7 +123,6 @@ class LanePlanner:
   def get_d_path(self, v_ego, path_t, path_xyz):
     # Reduce reliance on lanelines that are too far apart or
     # will be in a few seconds
-    path_xyz[:, 1] += self.path_offset
     l_prob, r_prob = self.lll_prob, self.rll_prob
     width_pts = self.rll_y - self.lll_y
     prob_mods = []

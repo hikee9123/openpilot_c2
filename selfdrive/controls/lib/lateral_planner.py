@@ -127,6 +127,7 @@ class LateralPlanner:
       yaw_rate_pts = np.interp(self.v_ego * self.t_idxs[:LAT_MPC_N + 1], np.linalg.norm(self.path_xyz, axis=1), self.plan_yaw_rate)
       self.y_pts = y_pts
     else:
+      self.path_xyz[:, 1] += self.LP.path_offset      
       self.lat_mpc.set_weights(PATH_COST, LATERAL_MOTION_COST,
                              LATERAL_ACCEL_COST, LATERAL_JERK_COST,
                              STEERING_RATE_COST)
