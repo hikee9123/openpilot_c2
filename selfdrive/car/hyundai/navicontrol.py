@@ -220,10 +220,18 @@ class NaviControl():
     model_v2 = self.sm['modelV2']
     lanePos = model_v2.position
     distance = 0
+    dy = 0
+    dz = 0
     if len(lanePos.x) > 0:
       distance = lanePos.x[-1]
 
-    return  distance
+    if len(lanePos.y) > 0:
+      dy = lanePos.y[-1]
+
+    if len(lanePos.z) > 0:
+      dz = lanePos.z[-1]      
+
+    return  distance, dy, dz
 
 
 
