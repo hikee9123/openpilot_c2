@@ -212,7 +212,7 @@ class CarController():
     
     self.gas = CS.out.gas
 
-  
+    self.NC.sm.update(0)  
     # Steering Torque
     new_steer = int(round(actuators.steer * self.params.STEER_MAX))
     apply_steer = apply_std_steer_torque_limits(new_steer, self.apply_steer_last, CS.out.steeringTorque, self.params)

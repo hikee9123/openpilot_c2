@@ -188,15 +188,6 @@ void update_model(UIState *s,
   float max_distance = std::clamp(model_position.getX()[TRAJECTORY_SIZE - 1],
                                   MIN_DRAW_DISTANCE, MAX_DRAW_DISTANCE);
 
-  auto plan_position = plan.getPosition();
-  if( scene.end_to_end )
-  {
-    if (plan_position.getX().size() < TRAJECTORY_SIZE){
-      plan_position = model.getPosition();
-    }
-    max_distance = std::clamp(plan_position.getX()[TRAJECTORY_SIZE - 1],
-                                    MIN_DRAW_DISTANCE, MAX_DRAW_DISTANCE);
-  }
 
   // update lane lines
   const auto lane_lines = model.getLaneLines();
@@ -225,6 +216,12 @@ void update_model(UIState *s,
 
   if( scene.end_to_end )
   {
+    auto plan_position = plan.getPosition();
+    if (plan_position.getX().size() < TRAJECTORY_SIZE){
+      plan_position = model.getPosition();
+    } 
+    //plan_position.getX()[TRAJECTORY_SIZE - 1];
+ 
     max_idx = get_path_length_idx(plan_position, max_distance);
     update_line_data(s, plan_position, 0.9, 1.22, &scene.track_vertices, max_idx, false);
   }
