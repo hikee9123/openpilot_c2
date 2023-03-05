@@ -141,7 +141,7 @@ class CarController():
       scc_log2 = 'start'
 
     model_pos, _dy, _dz = self.NC.get_model_pos()
-    str_log1 = 'TG={:.1f}  DIST={:.2f}  MP={:.1f},{:.1f},{:.1f} {} NC={}'.format(  apply_steer, CS.lead_distance,  model_pos, _dy, _dz, scc_log2, self.NC.log_msg )
+    str_log1 = 'TG={:.1f}  DIST={:.2f}  MP={:.0f} , y={:.1f} , z={:.1f} {} NC={}'.format(  apply_steer, CS.lead_distance,  model_pos, _dy, _dz, scc_log2, self.NC.log_msg )
     trace1.printf2( '{}'.format( str_log1 ) )
 
 
