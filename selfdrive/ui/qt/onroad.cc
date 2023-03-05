@@ -624,11 +624,12 @@ void NvgWindow::drawLaneLines(QPainter &painter, const UIState *s) {
   {
     ui_draw_line( painter, scene.track_vertices2 );
 
-    if( scene.stopLine.x > 0 )
+    if( scene.stopLine.x > 1 )
     {
-        int  alpha = (int)scene.stopLine.x;
-        bg.setColorAt(0, redColor());
-        bg.setColorAt(1, redColor(alpha));
+        int  alpha = 255 - (int)scene.stopLine.x;
+        bg.setColorAt(0, QColor(150, 100, 45, 255));
+        bg.setColorAt(0.75, QColor(201, 34, 20, alpha));
+        bg.setColorAt(1, QColor(201, 34, 20, 0));
     }
     else
     {

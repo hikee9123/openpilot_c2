@@ -128,22 +128,11 @@ class CarController():
 
 
   def update_debug(self, CS, c, apply_steer ):
-    actuators = c.actuators
     vFuture = c.hudControl.vFuture * 3.6
 
-    if actuators.longControlState == LongCtrlState.off:
-      scc_log2 = 'off'
-    elif actuators.longControlState == LongCtrlState.pid:
-      scc_log2 = 'pid'
-    elif actuators.longControlState == LongCtrlState.stopping:
-      scc_log2 = 'stop'
-    elif actuators.longControlState == LongCtrlState.starting:
-      scc_log2 = 'start'
-
     model_pos, _dy, _dz = self.NC.get_model_pos()
-    str_log1 = 'TG={:.1f}  DIST={:.2f}  MP={:.0f} , y={:.1f} , z={:.1f} {} NC={}'.format(  apply_steer, CS.lead_distance,  model_pos, _dy, _dz, scc_log2, self.NC.log_msg )
+    str_log1 = 'TG={:.1f}  DIST={:.2f}  MP={:.0f} , Y={:.0f} , Z={:.0f}  NC={}'.format( apply_steer, CS.lead_distance,  model_pos, _dy, _dz, self.NC.log_msg )
     trace1.printf2( '{}'.format( str_log1 ) )
-
 
     str_log1 = 'MODE={:.0f} vF={:.1f}  aRV={:.2f} '.format( CS.cruise_set_mode, vFuture, CS.aReqValue)
     trace1.printf3( '{}'.format( str_log1 ) )

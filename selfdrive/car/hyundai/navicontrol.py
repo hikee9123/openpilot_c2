@@ -7,7 +7,7 @@ import cereal.messaging as messaging
 
 
 
-
+LongCtrlState = car.CarControl.Actuators.LongControlState
 EventName = car.CarEvent.EventName
 
 
@@ -288,15 +288,30 @@ class NaviControl():
       vFuture = c.hudControl.vFuture * CV.MS_TO_KPH
       ctrl_speed = min( vFuture, ctrl_speed )
 
+      if ctrl_speed > 60:
+        _dx, _dy, _dz = self.get_model_pos()
+        curvspd = interp( abs(_dy), [5, 40], [ ctrl_speed, ctrl_speed - 10 ] )
+        ctrl_speed = min( curvspd, ctrl_speed )
 
-    #if cruise_set_speed > 30:
-    #  CS.set_cruise_speed( cruise_set_speed )    # setting speed change
 
     return  ctrl_speed
 
 
-  def update(self, c, CS, frame ):  
-    self.log_msg = ' {} {}={:.2f}  {}'.format(  self.wait_timer1, CS.cruise_set_speed_kph, CS.out.cruiseState.speed, frame % 1000   )
+  def update(self, c, CS, frame ):
+    actuators = c.actuators
+
+    if actuators.longControlState == LongCtrlState.off:
+      scc_log2 = 'off'
+    elif actuators.longControlState == LongCtrlState.pid:
+      scc_log2 = 'pid'
+    elif actuators.longControlState == LongCtrlState.stopping:
+      scc_log2 = 'stop'
+    elif actuators.longControlState == LongCtrlState.starting:
+      scc_log2 = 'start'
+    else:
+      scc_log2 = '-'
+
+    self.log_msg = '  {}'.format(  scc_log2  )
     # send scc to car if longcontrol enabled and SCC not on bus 0 or ont live
     btn_signal = None
     if not self.button_status( CS  ):
