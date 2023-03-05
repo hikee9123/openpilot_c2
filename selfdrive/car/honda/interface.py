@@ -37,7 +37,7 @@ class CarInterface(CarInterfaceBase):
 
       # Disable the radar and let openpilot control longitudinal
       # WARNING: THIS DISABLES AEB!
-      ret.openpilotLongitudinalControl = disable_radar
+      ret.openpilotLongitudinalControl = False
 
       ret.pcmCruise = not ret.openpilotLongitudinalControl
     else:
