@@ -231,21 +231,9 @@ class Controls:
       self.OpkrLiveSteerRatio = 0    
 
     self.camera_offset = CAMERA_OFFSET
-    self.modelSpeed = 0
 
 
 
-
-  def update_modelToSteerRatio(self, learnerSteerRatio ):
-    steerRatio = learnerSteerRatio
-    if self.sm.updated['lateralPlan']:
-      self.modelSpeed = self.sm['lateralPlan'].modelSpeed * CV.MS_TO_KPH
-      if self.modelSpeed:
-        dRate = interp( self.modelSpeed, [200,450], [ 1, 0.9 ] )
-        steerRatio = learnerSteerRatio * dRate
-    steerRatio = clip( steerRatio, 13.5, 19.5 )
-
-    return steerRatio  #, self.modelSpeed
 
 
   def set_initial_state(self):
@@ -635,9 +623,7 @@ class Controls:
 
     if self.OpkrLiveSteerRatio == 2:  # FIX
       sr = max(self.CP.steerRatio, 5.0)
-    elif self.OpkrLiveSteerRatio == 1:  
-      steerRatio = self.update_modelToSteerRatio( lp.steerRatio )
-      sr = max(steerRatio, 5.0)
+
 
     str_log1 = 'sR={:.2f} {}'.format( sr, self.OpkrLiveSteerRatio )
 

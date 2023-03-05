@@ -191,6 +191,6 @@ class LateralPlanner:
     lateralPlan.useLaneLines = self.LP.end_to_end
     lateralPlan.laneChangeState = self.DH.lane_change_state
     lateralPlan.laneChangeDirection = self.DH.lane_change_direction
-    lateralPlan.modelSpeed = 0
+
 
     pm.send('lateralPlan', plan_send)
