@@ -91,9 +91,6 @@ class LateralPlanner:
 
     # Parse model predictions
     md = sm['modelV2']
-    if sm.frame % 2 == 0:
-      self.LP.cal_model_speed( md, self.v_ego )
-
     self.LP.parse_model(md, sm)
     if len(md.position.x) == TRAJECTORY_SIZE and len(md.orientation.x) == TRAJECTORY_SIZE:
       self.path_xyz = np.column_stack([md.position.x, md.position.y, md.position.z])
@@ -194,6 +191,6 @@ class LateralPlanner:
     lateralPlan.useLaneLines = self.LP.end_to_end
     lateralPlan.laneChangeState = self.DH.lane_change_state
     lateralPlan.laneChangeDirection = self.DH.lane_change_direction
-    lateralPlan.modelSpeed = float(self.LP.soft_model_speed)
+    lateralPlan.modelSpeed = 0
 
     pm.send('lateralPlan', plan_send)
