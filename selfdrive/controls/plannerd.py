@@ -40,7 +40,7 @@ def plannerd_thread(sm=None, pm=None):
   cloudlog.event("e2e mode", on=use_lanelines)
 
   longitudinal_planner = LongitudinalPlanner(CP)
-  lateral_planner = LateralPlanner(CP, use_lanelines=use_lanelines, wide_camera=wide_camera)
+  lateral_planner = LateralPlanner(CP, end_to_end=use_lanelines, wide_camera=wide_camera)
 
   if sm is None:
     sm = messaging.SubMaster(['carState', 'controlsState', 'radarState', 'modelV2', "carParams",],
