@@ -622,7 +622,7 @@ class Controls:
     # atom
     if self.OpkrLiveSteerRatio == 2:  # FIX
       sr = max(self.CP.steerRatio, 5.0)
-    elif not torque_params.useParams and self.OpkrLiveSteerRatio == 1: # cal
+    elif self.OpkrLiveSteerRatio == 1: # cal
       sr = self.LaC.atom_steerRatio( CS, self.CP )
       sr = max( sr, 5.0 )
 
