@@ -288,9 +288,10 @@ class NaviControl():
       vFuture = c.hudControl.vFuture * CV.MS_TO_KPH
       ctrl_speed = min( vFuture, ctrl_speed )
 
-      if ctrl_speed > 60:
+      delta = self.cruiseState_speed - ctrl_speed
+      if delta < 3 and self.cruiseState_speed > 60:
         _dx, _dy, _dz = self.get_model_pos()
-        curvspd = interp( abs(_dy), [5, 40], [ ctrl_speed, ctrl_speed - 10 ] )
+        curvspd = interp( abs(_dy), [5, 40], [ self.cruiseState_speed, self.cruiseState_speed - 10 ] )
         ctrl_speed = min( curvspd, ctrl_speed )
 
 
