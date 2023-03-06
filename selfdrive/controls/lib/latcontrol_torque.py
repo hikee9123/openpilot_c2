@@ -47,7 +47,7 @@ class LatControlTorque(LatControl):
     self.sRsteerRatio = []
     self.MsV = []
 
-    sr_value = self.angle_steers_des
+    sr_value = abs(self.angle_steers_des)
     nPos = 0
     for angle in self.sr_BPV:  # angle
       self.sRsteerRatio.append( interp( sr_value, angle, self.sRsteerRatioV[nPos] ) )
@@ -72,7 +72,7 @@ class LatControlTorque(LatControl):
     self.lat_latAccelFactor = []
     self.MsV = []
 
-    sr_value = self.angle_steers_des
+    sr_value = abs(self.angle_steers_des)
     nPos = 0
     for angle in self.sr_BPV:  # angle
       self.lat_friction.append( interp( sr_value, angle, self.lat_frictionV[nPos] ) )
