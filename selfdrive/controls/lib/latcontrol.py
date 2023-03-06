@@ -23,6 +23,12 @@ class LatControl(ABC):
   def live_tune(self, CP):
     pass
 
+  def atom_steerRatio( self, CS, CP ):
+    return CP.steerRatio
+
+  def linear2_tune( self, CS, CP ):
+    pass
+
   def reset(self):
     self.sat_count = 0.
 

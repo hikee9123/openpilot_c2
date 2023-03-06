@@ -31,6 +31,7 @@ class LatControlTorque(LatControl):
     self.torque_from_lateral_accel = CI.torque_from_lateral_accel()
     self.use_steering_angle = self.torque_params.useSteeringAngle
     self.steering_angle_deadzone_deg = self.torque_params.steeringAngleDeadzoneDeg
+    self.angle_steers_des = 0
     self.CP = CP
 
 
@@ -38,7 +39,7 @@ class LatControlTorque(LatControl):
     super().reset()
     self.pid.reset()
 
-  def atom_steer( self, CS, CP ):  # 조향각에 따른 변화.
+  def atom_steerRatio( self, CS, CP ):  # 조향각에 따른 변화.
     self.sr_KPH = CP.atomTuning.sRKPH
     self.sr_BPV = CP.atomTuning.sRBPV
     self.sRsteerRatioV  = CP.atomTuning.sRsteerRatioV
@@ -46,23 +47,21 @@ class LatControlTorque(LatControl):
     self.sRsteerRatio = []
     self.MsV = []
 
-
-    sr_value = CS.steeringAngleDeg
+    sr_value = self.angle_steers_des
     nPos = 0
     for angle in self.sr_BPV:  # angle
       self.sRsteerRatio.append( interp( sr_value, angle, self.sRsteerRatioV[nPos] ) )
       nPos += 1
-      if nPos > 10:
+      if nPos > 20:
         break
 
     for kph in self.sr_KPH:
       self.MsV.append( kph * CV.KPH_TO_MS )
 
     sr = interp( CS.vEgo, self.MsV, self.sRsteerRatio )
-
     return sr
 
-  def atom_tune( self, sr_value, CP ):  # 조향각에 따른 변화.
+  def atom_tune( self, CS, CP ):  # 조향각에 따른 변화.
     self.sr_KPH = CP.atomTuning.sRKPH
     self.sr_BPV = CP.atomTuning.sRBPV
 
@@ -73,12 +72,13 @@ class LatControlTorque(LatControl):
     self.lat_latAccelFactor = []
     self.MsV = []
 
+    sr_value = self.angle_steers_des
     nPos = 0
     for angle in self.sr_BPV:  # angle
       self.lat_friction.append( interp( sr_value, angle, self.lat_frictionV[nPos] ) )
       self.lat_latAccelFactor.append( interp( sr_value, angle, self.lat_latAccelFactorV[nPos] ) )
       nPos += 1
-      if nPos > 10:
+      if nPos > 20:
         break
 
     for kph in self.sr_KPH:
@@ -87,8 +87,7 @@ class LatControlTorque(LatControl):
     return self.MsV, self.lat_friction, self.lat_latAccelFactor    
 
   def linear2_tune( self, CS, CP ):  # angle(조향각에 의한 변화)
-    sr_value = self.angle_steers_des
-    vEgoV, frictionV, latAccelFactorV = self.atom_tune( sr_value, CP )
+    vEgoV, frictionV, latAccelFactorV = self.atom_tune( CS, CP )
 
     self.torque_params.latAccelFactor = interp( CS.vEgo, vEgoV, latAccelFactorV )
     self.torque_params.friction = interp( CS.vEgo, vEgoV, frictionV )
@@ -109,11 +108,12 @@ class LatControlTorque(LatControl):
 
   def update(self, active, CS, VM, params, last_actuators, steer_limited, desired_curvature, desired_curvature_rate, llk):
     pid_log = log.ControlsState.LateralTorqueState.new_message()
-    self.angle_steers_des = CS.steeringAngleDeg
+
 
     #self.linear2_tune( CS, self.CP )
 
     if CS.vEgo < MIN_STEER_SPEED or not active:
+      angle_steers_des = 0
       output_torque = 0.0
       pid_log.active = False
     else:
@@ -159,5 +159,7 @@ class LatControlTorque(LatControl):
       pid_log.desiredLateralAccel = desired_lateral_accel
       pid_log.saturated = self._check_saturation(self.steer_max - abs(output_torque) < 1e-3, CS, steer_limited)
 
+      angle_steers_des = math.degrees(VM.get_steer_from_curvature(-desired_curvature, CS.vEgo, params.roll)) + params.angleOffsetDeg      
+    self.angle_steers_des = angle_steers_des
     # TODO left is positive in this convention
-    return -output_torque, 0.0, pid_log
+    return -output_torque, angle_steers_des, pid_log
