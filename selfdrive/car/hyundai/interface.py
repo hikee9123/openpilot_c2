@@ -336,7 +336,7 @@ class CarInterface(CarInterfaceBase):
     CarInterface.get_tunning_params( ret )
     CarInterface.get_normal_params( 0, ret )
 
-    CarInterface.live_tune( ret.atomTuning )
+    CarInterface.live_tune( ret.atomTuning, True )
 
     ret.startingState = True
     ret.startAccel = 1.0
@@ -376,7 +376,7 @@ class CarInterface(CarInterfaceBase):
     if read and OpkrLiveSteerRatio == 2:
       ATOMP.read_tune()
 
-    atomTuning.sRKPH     = ATOMP.sR_KPH
+    atomTuning.sRKPH     = ATOMP.sR_KPHV
     atomTuning.sRBPV     = ATOMP.sR_BPV
     atomTuning.sRsteerRatioV = ATOMP.sR_steerRatioV
 
