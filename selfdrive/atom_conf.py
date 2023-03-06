@@ -4,7 +4,7 @@ class atom_params():
   def __init__(self, CP=None):
     self.kegman = kegman_conf()
 
-    self.sR_KPH         = [30, 80]   # Speed  kph
+    self.sR_KPHV         = [30, 80]   # Speed  kph
     self.sR_BPV         = [[1.,30],     [1.,10]     ]  # steer
     self.sR_steerRatioV = [[15.5,16.5],[15.5,16.5]]
 
