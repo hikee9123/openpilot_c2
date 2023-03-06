@@ -5,7 +5,7 @@ from common.params import Params
 
 
 
-MethodModel = car.CarParams.MethodModel
+
 
 
 class TunType(Enum):
@@ -68,7 +68,7 @@ def set_long_tune(tune, name):
   else:
     raise NotImplementedError('This longitudinal tune does not exist')
 
-def update_lat_tune_patam(tune, MAX_LAT_ACCEL=2.5, steering_angle_deadzone_deg=0.0):
+def update_lat_tune_param(tune, MAX_LAT_ACCEL=2.5, steering_angle_deadzone_deg=0.0):
   params = Params()
 
   OpkrLateralControlMethod = int( params.get("OpkrLateralControlMethod", encoding="utf8") )
@@ -114,9 +114,9 @@ def update_lat_tune_patam(tune, MAX_LAT_ACCEL=2.5, steering_angle_deadzone_deg=0
 
       tune.init('torque')
       tune.torque.useSteeringAngle = UseAngle  #  False
-      tune.torque.kp = Kp #/ MAX_LAT_ACCEL        # 1.0 / 2.5 = 0.4
-      tune.torque.kf = Kf #/ MAX_LAT_ACCEL        # 1.0 / 2.5 = 0.4
-      tune.torque.ki = Ki #/ MAX_LAT_ACCEL        # 0.1 / 2.5 = 0.04
+      tune.torque.kp = Kp #      1.0
+      tune.torque.kf = Kf #      1.0
+      tune.torque.ki = Ki #      0.1
       tune.torque.friction = FRICTION
       tune.torque.latAccelFactor = MAX_LAT_ACCEL      
       tune.torque.latAccelOffset = 0.0      
