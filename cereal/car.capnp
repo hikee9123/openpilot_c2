@@ -553,11 +553,11 @@ struct CarParams {
   }
 
   struct LateralATOMTuning {
-    sRKPH @5 :List(Float32);
-    sRBPV @6 :List(List(Float32));
-    sRsteerRatioV @7 :List(List(Float32));
-    latFrictionV @8 :List(List(Float32));
-    latLatAccelFactorV @9 :List(List(Float32));
+    sRKPH @0 :List(Float32);
+    sRBPV @1 :List(List(Float32));
+    sRsteerRatioV @2 :List(List(Float32));
+    latFrictionV @3 :List(List(Float32));
+    latLatAccelFactorV @4 :List(List(Float32));
   }
 
   struct LateralPIDTuning {
