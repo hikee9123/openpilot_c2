@@ -130,8 +130,14 @@ class CarController():
   def update_debug(self, CS, c, apply_steer ):
     vFuture = c.hudControl.vFuture * 3.6
 
-    model_pos, _dy, _dz = self.NC.get_model_pos()
-    str_log1 = 'TG={:.1f}  DIST={:.2f}  MP={:.0f} , Y={:.0f} , Z={:.0f}  NC={}'.format( apply_steer, CS.lead_distance,  model_pos, _dy, _dz, self.NC.log_msg )
+
+    
+    if CS.out.cruiseState.accActive:
+      model_pos, _dy, _dz = self.NC.get_model_pos()
+      str_log1 = 'TG={:.1f}  DIST={:.2f}  MP={:.0f} , Y={:.0f} , Z={:.0f}  NC={}'.format( apply_steer, CS.lead_distance,  model_pos, _dy, _dz, self.NC.log_msg )
+    else:
+      str_log1 = 'SOC={:.1f} SOH={:.1f} SOF={:.1f}  I={:.1f}  V={:.1f}  T={:.1f} S={:.0f}  E={} {}'.format( CS.bat11["BAT_SOC"], CS.bat11["BAT_SOH"], CS.bat11["BAT_SOF"], CS.bat11["BAT_SNSR_I"], CS.bat11["BAT_SNSR_V"], CS.bat11["BAT_SNSR_Temp"], CS.bat11["BAT_SNSR_State"], CS.bat11["BAT_SNSR_Error"], CS.bat11["BAT_SNSR_Invalid"]  )
+
     trace1.printf2( '{}'.format( str_log1 ) )
 
     str_log1 = 'MODE={:.0f} vF={:.1f}  aRV={:.2f} '.format( CS.cruise_set_mode, vFuture, CS.aReqValue)
@@ -231,7 +237,9 @@ class CarController():
 
     if self.frame == 0: # initialize counts from last received count signals
       self.lkas11_cnt = CS.lkas11["CF_Lkas_MsgCount"] + 1
-      self.scc12_cnt = CS.scc12["CR_VSM_Alive"] + 1  
+      self.scc12_cnt = CS.scc12["CR_VSM_Alive"] + 1
+
+      
   
     self.lkas11_cnt %= 0x10
     self.scc12_cnt %= 0x0F
