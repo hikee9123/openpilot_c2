@@ -3,15 +3,17 @@ from cereal import car
 from panda import Panda
 from common.params import Params
 from common.conversions import Conversions as CV
-from selfdrive.car.hyundai.tunes import update_lat_tune_patam
+from selfdrive.car.hyundai.tunes import update_lat_tune_param
 from selfdrive.car.hyundai.values import CAR, DBC, EV_CAR, HYBRID_CAR, LEGACY_SAFETY_MODE_CAR, Buttons, CarControllerParams
 from selfdrive.car.hyundai.radar_interface import RADAR_START_ADDR
 from selfdrive.car import STD_CARGO_KG, scale_rot_inertia, scale_tire_stiffness, gen_empty_fingerprint, get_safety_config
 from selfdrive.car.interfaces import CarInterfaceBase
-from selfdrive.car.disable_ecu import disable_ecu
+from selfdrive.atom_conf import atom_params
 
 ButtonType = car.CarState.ButtonEvent.Type
 EventName = car.CarEvent.EventName
+
+ATOMP = atom_params()
 
 class CarInterface(CarInterfaceBase):
   @staticmethod
@@ -31,10 +33,8 @@ class CarInterface(CarInterfaceBase):
   def get_tunning_params( tune ):
 
     max_lat_accel = float( Params().get("TorqueMaxLatAccel", encoding="utf8") )
-    hybridSpeed = float( Params().get("TorqueHybridSpeed", encoding="utf8") )
-    tune.atomHybridSpeed = hybridSpeed * CV.KPH_TO_MS
     tune.maxLateralAccel = max_lat_accel
-    update_lat_tune_patam( tune.lateralTuning, MAX_LAT_ACCEL=tune.maxLateralAccel )
+    update_lat_tune_param( tune.lateralTuning, MAX_LAT_ACCEL=tune.maxLateralAccel )
 
 
 
@@ -94,8 +94,6 @@ class CarInterface(CarInterfaceBase):
 
 
     ret.longitudinalActuatorDelayUpperBound = 1.0 # s
-    ret.atomHybridSpeed = 50 * CV.KPH_TO_MS
-    #ret.steerRateCost = 0.1
 
     if candidate in (CAR.GRANDEUR_HEV_19):
       ret.mass = 1675. + STD_CARGO_KG
@@ -338,6 +336,7 @@ class CarInterface(CarInterfaceBase):
     CarInterface.get_tunning_params( ret )
     CarInterface.get_normal_params( 0, ret )
 
+    CarInterface.live_tune( ret.atomTuning, True )
 
     ret.startingState = True
     ret.startAccel = 1.0
@@ -368,6 +367,24 @@ class CarInterface(CarInterfaceBase):
       ret.safetyConfigs[0].safetyParam |= Panda.FLAG_HYUNDAI_LONG
 
     return ret
+
+  @staticmethod
+  def live_tune( atomTuning, read=False):
+    global ATOMP 
+    Param = Params()
+    OpkrLiveSteerRatio = int( Param.get('OpkrLiveSteerRatio') ) 
+    if read and OpkrLiveSteerRatio == 2:
+      ATOMP.read_tune()
+
+    atomTuning.sRKPH     = ATOMP.sR_KPHV
+    atomTuning.sRBPV     = ATOMP.sR_BPV
+    atomTuning.sRsteerRatioV = ATOMP.sR_steerRatioV
+
+    atomTuning.latFrictionV       = ATOMP.lat_friction
+    atomTuning.latLatAccelFactorV = ATOMP.lat_latAccelFactor
+
+
+
 
   @staticmethod
   def init(CP, logcan, sendcan):

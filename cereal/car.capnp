@@ -515,13 +515,13 @@ struct CarParams {
   wheelSpeedFactor @63 :Float32; # Multiplier on wheels speeds to computer actual speeds
 
   atompilotLongitudinalControl @68  :Bool;
-  atomHybridSpeed @69  :Float32;
+
 
   opkrAutoResume @70 :Bool;
 
   smoothSteer @71 :SmoothSteerData;
   laneParam @72 :LaneParamData;
-
+  atomTuning @77 :LateralATOMTuning;
 
 
   struct LaneParamData
@@ -546,10 +546,6 @@ struct CarParams {
     safetyParam @1 :Int16;
   }
 
-  struct MethodConfig {
-    methodModel @0 :MethodModel;
-    methodParam @1 :Float32;
-  }  
 
   struct LateralParams {
     torqueBP @0 :List(Int32);
@@ -557,11 +553,11 @@ struct CarParams {
   }
 
   struct LateralATOMTuning {
-    methodConfigs @0 :List(MethodConfig);    
-    lqr @1 :LateralLQRTuning;
-    torque @2 :LateralTorqueTuning;
-    pid @3 :LateralPIDTuning;
-    indi @4 :LateralINDITuning;
+    sRKPH @0 :List(Float32);
+    sRBPV @1 :List(List(Float32));
+    sRsteerRatioV @2 :List(List(Float32));
+    latFrictionV @3 :List(List(Float32));
+    latLatAccelFactorV @4 :List(List(Float32));
   }
 
   struct LateralPIDTuning {
@@ -654,11 +650,7 @@ struct CarParams {
     body @27;
   }
 
-  enum MethodModel {
-    lqr @0;
-    torque @1;
-    pid @2;
-  }
+
 
   enum SteerControlType {
     torque @0;
@@ -726,6 +718,7 @@ struct CarParams {
     gateway @1;    # Integration at vehicle's CAN gateway
   }
 
+  atomHybridSpeedDEPRECATED @69  :Float32;
   enableCameraDEPRECATED @4 :Bool;
   isPandaBlackDEPRECATED @39 :Bool;
   hasStockCameraDEPRECATED @57 :Bool;

@@ -86,7 +86,6 @@ def manager_init() -> None:
 
     # 3.Torque
     ("TorqueMaxLatAccel", "3"),
-    ("TorqueHybridSpeed", "50"),
     ("Torquedeadzone", "0"),     
     ("TorqueKp", "1.0"),
     ("TorqueKf", "1.0"),
