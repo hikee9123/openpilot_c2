@@ -440,7 +440,7 @@ class CarState(CarStateBase):
       ("SAS11", 100),
 
       ("TPMS11", 5),
-      ("BAT11", 5),
+      # ("BAT11", 5),
     ]
 
     if not CP.openpilotLongitudinalControl:
