@@ -136,7 +136,7 @@ class CarController():
       model_pos, _dy, _dz = self.NC.get_model_pos()
       str_log1 = 'TG={:.1f}  DIST={:.2f}  MP={:.0f} , Y={:.0f} , Z={:.0f}  NC={}'.format( apply_steer, CS.lead_distance,  model_pos, _dy, _dz, self.NC.log_msg )
     else:
-      str_log1 = 'SOC={:.1f} SOH={:.1f} SOF={:.1f}  I={:.1f}  V={:.1f}  T={:.1f} S={:.0f}  E={} {}'.format( CS.bat11["BAT_SOC"], CS.bat11["BAT_SOH"], CS.bat11["BAT_SOF"], CS.bat11["BAT_SNSR_I"], CS.bat11["BAT_SNSR_V"], CS.bat11["BAT_SNSR_Temp"], CS.bat11["BAT_SNSR_State"], CS.bat11["BAT_SNSR_Error"], CS.bat11["BAT_SNSR_Invalid"]  )
+      str_log1 = 'BAT={:.1f} '.format( CS.bat11["CR_DiBox_BatVol"] )
 
     trace1.printf2( '{}'.format( str_log1 ) )
 

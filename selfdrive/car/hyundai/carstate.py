@@ -323,7 +323,7 @@ class CarState(CarStateBase):
     self.scc12 = copy.copy(cp.vl["SCC12"])
     self.lkas11 = copy.copy(cp_cam.vl["LKAS11"])
     self.clu11 = copy.copy(cp.vl["CLU11"])
-    self.bat11 =  copy.copy(cp.vl["BAT11"])
+    self.bat11 =  copy.copy(cp.vl["DI_BOX12"])
     self.steer_state = cp.vl["MDPS12"]["CF_Mdps_ToiActive"]  # 0 NOT ACTIVE, 1 ACTIVE
     self.brake_error = cp.vl["TCS13"]["ACCEnable"] != 0 # 0 ACC CONTROL ENABLED, 1-3 ACC CONTROL DISABLED
     self.prev_cruise_buttons = self.cruise_buttons
@@ -413,15 +413,8 @@ class CarState(CarStateBase):
       ("PRESSURE_RL", "TPMS11"),
       ("PRESSURE_RR", "TPMS11"),
 
-      ("BAT_SOC", "BAT11"),
-      ("BAT_SOH", "BAT11"),
-      ("BAT_SOF", "BAT11"),
-      ("BAT_SNSR_I", "BAT11"),
-      ("BAT_SNSR_V", "BAT11"),
-      ("BAT_SNSR_Temp", "BAT11"),
-      ("BAT_SNSR_State", "BAT11"),
-      ("BAT_SNSR_Invalid", "BAT11"),
-      ("BAT_SNSR_Error", "BAT11"),
+      ("CR_DiBox_BatVol", "DI_BOX12"),
+
       
     ]
 
@@ -440,7 +433,7 @@ class CarState(CarStateBase):
       ("SAS11", 100),
 
       ("TPMS11", 5),
-      ("BAT11", 0),
+      ("DI_BOX12", 0),
     ]
 
     if not CP.openpilotLongitudinalControl:
