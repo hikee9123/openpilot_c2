@@ -136,7 +136,7 @@ class CarController():
       model_pos, _dy, _dz = self.NC.get_model_pos()
       str_log1 = 'TG={:.1f}  DIST={:.2f}  MP={:.0f} , Y={:.0f} , Z={:.0f}  NC={}'.format( apply_steer, CS.lead_distance,  model_pos, _dy, _dz, self.NC.log_msg )
     else:
-      str_log1 = 'BAT={:.1f} '.format( CS.bat11["CR_DiBox_BatVol"] )
+      str_log1 = 'BAT={:.1f} {}  {}'.format( CS.bat11["CR_DiBox_BatVol"], CS.bat11["CF_DiBox_SedInjVChg"], CS.bat11["CF_DiBox_FrtInjVChg"] )
 
     trace1.printf2( '{}'.format( str_log1 ) )
 
