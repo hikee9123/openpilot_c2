@@ -414,6 +414,8 @@ class CarState(CarStateBase):
       ("PRESSURE_RR", "TPMS11"),
 
       ("CR_DiBox_BatVol", "DI_BOX12"),
+      ("CF_DiBox_SedInjVChg", "DI_BOX12"),
+      ("CF_DiBox_FrtInjVChg", "DI_BOX12"),
 
       
     ]
