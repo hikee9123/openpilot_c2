@@ -413,9 +413,6 @@ class CarState(CarStateBase):
       ("PRESSURE_RL", "TPMS11"),
       ("PRESSURE_RR", "TPMS11"),
 
-      ("CR_DiBox_BatVol", "DI_BOX12"),
-      ("CF_DiBox_SedInjVChg", "DI_BOX12"),
-      ("CF_DiBox_FrtInjVChg", "DI_BOX12"),
 
       
     ]
@@ -435,7 +432,6 @@ class CarState(CarStateBase):
       ("SAS11", 100),
 
       ("TPMS11", 5),
-      ("DI_BOX12", 0),
     ]
 
     if not CP.openpilotLongitudinalControl:
