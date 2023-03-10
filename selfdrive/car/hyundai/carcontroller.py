@@ -138,7 +138,7 @@ class CarController():
 
     trace1.printf2( '{}'.format( str_log1 ) )
 
-    str_log1 = 'MODE={:.0f} vF={:.1f}  aRV={:.2f} '.format( CS.cruise_set_mode, vFuture, CS.aReqValue)
+    str_log1 = 'MODE={:.0f} vF={:.1f}  aRV={:.2f}  NV={}'.format( CS.cruise_set_mode, vFuture, CS.aReqValue,  CS.Navi["SpeedLim_Nav_Clu"] )
     trace1.printf3( '{}'.format( str_log1 ) )
   
 
