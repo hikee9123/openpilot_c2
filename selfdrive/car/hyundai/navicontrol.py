@@ -50,6 +50,7 @@ class NaviControl():
 
  
 
+    self.min_ctrl_speed = 0
     self.auto_brakePress_speed_set = False  #  gasPressed에 따른 속도 Setting
     self.auto_cruise_speed = 50
     self.cruiseState_speed = 30
@@ -289,11 +290,17 @@ class NaviControl():
       ctrl_speed = min( vFuture, ctrl_speed )
 
       delta = self.cruiseState_speed - ctrl_speed
-      if delta < 3 and self.cruiseState_speed > 60:
+      if delta < 3 and self.cruiseState_speed > 80:
         _dx, _dy, _dz = self.get_model_pos()
-        curvspd = interp( abs(_dy), [5, 40], [ self.cruiseState_speed, self.cruiseState_speed - 10 ] )
+        curvspd = interp( abs(_dy), [5, 50], [ self.cruiseState_speed, self.cruiseState_speed - 15 ] )
         ctrl_speed = min( curvspd, ctrl_speed )
-
+        if self.min_ctrl_speed > ctrl_speed:
+          self.min_ctrl_speed = ctrl_speed
+        
+        if abs(_dy) > 10:
+          ctrl_speed = self.min_ctrl_speed
+        else:
+          self.min_ctrl_speed = ctrl_speed 
 
     return  ctrl_speed
 
