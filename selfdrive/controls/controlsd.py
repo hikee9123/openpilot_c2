@@ -634,15 +634,15 @@ class Controls:
       torque_params = self.sm['liveTorqueParameters']
       if torque_params.useParams and self.sm.all_checks(['liveTorqueParameters']):
         self.LaC.update_live_torque_params(torque_params.latAccelFactorFiltered, torque_params.latAccelOffsetFiltered, torque_params.frictionCoefficientFiltered)
-        str_log1 = 'BP={:.0f} LV={:.0f} LAF={:.2f} FC={:.3f} LAO={:.3f} LAG={}'.format( torque_params.totalBucketPoints, torque_params.liveValid, torque_params.latAccelFactorFiltered, torque_params.frictionCoefficientFiltered, torque_params.latAccelOffsetFiltered, self.rk._debug_dt )
+        str_log1 = 'BP={:.0f} LV={:.0f} LAF={:.2f} FC={:.3f} LAO={:.3f} sR={:.3f}'.format( torque_params.totalBucketPoints, torque_params.liveValid, torque_params.latAccelFactorFiltered, torque_params.frictionCoefficientFiltered, torque_params.latAccelOffsetFiltered, sr )
       else:
         if self.OpkrLiveSteerRatio == 1:
           self.LaC.linear2_tune( CS, self.CP )
           torque_params = self.LaC.torque_params
-          str_log1 = 'LAF={:.2f} FC={:.3f} SR={:.1f}'.format( torque_params.latAccelFactor, torque_params.friction, sr )
+          str_log1 = 'LAF={:.2f} FC={:.3f} sR={:.1f}'.format( torque_params.latAccelFactor, torque_params.friction, sr )
         else:
           torque = self.CP.lateralTuning.torque
-          str_log1 = 'LAF={:.2f} FC={:.3f} SR={:.1f}'.format( torque.latAccelFactor, torque.friction, sr )
+          str_log1 = 'LAF={:.2f} FC={:.3f} sR={:.1f}'.format( torque.latAccelFactor, torque.friction, sr )
 
     trace1.printf1( '{}'.format( str_log1 ) )
     lat_plan = self.sm['lateralPlan']
