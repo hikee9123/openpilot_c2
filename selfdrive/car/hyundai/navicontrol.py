@@ -220,19 +220,28 @@ class NaviControl():
   def get_model_pos(self):
     model_v2 = self.sm['modelV2']
     lanePos = model_v2.position
-    distance = 0
+    dx = 0
     dy = 0
     dz = 0
     if len(lanePos.x) > 0:
-      distance = lanePos.x[-1]
+      dx = lanePos.x[-1]
 
     if len(lanePos.y) > 0:
       dy = lanePos.y[-1]
 
     if len(lanePos.z) > 0:
-      dz = lanePos.z[-1]      
+      dz = lanePos.z[-1]
 
-    return  distance, dy, dz
+
+    prob = model_v2.prob
+    dx_stopline = 255
+    if prob > 0.5:
+      stopLine = model_v2.stopLine
+      dx_stopline = stopLine.x
+
+
+
+    return  dx, dy, dz, dx_stopline
 
 
 
@@ -289,9 +298,10 @@ class NaviControl():
       vFuture = c.hudControl.vFuture * CV.MS_TO_KPH
       ctrl_speed = min( vFuture, ctrl_speed )
 
+      # curv
+      _dx, _dy, _dz, _stopline = self.get_model_pos()
       delta = self.cruiseState_speed - ctrl_speed
       if delta < 3 and self.cruiseState_speed > 80:
-        _dx, _dy, _dz = self.get_model_pos()
         curvspd = interp( abs(_dy), [5, 50], [ self.cruiseState_speed, self.cruiseState_speed - 15 ] )
         ctrl_speed = min( curvspd, ctrl_speed )
         if self.min_ctrl_speed > ctrl_speed:
@@ -304,7 +314,15 @@ class NaviControl():
           self.min_ctrl_time -= 1
           ctrl_speed = self.min_ctrl_speed
         else:
-          self.min_ctrl_speed = ctrl_speed 
+          self.min_ctrl_speed = ctrl_speed
+
+      # stop line
+      if _stopline < 150:
+        curvspd = interp( _stopline, [50, 150], [ 30, self.cruiseState_speed ] )
+        ctrl_speed = min( curvspd, ctrl_speed )
+
+      if ctrl_speed < 30:
+        ctrl_speed = 30
 
     return  ctrl_speed
 
