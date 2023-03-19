@@ -133,8 +133,8 @@ class CarController():
 
     
     #if CS.out.cruiseState.accActive:
-    model_pos, _dy, _dz = self.NC.get_model_pos()
-    str_log1 = 'TG={:.1f}  DIST={:.2f}  MP={:.0f} , Y={:.0f} , Z={:.0f}  NC={}'.format( apply_steer, CS.lead_distance,  model_pos, _dy, _dz, self.NC.log_msg )
+    model_pos, _dy, _dz, _stop = self.NC.get_model_pos()
+    str_log1 = 'TG={:.1f}  DIST={:.2f}  MP={:.0f} , Y={:.0f} , S={:.0f}  NC={}'.format( apply_steer, CS.lead_distance,  model_pos, _dy, _stop, self.NC.log_msg )
 
     trace1.printf2( '{}'.format( str_log1 ) )
 
