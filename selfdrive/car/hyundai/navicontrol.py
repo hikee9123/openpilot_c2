@@ -232,11 +232,10 @@ class NaviControl():
     if len(lanePos.z) > 0:
       dz = lanePos.z[-1]
 
-
-    prob = model_v2.prob
+    stopLine = model_v2.stopLine
+    prob = stopLine.prob
     dx_stopline = 255
     if prob > 0.5:
-      stopLine = model_v2.stopLine
       dx_stopline = stopLine.x
 
 
