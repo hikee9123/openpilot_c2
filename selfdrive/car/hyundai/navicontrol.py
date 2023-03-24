@@ -51,6 +51,7 @@ class NaviControl():
  
     self.min_ctrl_time = 0
     self.min_ctrl_speed = 0
+    self.old_ctrl_speed = 0
     self.auto_brakePress_speed_set = False  #  gasPressed에 따른 속도 Setting
     self.auto_cruise_speed = 50
     self.cruiseState_speed = 30
@@ -322,6 +323,11 @@ class NaviControl():
 
       if ctrl_speed < 30:
         ctrl_speed = 30
+
+      if abs(_dy) > 10:
+        ctrl_speed = min( ctrl_speed, self.old_ctrl_speed )
+
+      self.old_ctrl_speed = ctrl_speed
 
     return  ctrl_speed
 
