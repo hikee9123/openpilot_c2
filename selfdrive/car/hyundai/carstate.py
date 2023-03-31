@@ -413,7 +413,6 @@ class CarState(CarStateBase):
       ("PRESSURE_RL", "TPMS11"),
       ("PRESSURE_RR", "TPMS11"),
 
-      ("SpeedLim_Nav_Clu", "Navi_HU"),
       
       
     ]
