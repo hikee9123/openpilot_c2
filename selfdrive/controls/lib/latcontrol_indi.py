@@ -5,7 +5,7 @@ from cereal import log
 from common.filter_simple import FirstOrderFilter
 from common.numpy_fast import clip, interp
 from common.realtime import DT_CTRL
-from selfdrive.controls.lib.latcontrol import LatControl, MIN_STEER_SPEED
+from selfdrive.controls.lib.latcontrol import LatControl, MIN_LATERAL_CONTROL_SPEED
 
 
 class LatControlINDI(LatControl):
@@ -90,7 +90,7 @@ class LatControlINDI(LatControl):
     rate_des = VM.get_steer_from_curvature(-desired_curvature_rate, CS.vEgo, 0)
     indi_log.steeringRateDesiredDeg = math.degrees(rate_des)
 
-    if CS.vEgo < MIN_STEER_SPEED or not active:
+    if CS.vEgo < MIN_LATERAL_CONTROL_SPEED or not active:
       indi_log.active = False
       self.steer_filter.x = 0.0
       output_steer = 0
