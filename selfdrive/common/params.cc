@@ -207,6 +207,8 @@ std::unordered_map<std::string, uint32_t> keys = {
     {"OpkrPandaFirmwareCk", PERSISTENT},
     {"OpkrSSHLegacy", PERSISTENT},
     {"OpkrAutoFocus", PERSISTENT},
+    {"OpkrDriveMode", PERSISTENT},
+    
 
     {"OpkrRunNaviOnBoot", PERSISTENT},
     {"OpkratomLongitudinal", PERSISTENT},

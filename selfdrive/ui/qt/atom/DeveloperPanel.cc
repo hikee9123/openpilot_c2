@@ -48,6 +48,8 @@ DeveloperPanel::DeveloperPanel(QWidget* parent) : QFrame(parent)
   layout()->addWidget(new BrightnessOffControl());
   
   layout()->addWidget(new CAutoFocus());
+  layout()->addWidget(new CDriveMode());
+  
 
   
 
@@ -872,6 +874,86 @@ void CAutoFocus::refresh()
   } else {
     label.setText(QString::fromStdString(Params().get("OpkrAutoFocus")));
   }
+  btnminus.setText("－");
+  btnplus.setText("＋");
+}
+
+
+
+////////////////////////////////////////////////////////////////////////////////////////
+//
+//  Auto Focus
+
+  
+
+CDriveMode::CDriveMode() : AbstractControl("Drive Mode", "Drive Mode을 변경합니다.", "../assets/offroad/icon_shell.png") 
+{
+
+  label.setAlignment(Qt::AlignVCenter|Qt::AlignRight);
+  label.setStyleSheet("color: #e0e879");
+  hlayout->addWidget(&label);
+
+  btnminus.setStyleSheet(R"(
+    padding: 0;
+    border-radius: 50px;
+    font-size: 35px;
+    font-weight: 500;
+    color: #E4E4E4;
+    background-color: #393939;
+  )");
+  btnplus.setStyleSheet(R"(
+    padding: 0;
+    border-radius: 50px;
+    font-size: 35px;
+    font-weight: 500;
+    color: #E4E4E4;
+    background-color: #393939;
+  )");
+  btnminus.setFixedSize(150, 100);
+  btnplus.setFixedSize(150, 100);
+  hlayout->addWidget(&btnminus);
+  hlayout->addWidget(&btnplus);
+
+  QObject::connect(&btnminus, &QPushButton::released, [=]() {
+    auto str = QString::fromStdString(Params().get("OpkrDriveMode"));
+    int value = str.toInt();
+    value = value - 1;
+    if (value <= 0 ) {
+      value = 0;
+    } else {
+    }
+
+    UIScene  &scene =  uiState()->scene;//QUIState::ui_state.scene;
+    scene.scr.autoFocus = value;
+    QString values = QString::number(value);
+    Params().put("OpkrDriveMode", values.toStdString());
+    refresh();
+  });
+  
+  QObject::connect(&btnplus, &QPushButton::released, [=]() {
+    auto str = QString::fromStdString(Params().get("OpkrDriveMode"));
+    int value = str.toInt();
+    value = value + 1;
+    if (value >= 100 ) {
+      value = 100;
+    } else {
+    }
+
+    UIScene  &scene =  uiState()->scene;//QUIState::ui_state.scene;
+    scene.scr.autoFocus = value;
+    QString values = QString::number(value);
+    Params().put("OpkrDriveMode", values.toStdString());
+    refresh();
+  });
+  refresh();
+}
+
+void CDriveMode::refresh() 
+{
+  QString option = QString::fromStdString(Params().get("OpkrDriveMode"));
+
+  label.setText(QString::fromStdString(Params().get("OpkrDriveMode")));
+
   btnminus.setText("－");
   btnplus.setText("＋");
 }

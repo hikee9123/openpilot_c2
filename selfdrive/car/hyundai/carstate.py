@@ -1,5 +1,6 @@
 import copy
 from cereal import car
+from common.params import Params
 from common.conversions import Conversions as CV
 from opendbc.can.parser import CANParser
 from opendbc.can.can_define import CANDefine
@@ -34,6 +35,8 @@ class CarState(CarStateBase):
     self.cluster_speed_counter = CLUSTER_SAMPLE_RATE
 
     self.params = CarControllerParams(CP)
+    Param = Params()
+
 
     # atom
     self.cruise_buttons = 0
@@ -47,7 +50,7 @@ class CarState(CarStateBase):
     self.prev_acc_set_btn = False
     self.acc_active = 0
     self.cruise_set_speed_kph = 0
-    self.cruise_set_mode = 0     # 모드 설정.
+    self.cruise_set_mode = int( Param.get("OpkrDriveMode", encoding="utf8") )     # 모드 설정.
     self.gasPressed = False
     self.aReqValue = 0
 

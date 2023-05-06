@@ -53,6 +53,8 @@ def manager_init() -> None:
     ("OpkrPrebuiltOn", "0"),
     ("OpkrAutoScreenOff", "0"),
     ("OpkrAutoFocus", "0"),
+    ("OpkrDriveMode", "0"),
+    
     ("OpkrUIBrightness", "0"),
     ("OpkrUIVolumeBoost", "0"),    
     ("OpkrPandaFirmwareCk", "1"),
