@@ -51,7 +51,6 @@ class NaviControl():
  
     self.min_ctrl_time = 0
     self.min_ctrl_speed = 0
-    self.old_ctrl_speed = 0
     self.auto_brakePress_speed_set = False  #  gasPressed에 따른 속도 Setting
     self.auto_cruise_speed = 50
     self.cruiseState_speed = 30
@@ -239,8 +238,6 @@ class NaviControl():
     if prob > 0.5:
       dx_stopline = stopLine.x
 
-
-
     return  dx, dy, dz, dx_stopline
 
 
@@ -302,7 +299,7 @@ class NaviControl():
       _dx, _dy, _dz, _stopline = self.get_model_pos()
       delta = self.cruiseState_speed - ctrl_speed
       if delta < 3 and self.cruiseState_speed > 80:
-        curvspd = interp( abs(_dy), [5, 50], [ self.cruiseState_speed, self.cruiseState_speed - 15 ] )
+        curvspd = interp( abs(_dy), [5, 50], [ self.cruiseState_speed, self.cruiseState_speed - 5 ] )
         ctrl_speed = min( curvspd, ctrl_speed )
         if self.min_ctrl_speed > ctrl_speed:
           self.min_ctrl_speed = ctrl_speed
@@ -324,10 +321,6 @@ class NaviControl():
       if ctrl_speed < 30:
         ctrl_speed = 30
 
-      if abs(_dy) > 10:
-        ctrl_speed = min( ctrl_speed, self.old_ctrl_speed )
-
-      self.old_ctrl_speed = ctrl_speed
 
     return  ctrl_speed
 
