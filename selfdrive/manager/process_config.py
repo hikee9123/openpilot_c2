@@ -44,7 +44,7 @@ procs = [
   PythonProcess("shutdownd", "system.hardware.eon.shutdownd", enabled=EON),
   PythonProcess("androidd", "system.hardware.eon.androidd", enabled=EON, persistent=True),
 
-  PythonProcess("bridge", "system.logcatd.bridge", enabled=EON, persistent=True),
+  PythonProcess("bridge", "selfdrive.manager.bridge", enabled=EON, persistent=True),
 
   # Experimental
   PythonProcess("rawgpsd", "selfdrive.sensord.rawgps.rawgpsd", enabled=os.path.isfile("/persist/comma/use-quectel-rawgps")),
