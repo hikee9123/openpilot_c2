@@ -32,6 +32,7 @@ class Client:
 
 
     def get_broadcast_address(self):
+        print('get_broadcast_address\n')
         try:
             with socket.socket(socket.AF_INET, socket.SOCK_DGRAM) as s:
                 ip = fcntl.ioctl(
