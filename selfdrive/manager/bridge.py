@@ -58,7 +58,9 @@ class Client:
                     #    broadcast_address = self.get_broadcast_address()
                     broadcast_address = '255.255.255.255'
                     message = "Hello, this is a broadcast message!"
-                    sock.sendto(message.encode('utf-8'), (broadcast_address, Port.BROADCAST_PORT))
+                    address = (broadcast_address, Port.BROADCAST_PORT)
+                    sock.sendto(message.encode('utf-8'), address )
+                    print(f"Send : {rt} = {msg} {address}") 
                     """
                     if broadcast_address is not None and self.remote_address is None:
                         print('broadcast', broadcast_address)
