@@ -53,7 +53,6 @@ class Client:
             #sock.setsockopt(socket.SOL_SOCKET, socket.SO_BROADCAST, 1)
             while self.program_run:
                 try:
-                    print( f"broadcast_thread {self.frame}" )
                     if broadcast_address is None or self.frame % 10 == 0:
                         broadcast_address = self.get_broadcast_address()
 
@@ -69,6 +68,7 @@ class Client:
                 except Exception as e:
                     print(f"Send error occurred: {e}")
 
+                print( f"1. broadcast_thread {self.frame}" )
                 try:
                     data, self.remote_address = sock.recvfrom(2048)
                     print(f"recv: {data} {self.remote_address}")
@@ -76,6 +76,7 @@ class Client:
                     print(f"recv error occurred: {e}") 
   
                 self.frame += 1
+                print( f"2. broadcast_thread {self.frame}" )
                 #time.sleep(1.)
         print(f"broadcast_thread  end: {self.program_run}") 
 
