@@ -24,6 +24,7 @@ class Client:
         self.sm = messaging.SubMaster(['liveNaviData']) 
 
         self.frame = 0
+        self.program_run = True
         self.lock = threading.Lock()
 
         broadcast = Thread(target=self.broadcast_thread, args=[])
@@ -47,10 +48,10 @@ class Client:
    
     def broadcast_thread(self):
         broadcast_address = None
-
+        print(f"broadcast_thread  start: {self.program_run}") 
         with socket.socket(socket.AF_INET, socket.SOCK_DGRAM) as sock:
             #sock.setsockopt(socket.SOL_SOCKET, socket.SO_BROADCAST, 1)
-            while True:
+            while self.program_run:
                 try:
                     print( f"broadcast_thread {self.frame}" )
                     if broadcast_address is None or self.frame % 10 == 0:
@@ -76,7 +77,7 @@ class Client:
   
                 self.frame += 1
                 #time.sleep(1.)
-
+        print(f"broadcast_thread  end: {self.program_run}") 
 
 
 
@@ -130,7 +131,7 @@ class Client:
             except Exception as e:
                 print(f"client_socket error occurred: {e}")
 
-        print(f"client_socket run: frame = {self.frame}")
+
         time.sleep(0.5)     
 
 
@@ -138,20 +139,20 @@ def main():
     client = Client()
     client_socket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
 
-    program_run = True
+    client.program_run = True
     def signal_handler(signal, frame):
         print("Ctrl+C detected. Exiting gracefully.")
         # 여기에 추가적인 종료 로직을 작성할 수 있습니다.
-        program_run = False        
+        client.program_run = False     
         sys.exit(0)
 
 
     signal.signal(signal.SIGINT, signal_handler)  # Ctrl + C 핸들러 등록
 
 
-    while program_run:
+    while client.program_run:
         client.update( client_socket )
-
+        print(f"client_socket run: frame = {client.frame}  program_run={client.program_run}")
 
 
 if __name__ == "__main__":
