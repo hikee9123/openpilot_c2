@@ -174,7 +174,8 @@ class Client:
 
                 try:
                     remote_addr = ( self.remote_address[0], Port.RECEIVE_PORT )
-                    sock.sendto( json.dumps(json_data).encode(), remote_addr )
+                    rt = sock.sendto( json.dumps(json_data).encode(), remote_addr )
+                    print(f"Send : {rt} = {json_data} {remote_addr}") 
                 except Exception as e:
                     print(f"client_socket error occurred: {e}")
 
