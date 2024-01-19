@@ -211,7 +211,7 @@ int main() {
         nLastTime = entry.tv_sec;
       }
       
-
+      int  nUpdate = 0
       m_message = atoi( entry.message );
       // 2. MAP data Event.
       traffic_type = traffic_camera( &event );
@@ -247,6 +247,7 @@ int main() {
       }      
       else if( strcmp( entry.tag, "opkrsigntype" ) == 0 )  // 4.
       {
+        nUpdate = 1
         event.safetySign1 = m_message;
         event.dEventSec = dCurrentSec;
         update_event( &event, dSpeed_ms );
@@ -254,6 +255,7 @@ int main() {
       }
       else if( strcmp( entry.tag, "opkrroadsigntype" ) == 0 )
       {
+        nUpdate = 1
         event.safetySign2 = m_message;
         event.dEventSec = dCurrentSec;
         update_event( &event, dSpeed_ms );
@@ -319,7 +321,8 @@ int main() {
       auto framed = msg.initEvent().initLiveNaviData();
 
 
-      framed.setId( nIdxID++ );
+      nIdxID += nUpdate
+      framed.setId( nIdxID );
 
       framed.setMapType( event.mapType  );
       framed.setTs( entry.tv_sec );
