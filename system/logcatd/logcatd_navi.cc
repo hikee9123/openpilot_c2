@@ -318,7 +318,7 @@ int main() {
       MessageBuilder msg;
       auto framed = msg.initEvent().initLiveNaviData();
 
-      
+
       framed.setId(log_msg.id());
 
       framed.setMapType( event.mapType  );

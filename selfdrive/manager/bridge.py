@@ -34,7 +34,6 @@ class Client:
 
 
     def get_broadcast_address(self):
-        print( "get_broadcast_address" )
         try:
             with socket.socket(socket.AF_INET, socket.SOCK_DGRAM) as s:
                 ip = fcntl.ioctl(
@@ -121,9 +120,18 @@ class Client:
         liveNaviData = self.sm['liveNaviData']
 
         speedLimit = liveNaviData.speedLimit
-        speedLimitDistance = liveNaviData.arrivalDistance  #speedLimitDistance
+        speedLimitDistance = liveNaviData.speedLimitDistance  #speedLimitDistance
         mapValid = liveNaviData.mapValid
         trafficType = liveNaviData.trafficType
+        ts = liveNaviData.ts
+        safetySign1 = liveNaviData.safetySign1
+
+        distanceToTurn = liveNaviData.distanceToTurn
+        turnInfo =  liveNaviData.turnInfo
+
+        remainTime = liveNaviData.remainTime
+        roadCurvature = liveNaviData.roadCurvature
+        
 
         self.udp_recv( sock )
         if self.remote_address:
@@ -131,7 +139,14 @@ class Client:
                 "speedLimit":speedLimit,
                 "speedLimitDistance":speedLimitDistance,
                 "mapValid":mapValid,
-                "trafficType":trafficType
+                "trafficType":trafficType,
+                "safetySign1":safetySign1,
+
+                "distanceToTurn":distanceToTurn,
+                "turnInfo":turnInfo,
+                "remainTime":remainTime,
+                "roadCurvature":roadCurvature,
+                "ts":ts
             }
 
             try:
@@ -139,7 +154,6 @@ class Client:
                 sock.sendto( json.dumps(json_data).encode(), remote_addr )
             except Exception as e:
                 print(f"client_socket error occurred: {e}")
-
 
         time.sleep(0.5)     
 
@@ -161,7 +175,7 @@ def main():
 
     while client.program_run:
         client.update( client_socket )
-        print(f"client_socket run: frame = {client.frame}  program_run={client.program_run}")
+        #print(f"client_socket run: frame = {client.frame}  program_run={client.program_run}")
 
 
 if __name__ == "__main__":
