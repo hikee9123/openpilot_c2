@@ -108,7 +108,8 @@ class Client:
                     data, self.remote_address = sock.recvfrom(2048)
                     print(f"recv: {data} {self.remote_address}")
                 except socket.timeout:
-                    print("recv timeout") 
+                    if self.remote_address is None:
+                        print("recv timeout") 
                     recv_timeout = True
                 except Exception as e:
                     print(f"recv error occurred: {e}") 
