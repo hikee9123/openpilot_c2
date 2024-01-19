@@ -130,7 +130,6 @@ class Client:
         turnInfo =  liveNaviData.turnInfo
         id =  liveNaviData.id
 
-        
 
         self.udp_recv( sock )
         if self.remote_address:
