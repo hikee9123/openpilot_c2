@@ -74,6 +74,7 @@ class Client:
   
                 frame += 1
                 time.sleep(1.)
+                break
 
 
 
