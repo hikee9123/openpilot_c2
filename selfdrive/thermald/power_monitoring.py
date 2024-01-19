@@ -34,6 +34,8 @@ class PowerMonitoring:
     self.car_voltage_instant_mV = 12e3          # Last value of peripheralState voltage
     self.integration_lock = threading.Lock()
     self.ts_last_charging_ctrl = None
+    self.ts_last_battery_power = None
+
 
     car_battery_capacity_uWh = self.params.get("CarBatteryCapacity")
     if car_battery_capacity_uWh is None:
@@ -177,16 +179,27 @@ class PowerMonitoring:
     if offroad_timestamp is None:
       return False
 
-    print(f"usbPowerMode = {peripheralState.usbPowerMode}")
     now = sec_since_boot()
+    if self.ts_last_battery_power is None:
+      self.ts_last_battery_power = now
+
+    battery_statu = HARDWARE.get_battery_status()  #== "Charging"
+
+    if battery_statu == "Charging":
+      self.ts_last_battery_power = now
+    else:
+      started_seen = True
+
+    print(f"get_battery_status = {battery_statu}   started_seen={started_seen}")      
+
     panda_charging = (peripheralState.usbPowerMode != log.PeripheralState.UsbPowerMode.client)
     BATT_PERC_OFF = self.batt_perc_off_auto_power()
 
     should_shutdown = False
     # Wait until we have shut down charging before powering down
     should_shutdown |= (not panda_charging and self.should_disable_charging(ignition, in_car, offroad_timestamp))
-    should_shutdown |= ((HARDWARE.get_battery_capacity() < BATT_PERC_OFF) and (not HARDWARE.get_battery_charging()) and ((now - offroad_timestamp) > 30))
-    #should_shutdown &= started_seen or (now > MIN_ON_TIME_S)
+    should_shutdown |= ((HARDWARE.get_battery_capacity() < BATT_PERC_OFF) and (not HARDWARE.get_battery_charging()) and ((now - self.ts_last_battery_power) > 30))
+    should_shutdown &= started_seen or (now > MIN_ON_TIME_S)
     return should_shutdown
 
 
