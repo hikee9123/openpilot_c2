@@ -5,6 +5,7 @@ import struct
 import threading
 import select
 import json
+import signal
 import cereal.messaging as messaging
 
 from threading import Thread
@@ -135,7 +136,16 @@ def main():
     client = Client()
     client_socket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
 
-    while True:
+    program_run = True
+    def signal_handler(signal, frame):
+        print("Ctrl+C detected. Exiting gracefully.")
+        # 여기에 추가적인 종료 로직을 작성할 수 있습니다.
+        program_run = False
+
+    signal.signal(signal.SIGINT, signal_handler)  # Ctrl + C 핸들러 등록
+
+
+    while program_run:
         client.update( client_socket )
 
 
