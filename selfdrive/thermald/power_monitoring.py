@@ -190,7 +190,7 @@ class PowerMonitoring:
     else:
       started_seen = True
 
-    print(f"get_battery_status = {battery_status}   started_seen={started_seen}")      
+    #print(f"get_battery_status = {battery_status}   started_seen={started_seen}")      
 
     panda_charging = (peripheralState.usbPowerMode != log.PeripheralState.UsbPowerMode.client)
     BATT_PERC_OFF = self.batt_perc_off_auto_power()

@@ -64,6 +64,7 @@ class Client:
                             ip_tuple = socket.inet_aton(broadcast_address)
                             new_ip = ip_tuple[:-1] + bytes([i])
                             address = (socket.inet_ntoa(new_ip), Port.BROADCAST_PORT)
+                            print(f"Send : {msg} {address}")
                             sock.sendto(msg, address)
 
                 except Exception as e:
