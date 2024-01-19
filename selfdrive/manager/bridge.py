@@ -99,7 +99,7 @@ class Client:
             ready = select.select([sock], [], [], 1.)
             ret = bool(ready[0])
             if ret:
-                data, self.remote_addr = sock.recvfrom(2048)
+                data, remote_addr = sock.recvfrom(2048)
                 json_obj = json.loads(data.decode())
                 print(f"json={json_obj}")                
 
@@ -107,7 +107,7 @@ class Client:
                 if 'echo' in json_obj:
                     try:
                         echo = json.dumps(json_obj["echo"])
-                        sock.sendto(echo.encode(), self.remote_addr ) #  (self.remote_addr[0], Port.BROADCAST_PORT))
+                        sock.sendto(echo.encode(), remote_addr ) #  (self.remote_addr[0], Port.BROADCAST_PORT))
                         ret = False
                     except:
                         pass
