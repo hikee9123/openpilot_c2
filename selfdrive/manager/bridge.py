@@ -109,7 +109,12 @@ class Client:
                     print(f"recv: {data} {self.remote_address}")
                 except socket.timeout:
                     if self.remote_address is None:
-                        print("recv timeout") 
+                        print("recv timeout")
+                    else:
+                        msg = '{"echo":"NAVI_SERVICE"}'.encode()
+                        rt = sock.sendto(msg, self.remote_address)
+                        print(f"Send : {rt} = {msg} {self.remote_address}") 
+
                     recv_timeout = True
                 except Exception as e:
                     print(f"recv error occurred: {e}") 
@@ -139,7 +144,7 @@ class Client:
                 if 'echo' in json_obj:
                     try:
                         echo = json.dumps(json_obj["echo"])
-                        sock.sendto(echo.encode(), remote_addr ) #  (self.remote_addr[0], Port.BROADCAST_PORT))
+                        #sock.sendto(echo.encode(), remote_addr ) #  (self.remote_addr[0], Port.BROADCAST_PORT))
                         ret = False
                     except:
                         pass
