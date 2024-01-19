@@ -130,7 +130,7 @@ class Client:
                     "safetySign1":liveNaviData.safetySign1,
 
                     "distanceToTurn":liveNaviData.distanceToTurn,
-                    "turnInfo":liveNaviData.turnInfoInfo,
+                    "turnInfo":liveNaviData.turnInfo,
 
                     "ts":liveNaviData.ts,
                     "id":liveNaviData.id
