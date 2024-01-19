@@ -321,7 +321,7 @@ int main() {
       auto framed = msg.initEvent().initLiveNaviData();
 
 
-      nIdxID += nUpdate
+      nIdxID += nUpdate;
       framed.setId( nIdxID );
 
       framed.setMapType( event.mapType  );
