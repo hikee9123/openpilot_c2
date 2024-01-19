@@ -156,6 +156,7 @@ int main() {
   double  dEventLastSec, dEventHideSec;
   double  dCurrentSec;
   long    nCurPID = 0;
+  long    nIdxID = 0;
       
       
   ExitHandler do_exit;
@@ -228,7 +229,7 @@ int main() {
         event.speedLimitDistance = m_message;
         if( m_message > 50 )
            opkr = 1;
-      }      
+      }
       else if( strcmp( entry.tag, "opkrspdlimit" ) == 0 ) // 2
       {
         event.speedLimit = m_message;
@@ -271,7 +272,7 @@ int main() {
 
 
       
-      
+      /*
       // 3. Message hide process.
       if( opkr )
       {
@@ -280,8 +281,7 @@ int main() {
           dEventLastSec = dCurrentSec - event.dEventSec;  // 마지막 Event Time
           event.dArrivalTimeSec = event.dHideTimeSec - dCurrentSec;
           event.dArrivalDistance =  event.dArrivalTimeSec * dSpeed_ms;
-
-          
+         
           if( event.mapType == 2 )  // iNavi
           {
               dEventHideSec = 7;
@@ -308,6 +308,7 @@ int main() {
 //        if( event.mapType == 1 )  // mappy
         event.dHideTimeSec = dCurrentSec + 5;
       }
+      */
 
       if ( opkr )
          event.mapValid = 1;
@@ -318,7 +319,7 @@ int main() {
       auto framed = msg.initEvent().initLiveNaviData();
 
 
-      framed.setId(log_msg.id());
+      framed.setId( nIdxID++ );
 
       framed.setMapType( event.mapType  );
       framed.setTs( dCurrentSec );

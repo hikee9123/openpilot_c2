@@ -128,7 +128,7 @@ class Client:
 
         distanceToTurn = liveNaviData.distanceToTurn
         turnInfo =  liveNaviData.turnInfo
-
+        id =  liveNaviData.id
 
         
 
@@ -144,7 +144,8 @@ class Client:
                 "distanceToTurn":distanceToTurn,
                 "turnInfo":turnInfo,
 
-                "ts":ts
+                "ts":ts,
+                "id":id
             }
 
             try:
