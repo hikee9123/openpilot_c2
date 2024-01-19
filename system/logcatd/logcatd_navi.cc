@@ -153,7 +153,7 @@ int main() {
   int      m_message = 0;
 
 
-  double  dEventLastSec, dEventHideSec;
+  //double  dEventLastSec, dEventHideSec;
   double  dCurrentSec;
   long    nCurPID = 0;
   long    nIdxID = 0;
