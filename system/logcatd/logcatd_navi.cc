@@ -321,7 +321,7 @@ int main() {
       framed.setId(log_msg.id());
 
       framed.setMapType( event.mapType  );
-      framed.setTs( event.tv_sec );
+      framed.setTs( dCurrentSec );
       framed.setSpeedLimit( event.speedLimit );  // Float32;
       framed.setSpeedLimitDistance( event.speedLimitDistance );  // raw_target_speed_map_dist Float32;
 
