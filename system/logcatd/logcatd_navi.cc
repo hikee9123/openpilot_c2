@@ -211,7 +211,7 @@ int main() {
         nLastTime = entry.tv_sec;
       }
       
-      int  nUpdate = 0
+      int  nUpdate = 0;
       m_message = atoi( entry.message );
       // 2. MAP data Event.
       traffic_type = traffic_camera( &event );
