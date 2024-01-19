@@ -116,7 +116,7 @@ class Client:
         return ret 
 
     def update(self, sock ):
-        self.sm.update()
+        self.sm.update(1)
 
         if self.sm.updated("liveNaviData"):
             liveNaviData = self.sm['liveNaviData']
