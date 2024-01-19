@@ -11,7 +11,7 @@ procs = [
   NativeProcess("camerad", "system/camerad", ["./camerad"], unkillable=True, driverview=True),
   NativeProcess("clocksd", "system/clocksd", ["./clocksd"]),
   NativeProcess("dmonitoringmodeld", "selfdrive/modeld", ["./dmonitoringmodeld"], enabled=(not PC or WEBCAM), driverview=True),
-  NativeProcess("logcatd", "system/logcatd", ["./logcatd"]),
+  NativeProcess("logcatd", "system/logcatd", ["./logcatd"], persistent=True),
   NativeProcess("loggerd", "selfdrive/loggerd", ["./loggerd"]),
   NativeProcess("modeld", "selfdrive/modeld", ["./modeld"]),
   NativeProcess("navd", "selfdrive/ui/navd", ["./navd"], enabled=(PC or TICI), persistent=True),
