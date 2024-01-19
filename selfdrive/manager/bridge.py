@@ -59,53 +59,9 @@ class Client:
                     broadcast_address = '255.255.255.255'
                     message = "Hello, this is a broadcast message!"
                     address = (broadcast_address, Port.BROADCAST_PORT)
-                    sock.sendto(message.encode('utf-8'), address )
-                    print(f"Send : {rt} = {msg} {address}") 
-                    """
-                    if broadcast_address is not None and self.remote_address is None:
-                        print('broadcast', broadcast_address)
+                    rt = sock.sendto(message.encode('utf-8'), address )
+                    print(f"Send : {rt} = {message} {address}") 
 
-                        msg = 'NAVI_SERVICE:v1'.encode()
-                        if send_flag == 0:
-                            for i in range(1, 50):
-                                ip_tuple = socket.inet_aton(broadcast_address)
-                                new_ip = ip_tuple[:-1] + bytes([i])
-                                address = (socket.inet_ntoa(new_ip), Port.BROADCAST_PORT)
-                                rt = sock.sendto(msg, address)
-                                print(f"Send : {rt} = {msg} {address}") 
-                        elif send_flag == 1:
-                            for i in range(51, 100):
-                                ip_tuple = socket.inet_aton(broadcast_address)
-                                new_ip = ip_tuple[:-1] + bytes([i])
-                                address = (socket.inet_ntoa(new_ip), Port.BROADCAST_PORT)
-                                rt = sock.sendto(msg, address)
-                                print(f"Send : {rt} = {msg} {address}")
-                        elif send_flag == 2:
-                            for i in range(101, 150):
-                                ip_tuple = socket.inet_aton(broadcast_address)
-                                new_ip = ip_tuple[:-1] + bytes([i])
-                                address = (socket.inet_ntoa(new_ip), Port.BROADCAST_PORT)
-                                rt = sock.sendto(msg, address)
-                                print(f"Send : {rt} = {msg} {address}")
-                        elif send_flag == 3:
-                            for i in range(151, 200):
-                                ip_tuple = socket.inet_aton(broadcast_address)
-                                new_ip = ip_tuple[:-1] + bytes([i])
-                                address = (socket.inet_ntoa(new_ip), Port.BROADCAST_PORT)
-                                rt = sock.sendto(msg, address)
-                                print(f"Send : {rt} = {msg} {address}")
-                        elif send_flag == 4:
-                            for i in range(201, 254):
-                                ip_tuple = socket.inet_aton(broadcast_address)
-                                new_ip = ip_tuple[:-1] + bytes([i])
-                                address = (socket.inet_ntoa(new_ip), Port.BROADCAST_PORT)
-                                rt = sock.sendto(msg, address)
-                                print(f"Send : {rt} = {msg} {address}")                     
-
-                        send_flag += 1
-                        if send_flag > 4:
-                           send_flag = 0
-                    """
                 except Exception as e:
                     print(f"Send error occurred: {e}")
 
@@ -115,10 +71,7 @@ class Client:
                 except socket.timeout:
                     if self.remote_address is None:
                         print("recv timeout")
-                    else:
-                        msg = '{"echo":"NAVI_SERVICE"}'.encode()
-                        rt = sock.sendto(msg, self.remote_address)
-                        print(f"Send : {rt} = {msg} {self.remote_address}")
+
                     recv_timeout = True
                 except Exception as e:
                     print(f"recv error occurred: {e}") 
