@@ -48,7 +48,7 @@ class Client:
    
     def broadcast_thread(self):
         broadcast_address = None
-        print(f"broadcast_thread  start: {self.program_run}") 
+        recv_timeout = False
         with socket.socket(socket.AF_INET, socket.SOCK_DGRAM) as sock:
             #sock.setsockopt(socket.SOL_SOCKET, socket.SO_BROADCAST, 1)
             sock.settimeout(1.0)  # 1초의 타임아웃 설정
@@ -69,19 +69,24 @@ class Client:
                 except Exception as e:
                     print(f"Send error occurred: {e}")
 
-                print( f"1. broadcast_thread {self.frame}" )
+
                 try:
                     data, self.remote_address = sock.recvfrom(2048)
                     print(f"recv: {data} {self.remote_address}")
                 except socket.timeout:
                     print("recv timeout") 
+                    recv_timeout = True
                 except Exception as e:
                     print(f"recv error occurred: {e}") 
   
                 self.frame += 1
-                print( f"2. broadcast_thread {self.frame}" )
-                #time.sleep(1.)
-        print(f"broadcast_thread  end: {self.program_run}") 
+
+                if recv_timeout == False:
+                  time.sleep(1.)
+                else:
+                    recv_timeout = False
+
+
 
 
 
