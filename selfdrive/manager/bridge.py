@@ -56,11 +56,12 @@ class Client:
                 try:
                     #if broadcast_address is None or self.frame % 10 == 0:
                     #    broadcast_address = self.get_broadcast_address()
-                    broadcast_address = '255.255.255.255'
-                    message = "Hello, this is a broadcast message!"
-                    address = (broadcast_address, Port.BROADCAST_PORT)
-                    rt = sock.sendto(message.encode('utf-8'), address )
-                    print(f"Send : {rt} = {message} {address}") 
+                    if self.remote_address is None:
+                        broadcast_address = '255.255.255.255'
+                        message = "Hello, this is a broadcast message!"
+                        address = (broadcast_address, Port.BROADCAST_PORT)
+                        rt = sock.sendto(message.encode('utf-8'), address )
+                        print(f"Send : {rt} = {message} {address}") 
 
                 except Exception as e:
                     print(f"Send error occurred: {e}")
