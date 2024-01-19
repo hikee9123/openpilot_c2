@@ -50,13 +50,16 @@ class Client:
         recv_timeout = False
         send_flag = 0
         with socket.socket(socket.AF_INET, socket.SOCK_DGRAM) as sock:
-            #sock.setsockopt(socket.SOL_SOCKET, socket.SO_BROADCAST, 1)
+            sock.setsockopt(socket.SOL_SOCKET, socket.SO_BROADCAST, 1)
             sock.settimeout(1.0)  # 1초의 타임아웃 설정
             while self.program_run:
                 try:
-                    if broadcast_address is None or self.frame % 10 == 0:
-                        broadcast_address = self.get_broadcast_address()
-
+                    #if broadcast_address is None or self.frame % 10 == 0:
+                    #    broadcast_address = self.get_broadcast_address()
+                    broadcast_address = '255.255.255.255'
+                    message = "Hello, this is a broadcast message!"
+                    sock.sendto(message.encode('utf-8'), (broadcast_address, Port.BROADCAST_PORT))
+                    """
                     if broadcast_address is not None and self.remote_address is None:
                         print('broadcast', broadcast_address)
 
@@ -100,7 +103,7 @@ class Client:
                         send_flag += 1
                         if send_flag > 4:
                            send_flag = 0
-
+                    """
                 except Exception as e:
                     print(f"Send error occurred: {e}")
 
