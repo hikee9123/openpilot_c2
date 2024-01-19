@@ -6,6 +6,7 @@ import threading
 import select
 import json
 import signal
+import sys
 import cereal.messaging as messaging
 
 from threading import Thread
@@ -140,7 +141,9 @@ def main():
     def signal_handler(signal, frame):
         print("Ctrl+C detected. Exiting gracefully.")
         # 여기에 추가적인 종료 로직을 작성할 수 있습니다.
-        program_run = False
+        program_run = False        
+        sys.exit(0)
+
 
     signal.signal(signal.SIGINT, signal_handler)  # Ctrl + C 핸들러 등록
 
