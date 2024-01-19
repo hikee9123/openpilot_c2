@@ -66,18 +66,21 @@ class Client:
                             new_ip = ip_tuple[:-1] + bytes([i])
                             address = (socket.inet_ntoa(new_ip), Port.BROADCAST_PORT)
                             sock.sendto(msg, address)
+
+                        try:
+                            data, self.remote_address = sock.recvfrom(2048)
+                            print(f"recv: {data} {self.remote_address}")
+                        except socket.timeout:
+                            print("recv timeout") 
+                            recv_timeout = True
+                        except Exception as e:
+                            print(f"recv error occurred: {e}") 
+
                 except Exception as e:
                     print(f"Send error occurred: {e}")
 
 
-                try:
-                    data, self.remote_address = sock.recvfrom(2048)
-                    print(f"recv: {data} {self.remote_address}")
-                except socket.timeout:
-                    print("recv timeout") 
-                    recv_timeout = True
-                except Exception as e:
-                    print(f"recv error occurred: {e}") 
+
   
                 self.frame += 1
 
