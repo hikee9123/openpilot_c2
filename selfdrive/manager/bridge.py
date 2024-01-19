@@ -116,9 +116,8 @@ class Client:
                     else:
                         msg = '{"echo":"NAVI_SERVICE"}'.encode()
                         rt = sock.sendto(msg, self.remote_address)
-                        print(f"Send : {rt} = {msg} {self.remote_address}") 
-
-                    recv_timeout = True
+                        print(f"Send : {rt} = {msg} {self.remote_address}")
+                      recv_timeout = True
                 except Exception as e:
                     print(f"recv error occurred: {e}") 
   
