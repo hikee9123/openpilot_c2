@@ -23,7 +23,7 @@ class Client:
 
         self.sm = messaging.SubMaster(['liveNaviData']) 
 
-
+        self.frame = 0
         self.lock = threading.Lock()
 
         broadcast = Thread(target=self.broadcast_thread, args=[])
@@ -47,14 +47,13 @@ class Client:
    
     def broadcast_thread(self):
         broadcast_address = None
-        frame = 0
 
         with socket.socket(socket.AF_INET, socket.SOCK_DGRAM) as sock:
             #sock.setsockopt(socket.SOL_SOCKET, socket.SO_BROADCAST, 1)
             while True:
                 try:
-                    print( f"broadcast_thread {frame}" )
-                    if broadcast_address is None or frame % 10 == 0:
+                    print( f"broadcast_thread {self.frame}" )
+                    if broadcast_address is None or self.frame % 10 == 0:
                         broadcast_address = self.get_broadcast_address()
 
                     if broadcast_address is not None and self.remote_address is None:
@@ -75,7 +74,7 @@ class Client:
                 except Exception as e:
                     print(f"recv error occurred: {e}") 
   
-                frame += 1
+                self.frame += 1
                 time.sleep(1.)
 
 
@@ -131,6 +130,7 @@ class Client:
             except Exception as e:
                 print(f"client_socket error occurred: {e}")
 
+        print(f"client_socket run: frame = {self.frame}")
         time.sleep(0.5)     
 
 
