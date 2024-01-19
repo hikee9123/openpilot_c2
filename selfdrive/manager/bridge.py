@@ -117,11 +117,10 @@ class Client:
 
     def update(self, sock ):
         self.sm.update(1)
+        self.udp_recv( sock )
 
         if self.sm.updated['liveNaviData']:
             liveNaviData = self.sm['liveNaviData']
-
-            self.udp_recv( sock )
             if self.remote_address:
                 json_data = {
                     "speedLimit":liveNaviData.speedLimit,
