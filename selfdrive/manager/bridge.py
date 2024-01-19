@@ -153,7 +153,7 @@ class Client:
             except Exception as e:
                 print(f"client_socket error occurred: {e}")
 
-        time.sleep(0.2)     
+        time.sleep(0.5)     
 
 
 def main():
