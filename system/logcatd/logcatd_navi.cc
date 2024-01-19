@@ -247,7 +247,7 @@ int main() {
       }      
       else if( strcmp( entry.tag, "opkrsigntype" ) == 0 )  // 4.
       {
-        nUpdate = 1
+        nUpdate = 1;
         event.safetySign1 = m_message;
         event.dEventSec = dCurrentSec;
         update_event( &event, dSpeed_ms );
@@ -255,7 +255,7 @@ int main() {
       }
       else if( strcmp( entry.tag, "opkrroadsigntype" ) == 0 )
       {
-        nUpdate = 1
+        nUpdate = 1;
         event.safetySign2 = m_message;
         event.dEventSec = dCurrentSec;
         update_event( &event, dSpeed_ms );
