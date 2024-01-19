@@ -116,44 +116,34 @@ class Client:
         return ret 
 
     def update(self, sock ):
-        self.sm.update(0)
-        liveNaviData = self.sm['liveNaviData']
+        self.sm.update()
 
-        speedLimit = liveNaviData.speedLimit
-        speedLimitDistance = liveNaviData.speedLimitDistance  #speedLimitDistance
-        mapValid = liveNaviData.mapValid
-        trafficType = liveNaviData.trafficType
-        ts = liveNaviData.ts
-        safetySign1 = liveNaviData.safetySign1
-
-        distanceToTurn = liveNaviData.distanceToTurn
-        turnInfo =  liveNaviData.turnInfo
-        id =  liveNaviData.id
+        if self.sm.updated("liveNaviData"):
+            liveNaviData = self.sm['liveNaviData']
 
 
-        self.udp_recv( sock )
-        if self.remote_address:
-            json_data = {
-                "speedLimit":speedLimit,
-                "speedLimitDistance":speedLimitDistance,
-                "mapValid":mapValid,
-                "trafficType":trafficType,
-                "safetySign1":safetySign1,
+            self.udp_recv( sock )
+            if self.remote_address:
+                json_data = {
+                    "speedLimit":liveNaviData.speedLimit,
+                    "speedLimitDistance":liveNaviData.speedLimitDistance,
+                    "mapValid":liveNaviData.mapValid,
+                    "trafficType":liveNaviData.trafficType,
+                    "safetySign1":liveNaviData.safetySign1,
 
-                "distanceToTurn":distanceToTurn,
-                "turnInfo":turnInfo,
+                    "distanceToTurn":liveNaviData.distanceToTurn,
+                    "turnInfo":liveNaviData.turnInfoInfo,
 
-                "ts":ts,
-                "id":id
-            }
+                    "ts":liveNaviData.ts,
+                    "id":liveNaviData.id
+                }
 
-            try:
-                remote_addr = ( self.remote_address[0], Port.RECEIVE_PORT )
-                sock.sendto( json.dumps(json_data).encode(), remote_addr )
-            except Exception as e:
-                print(f"client_socket error occurred: {e}")
+                try:
+                    remote_addr = ( self.remote_address[0], Port.RECEIVE_PORT )
+                    sock.sendto( json.dumps(json_data).encode(), remote_addr )
+                except Exception as e:
+                    print(f"client_socket error occurred: {e}")
 
-        time.sleep(0.5)     
 
 
 def main():
