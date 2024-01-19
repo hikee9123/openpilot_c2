@@ -59,13 +59,13 @@ class Client:
                     if broadcast_address is not None and self.remote_address is None:
                         print('broadcast', broadcast_address)
 
-                        msg = 'EON:ROAD_LIMIT_SERVICE:v1'.encode()
+                        msg = 'NAVI_SERVICE:v1'.encode()
                         for i in range(1, 255):
                             ip_tuple = socket.inet_aton(broadcast_address)
                             new_ip = ip_tuple[:-1] + bytes([i])
                             address = (socket.inet_ntoa(new_ip), Port.BROADCAST_PORT)
-                            print(f"Send : {msg} {address}")
-                            sock.sendto(msg, address)
+                            rt = sock.sendto(msg, address)
+                            print(f"Send : {rt} = {msg} {address}")                            
 
                 except Exception as e:
                     print(f"Send error occurred: {e}")
