@@ -48,6 +48,7 @@ class Client:
     def broadcast_thread(self):
         broadcast_address = None
         recv_timeout = False
+        send_flag = 0
         with socket.socket(socket.AF_INET, socket.SOCK_DGRAM) as sock:
             #sock.setsockopt(socket.SOL_SOCKET, socket.SO_BROADCAST, 1)
             sock.settimeout(1.0)  # 1초의 타임아웃 설정
@@ -60,12 +61,45 @@ class Client:
                         print('broadcast', broadcast_address)
 
                         msg = 'NAVI_SERVICE:v1'.encode()
-                        for i in range(1, 255):
-                            ip_tuple = socket.inet_aton(broadcast_address)
-                            new_ip = ip_tuple[:-1] + bytes([i])
-                            address = (socket.inet_ntoa(new_ip), Port.BROADCAST_PORT)
-                            rt = sock.sendto(msg, address)
-                            print(f"Send : {rt} = {msg} {address}")                            
+                        if send_flag == 0:
+                            for i in range(1, 50):
+                                ip_tuple = socket.inet_aton(broadcast_address)
+                                new_ip = ip_tuple[:-1] + bytes([i])
+                                address = (socket.inet_ntoa(new_ip), Port.BROADCAST_PORT)
+                                rt = sock.sendto(msg, address)
+                                print(f"Send : {rt} = {msg} {address}") 
+                        elif send_flag == 1:
+                            for i in range(51, 100):
+                                ip_tuple = socket.inet_aton(broadcast_address)
+                                new_ip = ip_tuple[:-1] + bytes([i])
+                                address = (socket.inet_ntoa(new_ip), Port.BROADCAST_PORT)
+                                rt = sock.sendto(msg, address)
+                                print(f"Send : {rt} = {msg} {address}")
+                        elif send_flag == 2:
+                            for i in range(101, 150):
+                                ip_tuple = socket.inet_aton(broadcast_address)
+                                new_ip = ip_tuple[:-1] + bytes([i])
+                                address = (socket.inet_ntoa(new_ip), Port.BROADCAST_PORT)
+                                rt = sock.sendto(msg, address)
+                                print(f"Send : {rt} = {msg} {address}")
+                        elif send_flag == 3:
+                            for i in range(151, 200):
+                                ip_tuple = socket.inet_aton(broadcast_address)
+                                new_ip = ip_tuple[:-1] + bytes([i])
+                                address = (socket.inet_ntoa(new_ip), Port.BROADCAST_PORT)
+                                rt = sock.sendto(msg, address)
+                                print(f"Send : {rt} = {msg} {address}")
+                        elif send_flag == 4:
+                            for i in range(201, 254):
+                                ip_tuple = socket.inet_aton(broadcast_address)
+                                new_ip = ip_tuple[:-1] + bytes([i])
+                                address = (socket.inet_ntoa(new_ip), Port.BROADCAST_PORT)
+                                rt = sock.sendto(msg, address)
+                                print(f"Send : {rt} = {msg} {address}")                     
+
+                        send_flag += 1
+                        if send_flag > 4:
+                           send_flag = 0
 
                 except Exception as e:
                     print(f"Send error occurred: {e}")
