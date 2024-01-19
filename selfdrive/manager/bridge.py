@@ -129,8 +129,7 @@ class Client:
         distanceToTurn = liveNaviData.distanceToTurn
         turnInfo =  liveNaviData.turnInfo
 
-        remainTime = liveNaviData.remainTime
-        roadCurvature = liveNaviData.roadCurvature
+
         
 
         self.udp_recv( sock )
@@ -144,8 +143,7 @@ class Client:
 
                 "distanceToTurn":distanceToTurn,
                 "turnInfo":turnInfo,
-                "remainTime":remainTime,
-                "roadCurvature":roadCurvature,
+
                 "ts":ts
             }
 
