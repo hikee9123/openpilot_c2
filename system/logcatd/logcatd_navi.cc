@@ -184,9 +184,8 @@ int main() {
 
 
     while (!do_exit) {
-      
-      sm.update(0);
-      const float dSpeed_ms = sm["carState"].getCarState().getVEgo();
+      //sm.update(0);
+      const float dSpeed_ms = 10;// sm["carState"].getCarState().getVEgo();
 
       struct timeval t;
       gettimeofday(&t, NULL);
