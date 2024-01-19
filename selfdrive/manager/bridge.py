@@ -33,7 +33,7 @@ class Client:
 
 
     def get_broadcast_address(self):
-        print('get_broadcast_address\n')
+        print( "get_broadcast_address" )
         try:
             with socket.socket(socket.AF_INET, socket.SOCK_DGRAM) as s:
                 ip = fcntl.ioctl(
@@ -53,6 +53,7 @@ class Client:
             #sock.setsockopt(socket.SOL_SOCKET, socket.SO_BROADCAST, 1)
             while True:
                 try:
+                    print( f"broadcast_thread {frame}" )
                     if broadcast_address is None or frame % 10 == 0:
                         broadcast_address = self.get_broadcast_address()
 
