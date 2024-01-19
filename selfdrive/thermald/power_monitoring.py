@@ -183,14 +183,14 @@ class PowerMonitoring:
     if self.ts_last_battery_power is None:
       self.ts_last_battery_power = now
 
-    battery_statu = HARDWARE.get_battery_status()  #== "Charging"
+    battery_status = HARDWARE.get_battery_status()  #== "Charging"
 
-    if battery_statu == "Charging":
+    if battery_status == "Charging":
       self.ts_last_battery_power = now
     else:
       started_seen = True
 
-    print(f"get_battery_status = {battery_statu}   started_seen={started_seen}")      
+    print(f"get_battery_status = {battery_status}   started_seen={started_seen}")      
 
     panda_charging = (peripheralState.usbPowerMode != log.PeripheralState.UsbPowerMode.client)
     BATT_PERC_OFF = self.batt_perc_off_auto_power()
