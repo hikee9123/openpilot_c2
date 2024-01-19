@@ -118,9 +118,8 @@ class Client:
     def update(self, sock ):
         self.sm.update(1)
 
-        if self.sm.updated("liveNaviData"):
+        if self.sm.updated['liveNaviData']:
             liveNaviData = self.sm['liveNaviData']
-
 
             self.udp_recv( sock )
             if self.remote_address:
