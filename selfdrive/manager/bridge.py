@@ -116,7 +116,7 @@ class Client:
         return ret 
 
     def update(self, sock ):
-        self.sm.update(1)
+        self.sm.update()
         self.udp_recv( sock )
 
         if self.sm.updated['liveNaviData']:
