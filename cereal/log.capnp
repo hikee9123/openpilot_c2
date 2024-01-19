@@ -1708,7 +1708,7 @@ struct LiveTorqueParametersData {
   # atom
 struct LiveNaviData {
   id @0 :UInt8;
-  ts @1 :Float32;  
+  ts @1 :UInt64;  
   speedLimit @2 :Float32;
   speedLimitDistance @3 :Float32;
 

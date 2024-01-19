@@ -322,7 +322,7 @@ int main() {
       framed.setId( nIdxID++ );
 
       framed.setMapType( event.mapType  );
-      framed.setTs( dCurrentSec );
+      framed.setTs( entry.tv_sec );
       framed.setSpeedLimit( event.speedLimit );  // Float32;
       framed.setSpeedLimitDistance( event.speedLimitDistance );  // raw_target_speed_map_dist Float32;
 
