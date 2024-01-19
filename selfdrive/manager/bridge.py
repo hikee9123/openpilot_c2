@@ -2,7 +2,6 @@ import socket
 import time
 import fcntl
 import struct
-#import psutil
 import threading
 import select
 import json
@@ -43,23 +42,6 @@ class Client:
                 return socket.inet_ntoa(ip)
         except:
             return None
-
-    """
-    def get_broadcast_address(self):
-    try:
-        interfaces = psutil.net_if_addrs()
-        wlan0_info = interfaces.get('이더넷')  # Replace 'wlan0' with your actual network interface name
-
-        if wlan0_info:
-            for addr in wlan0_info:
-                if addr.family == socket.AF_INET:
-                    return addr.address
-                
-    except Exception as e:
-        print(f"An error occurred: {e}")
-
-    return None  
-    """
    
     def broadcast_thread(self):
         broadcast_address = None
@@ -91,7 +73,8 @@ class Client:
                     print(f"recv error occurred: {e}") 
   
                 frame += 1
-                time.sleep(5.)
+                time.sleep(1.)
+
 
 
     def udp_recv(self, sock):
@@ -101,16 +84,8 @@ class Client:
             ret = bool(ready[0])
             if ret:
                 data, self.remote_addr = sock.recvfrom(2048)
-                print(f"udp_recv={data}")
                 json_obj = json.loads(data.decode())
                 print(f"json={json_obj}")                
-
-                if 'cmd' in json_obj:
-                    try:
-                        #os.system(json_obj['cmd'])
-                        ret = False
-                    except:
-                        pass
 
 
                 if 'echo' in json_obj:
